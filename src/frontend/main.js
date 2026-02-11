@@ -774,6 +774,8 @@ export class App {
 
     const visibilityBtn = document.createElement('button');
     visibilityBtn.className = 'visibility-btn';
+    visibilityBtn.setAttribute('aria-label', obj.visible ? 'Hide object' : 'Show object');
+    visibilityBtn.setAttribute('title', obj.visible ? 'Hide object' : 'Show object');
     visibilityBtn.onclick = (e) => {
       e.stopPropagation();
       obj.visible = !obj.visible;
@@ -786,6 +788,7 @@ export class App {
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-btn';
     deleteBtn.setAttribute('aria-label', 'Delete object');
+    deleteBtn.setAttribute('title', 'Delete object');
     deleteBtn.textContent = '🗑️';
     deleteBtn.onclick = (e) => {
       e.stopPropagation();
@@ -831,6 +834,9 @@ export class App {
 
     if (visibilityBtn.getAttribute('aria-label') !== expectedVisLabel) {
         visibilityBtn.setAttribute('aria-label', expectedVisLabel);
+    }
+    if (visibilityBtn.getAttribute('title') !== expectedVisLabel) {
+        visibilityBtn.setAttribute('title', expectedVisLabel);
     }
     if (visibilityBtn.textContent !== expectedVisIcon) {
         visibilityBtn.textContent = expectedVisIcon;
