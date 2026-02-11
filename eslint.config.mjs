@@ -35,7 +35,11 @@ export default [
                 afterEach: "readonly",
                 beforeAll: "readonly",
                 afterAll: "readonly",
-                jest: "readonly"
+                jest: "readonly",
+                test: "readonly",
+                performance: "readonly",
+                global: "readonly",
+                HTMLInputElement: "readonly"
             }
         },
         rules: {
