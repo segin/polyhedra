@@ -3,6 +3,11 @@ import { TeapotGeometry } from 'three/examples/jsm/geometries/TeapotGeometry.js'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
+const LATHE_POINTS = [];
+for (let i = 0; i < 10; i++) {
+  LATHE_POINTS.push(new THREE.Vector2(Math.sin(i * 0.2) * 0.5 + 0.5, (i - 5) * 0.2));
+}
+
 export class PrimitiveManager {
   constructor(scene) {
     this.scene = scene;
@@ -145,11 +150,7 @@ export class PrimitiveManager {
   }
 
   addLathe() {
-    const points = [];
-    for (let i = 0; i < 10; i++) {
-      points.push(new THREE.Vector2(Math.sin(i * 0.2) * 0.5 + 0.5, (i - 5) * 0.2));
-    }
-    const geometry = new THREE.LatheGeometry(points);
+    const geometry = new THREE.LatheGeometry(LATHE_POINTS);
     return this._createMesh(geometry, 0x00ff80); // Spring Green for Lathe
   }
 
