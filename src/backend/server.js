@@ -75,6 +75,57 @@ app.get('/modules/OrbitControls.js', (req, res) => {
   );
 });
 
+app.get('/modules/OBJLoader.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(
+    path.join(
+      __dirname,
+      '..',
+      '..',
+      'node_modules',
+      'three',
+      'examples',
+      'jsm',
+      'loaders',
+      'OBJLoader.js',
+    ),
+  );
+});
+
+app.get('/modules/GLTFLoader.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(
+    path.join(
+      __dirname,
+      '..',
+      '..',
+      'node_modules',
+      'three',
+      'examples',
+      'jsm',
+      'loaders',
+      'GLTFLoader.js',
+    ),
+  );
+});
+
+app.get('/utils/BufferGeometryUtils.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(
+    path.join(
+      __dirname,
+      '..',
+      '..',
+      'node_modules',
+      'three',
+      'examples',
+      'jsm',
+      'utils',
+      'BufferGeometryUtils.js',
+    ),
+  );
+});
+
 app.get('/modules/TransformControls.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(
