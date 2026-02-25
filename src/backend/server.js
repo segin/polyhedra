@@ -8,8 +8,8 @@ import crypto from 'crypto';
 import fs from 'fs';
 import rateLimit from 'express-rate-limit';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const currentFilename = fileURLToPath(import.meta.url);
+const currentDirname = path.dirname(currentFilename);
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -43,6 +43,7 @@ app.use(
         objectSrc: ["'none'"],
         mediaSrc: ["'self'"],
         frameSrc: ["'none'"],
+        workerSrc: ["'self'", 'blob:'],
       },
     },
   }),
@@ -50,142 +51,9 @@ app.use(
 
 app.use(cors());
 
-// Serve modules from node_modules with proper MIME types
-app.get('/modules/three.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(
-    path.join(__dirname, '..', '..', 'node_modules', 'three', 'build', 'three.module.js'),
-  );
-});
-
-app.get('/modules/OrbitControls.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(
-    path.join(
-      __dirname,
-      '..',
-      '..',
-      'node_modules',
-      'three',
-      'examples',
-      'jsm',
-      'controls',
-      'OrbitControls.js',
-    ),
-  );
-});
-
-app.get('/modules/TransformControls.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(
-    path.join(
-      __dirname,
-      '..',
-      '..',
-      'node_modules',
-      'three',
-      'examples',
-      'jsm',
-      'controls',
-      'TransformControls.js',
-    ),
-  );
-});
-
-app.get('/modules/dat.gui.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(
-    path.join(__dirname, '..', '..', 'node_modules', 'dat.gui', 'build', 'dat.gui.module.js'),
-  );
-});
-
-app.get('/modules/jszip.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(path.join(__dirname, '..', '..', 'node_modules', 'jszip', 'dist', 'jszip.min.js'));
-});
-
-// Serve three.min.js for web worker
-app.get('/modules/three.min.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(path.join(__dirname, '..', '..', 'node_modules', 'three', 'build', 'three.min.js'));
-});
-
-app.get('/modules/loglevel.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(
-    path.join(__dirname, '..', '..', 'node_modules', 'loglevel', 'dist', 'loglevel.min.js'),
-  );
-});
-
-// Serve cannon-es
-app.get('/modules/cannon-es.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(
-    path.join(__dirname, '..', '..', 'node_modules', 'cannon-es', 'dist', 'cannon-es.js'),
-  );
-});
-
-// Serve three-csg-ts
-app.get('/modules/three-csg-ts.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(path.join(__dirname, '..', '..', 'node_modules', 'three-csg-ts', 'index.js'));
-});
-
-// Serve extra three examples
-app.get('/modules/TeapotGeometry.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(
-    path.join(
-      __dirname,
-      '..',
-      '..',
-      'node_modules',
-      'three',
-      'examples',
-      'jsm',
-      'geometries',
-      'TeapotGeometry.js',
-    ),
-  );
-});
-
-app.get('/modules/FontLoader.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(
-    path.join(
-      __dirname,
-      '..',
-      '..',
-      'node_modules',
-      'three',
-      'examples',
-      'jsm',
-      'loaders',
-      'FontLoader.js',
-    ),
-  );
-});
-
-app.get('/modules/TextGeometry.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(
-    path.join(
-      __dirname,
-      '..',
-      '..',
-      'node_modules',
-      'three',
-      'examples',
-      'jsm',
-      'geometries',
-      'TextGeometry.js',
-    ),
-  );
-});
-
 // Serve index.html with injected nonce
 const serveIndex = (req, res) => {
-  const indexHtmlPath = path.join(__dirname, '..', 'frontend', 'index.html');
+  const indexHtmlPath = path.join(currentDirname, '..', '..', 'dist', 'index.html');
   fs.readFile(indexHtmlPath, 'utf8', (err, data) => {
     if (err) {
       log.error('Failed to read index.html:', err);
@@ -210,7 +78,7 @@ const serveIndex = (req, res) => {
 app.get('/', serveIndex);
 app.get('/index.html', serveIndex);
 
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
+app.use(express.static(path.join(currentDirname, '..', '..', 'dist')));
 
 app.get('/healthz', (req, res) => {
   res.status(200).send('OK');

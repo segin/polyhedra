@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import log from './logger.js';
+import JSZip from 'jszip';
 
 export class SceneStorage {
   /**
@@ -9,7 +10,7 @@ export class SceneStorage {
   constructor(scene, eventBus) {
     this.eventBus = eventBus;
     this.scene = scene;
-    this.worker = new Worker('./worker.js');
+    this.worker = new Worker(new URL('./worker.js', import.meta.url), { type: 'module' });
     this.worker.onmessage = this.handleWorkerMessage.bind(this);
   }
 
@@ -34,12 +35,6 @@ export class SceneStorage {
    * Saves the scene to a .nodist3d zip file.
    */
   async saveScene() {
-    // @ts-ignore
-    const JSZip = window.JSZip;
-    if (!JSZip) {
-      throw new Error('JSZip not loaded');
-    }
-
     const zip = new JSZip();
 
     // Optimization: avoid standard Array conversion for TypedArrays
@@ -119,8 +114,6 @@ export class SceneStorage {
    */
   async loadScene(file) {
     try {
-      // @ts-ignore
-      const JSZip = window.JSZip;
       const zip = new JSZip();
       const loadedZip = await zip.loadAsync(file);
 

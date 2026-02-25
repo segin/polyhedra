@@ -3,6 +3,9 @@ jest.unmock('three'); // Use real Three.js for accurate benchmarking
 import * as THREE from 'three';
 import { SceneStorage } from '../src/frontend/SceneStorage.js';
 import { JSDOM } from 'jsdom';
+import JSZip from 'jszip';
+
+jest.mock('jszip');
 
 // Setup JSDOM for window/document
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
@@ -11,10 +14,11 @@ const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
 });
 global.window = dom.window;
 global.document = dom.window.document;
-global.URL = {
-    createObjectURL: jest.fn(),
-    revokeObjectURL: jest.fn()
-};
+
+if (typeof URL.createObjectURL === 'undefined') {
+    Object.defineProperty(URL, 'createObjectURL', { value: jest.fn() });
+    Object.defineProperty(URL, 'revokeObjectURL', { value: jest.fn() });
+}
 
 // Mock Worker
 class MockWorker {
@@ -38,8 +42,8 @@ class MockWorker {
 global.Worker = MockWorker;
 
 // Mock JSZip
-global.JSZip = class JSZip {
-    loadAsync() {
+JSZip.mockImplementation(() => ({
+    loadAsync: () => {
         return Promise.resolve({
             file: (name) => {
                 if (name === 'scene.json') return { async: () => Promise.resolve('{}') };
@@ -48,8 +52,7 @@ global.JSZip = class JSZip {
             }
         });
     }
-};
-global.window.JSZip = global.JSZip;
+}));
 
 // Mock EventBus
 const mockEventBus = { publish: jest.fn(), subscribe: jest.fn() };

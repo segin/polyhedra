@@ -3,7 +3,9 @@ import { SceneStorage } from '../src/frontend/SceneStorage.js';
 import EventBus from '../src/frontend/EventBus.js';
 import { ObjectManager } from '../src/frontend/ObjectManager.js';
 import './__mocks__/three-dat.gui.js';
+import JSZip from 'jszip';
 
+jest.mock('jszip');
 jest.mock('three');
 jest.mock('../src/frontend/logger.js', () => ({
     info: jest.fn(),
@@ -94,10 +96,13 @@ class MockWorker {
 }
 global.Worker = MockWorker;
 
-global.URL = {
-    createObjectURL: jest.fn(() => 'blob:mockurl'),
-    revokeObjectURL: jest.fn(),
-};
+// Mock createObjectURL and revokeObjectURL on the global URL object
+if (typeof URL.createObjectURL === 'undefined') {
+    Object.defineProperty(URL, 'createObjectURL', { value: jest.fn(() => 'blob:mockurl') });
+}
+if (typeof URL.revokeObjectURL === 'undefined') {
+    Object.defineProperty(URL, 'revokeObjectURL', { value: jest.fn() });
+}
 
 describe('SceneStorage', () => {
     let scene;
@@ -143,12 +148,7 @@ describe('SceneStorage', () => {
             })
         };
 
-        global.JSZip = jest.fn(() => mockJSZipInstance);
-        
-        // Ensure window.JSZip matches global.JSZip for the test
-        if (typeof window !== 'undefined') {
-            window.JSZip = global.JSZip;
-        }
+        JSZip.mockImplementation(() => mockJSZipInstance);
 
         sceneStorage = new SceneStorage(scene, eventBus);
         objectManager = new ObjectManager(scene, null, eventBus);
@@ -167,13 +167,12 @@ describe('SceneStorage', () => {
         const publishSpy = jest.spyOn(EventBus, 'publish');
         await sceneStorage.saveScene();
         
-        expect(global.URL.createObjectURL).toHaveBeenCalled();
+        expect(URL.createObjectURL).toHaveBeenCalled();
         expect(publishSpy).toHaveBeenCalledWith('scene_saved', expect.any(Object));
         
         // Verify JSZip usage
-        const zipInstance = global.JSZip.mock.results[0].value;
-        expect(zipInstance.file).toHaveBeenCalledWith('scene.json', expect.any(String));
-        expect(zipInstance.file).toHaveBeenCalledWith('buffers.json', expect.any(String));
+        expect(mockJSZipInstance.file).toHaveBeenCalledWith('scene.json', expect.any(String));
+        expect(mockJSZipInstance.file).toHaveBeenCalledWith('buffers.json', expect.any(String));
     });
 
     it('should load the scene', async () => {
