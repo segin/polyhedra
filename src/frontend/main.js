@@ -373,9 +373,6 @@ export class App {
     this.orbitControls.dampingFactor = 0.05;
 
     this.transformControls = new TransformControls(this.camera, this.renderer.domElement);
-    this.transformControls.addEventListener('change', () => {
-      this.renderer.render(this.scene, this.camera);
-    });
     this.transformControls.addEventListener('dragging-changed', (event) => {
       this.orbitControls.enabled = !event.value;
       if (!event.value && this.selectedObject) {
