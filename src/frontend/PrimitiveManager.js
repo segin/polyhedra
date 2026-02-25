@@ -6,6 +6,8 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 export class PrimitiveManager {
   constructor(scene) {
     this.scene = scene;
+    this.cachedFont = null;
+    this.fontLoadingPromise = null;
   }
 
   /**
@@ -177,23 +179,39 @@ export class PrimitiveManager {
   }
 
   addText(text = "nodist3d") {
-    const loader = new FontLoader();
-    return new Promise((resolve) => {
-      loader.load('./node_modules/three/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-        const geometry = new TextGeometry(text, {
-          font: font,
-          size: 0.5,
-          depth: 0.2,
-          curveSegments: 12,
-          bevelEnabled: true,
-          bevelThickness: 0.03,
-          bevelSize: 0.02,
-          bevelOffset: 0,
-          bevelSegments: 5,
-        });
-        geometry.center();
-        resolve(this._createMesh(geometry, 0x00bfff)); // Deep Sky Blue for Text
+    const createMeshWithFont = (font) => {
+      const geometry = new TextGeometry(text, {
+        font: font,
+        size: 0.5,
+        depth: 0.2,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 0.03,
+        bevelSize: 0.02,
+        bevelOffset: 0,
+        bevelSegments: 5,
       });
-    });
+      geometry.center();
+      return this._createMesh(geometry, 0x00bfff); // Deep Sky Blue for Text
+    };
+
+    if (this.cachedFont) {
+      return Promise.resolve(createMeshWithFont(this.cachedFont));
+    }
+
+    if (!this.fontLoadingPromise) {
+      this.fontLoadingPromise = new Promise((resolve) => {
+        const loader = new FontLoader();
+        loader.load(
+          './node_modules/three/examples/fonts/helvetiker_regular.typeface.json',
+          (font) => {
+            this.cachedFont = font;
+            resolve(font);
+          },
+        );
+      });
+    }
+
+    return this.fontLoadingPromise.then(createMeshWithFont);
   }
 }
