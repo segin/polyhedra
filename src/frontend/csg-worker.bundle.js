@@ -1749,7 +1749,6 @@
     dot(v) {
       return this.x * v.x + this.y * v.y + this.z * v.z;
     }
-    // TODO lengthSquared?
     lengthSq() {
       return this.x * this.x + this.y * this.y + this.z * this.z;
     }
