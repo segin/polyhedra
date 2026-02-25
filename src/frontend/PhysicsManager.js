@@ -1,5 +1,5 @@
-import * as CANNON from 'cannon-es';
-import log from './logger.js';
+import * as CANNON from "cannon-es";
+import log from "./logger.js";
 
 export class PhysicsManager {
   constructor(scene) {
@@ -13,14 +13,16 @@ export class PhysicsManager {
     this.meshToBodyMap = new Map();
   }
 
-  addBody(mesh, mass = 1, shapeType = 'box') {
+  addBody(mesh, mass = 1, shapeType = "box") {
     if (!mesh.geometry.parameters) {
-      log.warn('Unsupported geometry for physics body. Geometry has no parameters.');
+      log.warn(
+        "Unsupported geometry for physics body. Geometry has no parameters.",
+      );
       return null;
     }
     let shape;
     switch (shapeType) {
-      case 'box': {
+      case "box": {
         const halfExtents = new CANNON.Vec3(
           (mesh.geometry.parameters.width / 2) * mesh.scale.x,
           (mesh.geometry.parameters.height / 2) * mesh.scale.y,
@@ -29,11 +31,13 @@ export class PhysicsManager {
         shape = new CANNON.Box(halfExtents);
         break;
       }
-      case 'sphere': {
-        shape = new CANNON.Sphere(mesh.geometry.parameters.radius * mesh.scale.x);
+      case "sphere": {
+        shape = new CANNON.Sphere(
+          mesh.geometry.parameters.radius * mesh.scale.x,
+        );
         break;
       }
-      case 'cylinder': {
+      case "cylinder": {
         shape = new CANNON.Cylinder(
           mesh.geometry.parameters.radiusTop * mesh.scale.x,
           mesh.geometry.parameters.radiusBottom * mesh.scale.x,
@@ -43,14 +47,18 @@ export class PhysicsManager {
         break;
       }
       default: {
-        log.warn('Unsupported shape type for physics body:', shapeType);
+        log.warn("Unsupported shape type for physics body:", shapeType);
         return null;
       }
     }
 
     const body = new CANNON.Body({
       mass: mass,
-      position: new CANNON.Vec3(mesh.position.x, mesh.position.y, mesh.position.z),
+      position: new CANNON.Vec3(
+        mesh.position.x,
+        mesh.position.y,
+        mesh.position.z,
+      ),
       quaternion: new CANNON.Quaternion(
         mesh.quaternion.x,
         mesh.quaternion.y,
@@ -112,7 +120,10 @@ export class PhysicsManager {
     // Use a fixed time step of 1/60 seconds, with a maximum of 10 substeps to catch up
     this.world.step(1 / 60, deltaTime, 10);
 
-    for (const item of this.bodies) {
+    const bodies = this.bodies;
+    const len = bodies.length;
+    for (let i = 0; i < len; i++) {
+      const item = bodies[i];
       item.mesh.position.copy(item.body.position);
       item.mesh.quaternion.copy(item.body.quaternion);
     }
