@@ -716,6 +716,7 @@ export class App {
         const visibilityBtn = document.createElement('button');
         visibilityBtn.className = 'visibility-btn';
         visibilityBtn.setAttribute('aria-label', obj.visible ? 'Hide object' : 'Show object');
+        visibilityBtn.setAttribute('title', obj.visible ? 'Hide object' : 'Show object');
         visibilityBtn.textContent = obj.visible ? '👁️' : '🚫';
         visibilityBtn.onclick = (e) => {
           e.stopPropagation();
@@ -727,6 +728,7 @@ export class App {
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.setAttribute('aria-label', 'Delete object');
+        deleteBtn.setAttribute('title', 'Delete object');
         deleteBtn.textContent = '🗑️';
         deleteBtn.onclick = (e) => {
           e.stopPropagation();
