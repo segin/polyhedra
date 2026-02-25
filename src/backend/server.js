@@ -234,27 +234,37 @@ app.get('/modules/TextGeometry.js', (req, res) => {
   );
 });
 
+const indexHtmlPath = path.join(__dirname, '..', 'frontend', 'index.html');
+let indexHtmlContent = null;
+
+try {
+  indexHtmlContent = fs.readFileSync(indexHtmlPath, 'utf8');
+} catch (err) {
+  log.error('Failed to preload index.html:', err);
+}
+
+const injectNonce = (html, nonce) => {
+  return html
+    .replace(/<script /g, `<script nonce="${nonce}" `)
+    .replace(/<style>/g, `<style nonce="${nonce}">`)
+    .replace(/<link rel="stylesheet"/g, `<link rel="stylesheet" nonce="${nonce}"`);
+};
+
 // Serve index.html with injected nonce
 const serveIndex = (req, res) => {
-  const indexHtmlPath = path.join(__dirname, '..', 'frontend', 'index.html');
+  if (indexHtmlContent) {
+    res.send(injectNonce(indexHtmlContent, res.locals.cspNonce));
+    return;
+  }
+
   fs.readFile(indexHtmlPath, 'utf8', (err, data) => {
     if (err) {
       log.error('Failed to read index.html:', err);
       res.status(500).send('Internal Server Error');
       return;
     }
-    // Inject nonces into all script and style tags
-    const injectedHtml = data.replace(
-      /<script /g,
-      `<script nonce="${res.locals.cspNonce}" `
-    ).replace(
-      /<style>/g,
-      `<style nonce="${res.locals.cspNonce}">`
-    ).replace(
-      /<link rel="stylesheet"/g,
-      `<link rel="stylesheet" nonce="${res.locals.cspNonce}"`
-    );
-    res.send(injectedHtml);
+    indexHtmlContent = data;
+    res.send(injectNonce(data, res.locals.cspNonce));
   });
 };
 
