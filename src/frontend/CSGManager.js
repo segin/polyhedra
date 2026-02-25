@@ -31,15 +31,19 @@ export class CSGManager {
   }
 
   performCSG(objectA, objectB, operation) {
-    // Serialize objects
+    // Hide objects immediately to prevent rendering detached buffers
+    objectA.visible = false;
+    objectB.visible = false;
+
+    // Serialize objects (destructive to geometry buffers due to transfer)
     const meshAData = this.serializeMesh(objectA);
     const meshBData = this.serializeMesh(objectB);
 
-    // Prepare transfer list
-    const transferList = [
+    // Prepare transfer list (deduplicate buffers)
+    const transferList = Array.from(new Set([
       ...this.getBuffers(meshAData),
       ...this.getBuffers(meshBData)
-    ];
+    ]));
 
     const id = this.nextId++;
 
@@ -99,29 +103,30 @@ export class CSGManager {
     const attributes = {};
     const transferBuffers = [];
 
-    // We copy the TypedArrays because if we transfer them, the main thread mesh becomes invalid immediately.
-    // Use .slice() to create a copy of the underlying buffer/view.
+    // OPTIMIZATION: Transfer the original TypedArray buffers to avoid copying.
+    // This detaches the buffers from the original geometry, making the mesh invalid on the main thread.
+    // The mesh should be hidden or removed immediately.
 
     if (geometry.attributes.position) {
         const array = geometry.attributes.position.array;
-        attributes.position = array.slice();
+        attributes.position = array;
         transferBuffers.push(attributes.position.buffer);
     }
     if (geometry.attributes.normal) {
         const array = geometry.attributes.normal.array;
-        attributes.normal = array.slice();
+        attributes.normal = array;
         transferBuffers.push(attributes.normal.buffer);
     }
     if (geometry.attributes.uv) {
         const array = geometry.attributes.uv.array;
-        attributes.uv = array.slice();
+        attributes.uv = array;
         transferBuffers.push(attributes.uv.buffer);
     }
 
     let index = null;
     if (geometry.index) {
         const array = geometry.index.array;
-        index = array.slice();
+        index = array;
         transferBuffers.push(index.buffer);
     }
 
