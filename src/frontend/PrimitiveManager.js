@@ -1,11 +1,12 @@
-import * as THREE from 'three';
-import { TeapotGeometry } from 'three/examples/jsm/geometries/TeapotGeometry.js';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
+import * as THREE from "three";
+import { TeapotGeometry } from "three/examples/jsm/geometries/TeapotGeometry.js";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 
 export class PrimitiveManager {
   constructor(scene) {
     this.scene = scene;
+    this.fontLoadingPromise = null;
   }
 
   /**
@@ -32,7 +33,11 @@ export class PrimitiveManager {
     const radius = 0.75;
     const widthSegments = 32;
     const heightSegments = 16;
-    const geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
+    const geometry = new THREE.SphereGeometry(
+      radius,
+      widthSegments,
+      heightSegments,
+    );
     return this._createMesh(geometry, 0xff0000); // Red color for sphere
   }
 
@@ -41,7 +46,12 @@ export class PrimitiveManager {
     const radiusBottom = 0.5;
     const height = 1;
     const radialSegments = 32;
-    const geometry = new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radialSegments);
+    const geometry = new THREE.CylinderGeometry(
+      radiusTop,
+      radiusBottom,
+      height,
+      radialSegments,
+    );
     return this._createMesh(geometry, 0x0000ff); // Blue color for cylinder
   }
 
@@ -58,7 +68,12 @@ export class PrimitiveManager {
     const tube = 0.2;
     const radialSegments = 16;
     const tubularSegments = 100;
-    const geometry = new THREE.TorusGeometry(radius, tube, radialSegments, tubularSegments);
+    const geometry = new THREE.TorusGeometry(
+      radius,
+      tube,
+      radialSegments,
+      tubularSegments,
+    );
     return this._createMesh(geometry, 0x800080); // Purple color for torus
   }
 
@@ -126,7 +141,13 @@ export class PrimitiveManager {
     const radius = 0.2;
     const radialSegments = 8;
     const closed = false;
-    const geometry = new THREE.TubeGeometry(path, tubularSegments, radius, radialSegments, closed);
+    const geometry = new THREE.TubeGeometry(
+      path,
+      tubularSegments,
+      radius,
+      radialSegments,
+      closed,
+    );
     return this._createMesh(geometry, 0xffc0cb); // Pink color for tube
   }
 
@@ -138,14 +159,24 @@ export class PrimitiveManager {
     const body = true;
     const fitLid = false;
     const blinn = true;
-    const geometry = new TeapotGeometry(size, segments, bottom, lid, body, fitLid, blinn);
+    const geometry = new TeapotGeometry(
+      size,
+      segments,
+      bottom,
+      lid,
+      body,
+      fitLid,
+      blinn,
+    );
     return this._createMesh(geometry, 0x800000); // Maroon color for teapot
   }
 
   addLathe() {
     const points = [];
     for (let i = 0; i < 10; i++) {
-      points.push(new THREE.Vector2(Math.sin(i * 0.2) * 0.5 + 0.5, (i - 5) * 0.2));
+      points.push(
+        new THREE.Vector2(Math.sin(i * 0.2) * 0.5 + 0.5, (i - 5) * 0.2),
+      );
     }
     const geometry = new THREE.LatheGeometry(points);
     return this._createMesh(geometry, 0x00ff80); // Spring Green for Lathe
@@ -177,23 +208,32 @@ export class PrimitiveManager {
   }
 
   addText(text = "nodist3d") {
-    const loader = new FontLoader();
-    return new Promise((resolve) => {
-      loader.load('./node_modules/three/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-        const geometry = new TextGeometry(text, {
-          font: font,
-          size: 0.5,
-          depth: 0.2,
-          curveSegments: 12,
-          bevelEnabled: true,
-          bevelThickness: 0.03,
-          bevelSize: 0.02,
-          bevelOffset: 0,
-          bevelSegments: 5,
-        });
-        geometry.center();
-        resolve(this._createMesh(geometry, 0x00bfff)); // Deep Sky Blue for Text
+    if (!this.fontLoadingPromise) {
+      const loader = new FontLoader();
+      this.fontLoadingPromise = new Promise((resolve, reject) => {
+        loader.load(
+          "./node_modules/three/examples/fonts/helvetiker_regular.typeface.json",
+          (font) => resolve(font),
+          undefined,
+          (err) => reject(err),
+        );
       });
+    }
+
+    return this.fontLoadingPromise.then((font) => {
+      const geometry = new TextGeometry(text, {
+        font: font,
+        size: 0.5,
+        depth: 0.2,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 0.03,
+        bevelSize: 0.02,
+        bevelOffset: 0,
+        bevelSegments: 5,
+      });
+      geometry.center();
+      return this._createMesh(geometry, 0x00bfff); // Deep Sky Blue for Text
     });
   }
 }
