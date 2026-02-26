@@ -25,7 +25,9 @@
           "three-csg-ts": "/modules/three-csg-ts.js",
           "three/examples/jsm/geometries/TeapotGeometry.js": "/modules/TeapotGeometry.js",
           "three/examples/jsm/loaders/FontLoader.js": "/modules/FontLoader.js",
-          "three/examples/jsm/geometries/TextGeometry.js": "/modules/TextGeometry.js"
+          "three/examples/jsm/geometries/TextGeometry.js": "/modules/TextGeometry.js",
+          "three/examples/jsm/loaders/OBJLoader.js": "/modules/OBJLoader.js",
+          "three/examples/jsm/loaders/GLTFLoader.js": "/modules/GLTFLoader.js"
         }
       }
     </script>
@@ -39,6 +41,9 @@
       <input type="file" id="file-input" accept=".nodist3d" style="display: none" />
     </div>
     <div id="scene-graph"></div>
-    <script type="module" src="main.js"></script>
+    <script type="module">
+      import { App } from './main.js';
+      new App();
+    </script>
   </body>
 </html>

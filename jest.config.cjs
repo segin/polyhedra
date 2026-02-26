@@ -6,7 +6,7 @@ module.exports = {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   transform: {
-    '^.+\\.(js|mjs)$': 'babel-jest',
+    '^.+\\.(js|ts)$': 'babel-jest',
   },
-  transformIgnorePatterns: ['node_modules/(?!.*(three|three/examples/jsm|cannon-es|@exodus|html-encoding-sniffer|@asamuzakjp|@csstools|parse5|@bramus)/)'],
+  transformIgnorePatterns: ['node_modules/(?!.*(three|three/examples/jsm|cannon-es|@exodus|html-encoding-sniffer|@asamuzakjp))'],
 };

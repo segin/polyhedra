@@ -1,27 +1,10 @@
 
-import { PhysicsManager } from '../src/frontend/PhysicsManager.js';
+
 import * as THREE from 'three';
 
 // Mock dependencies
-jest.mock('cannon-es', () => {
-  return {
-    World: jest.fn().mockImplementation(() => ({
-      gravity: { set: jest.fn() },
-      addBody: jest.fn(),
-      removeBody: jest.fn(),
-      step: jest.fn(),
-    })),
-    Vec3: jest.fn().mockImplementation(() => ({ set: jest.fn() })),
-    Box: jest.fn(),
-    Sphere: jest.fn(),
-    Cylinder: jest.fn(),
-    Body: jest.fn().mockImplementation(() => ({
-      position: { x: 0, y: 0, z: 0 },
-      quaternion: { x: 0, y: 0, z: 0, w: 1 },
-    })),
-    Quaternion: jest.fn(),
-  };
-});
+
+// Mock cannon-es is handled by jest.setup.cjs
 
 jest.mock('../src/frontend/logger.js', () => ({
   warn: jest.fn(),
@@ -29,10 +12,21 @@ jest.mock('../src/frontend/logger.js', () => ({
 }));
 
 describe('PhysicsManager removeBody Performance', () => {
+  let PhysicsManager;
   let physicsManager;
   let scene;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    // Setup environment (handled by jsdom environment)
+    if (typeof document !== 'undefined') {
+        document.body.innerHTML = '';
+    }
+    
+    global.console = { ...console, log: jest.fn() }; 
+
+    const module = await import('../src/frontend/PhysicsManager.js');
+    PhysicsManager = module.PhysicsManager;
+
     scene = new THREE.Scene();
     physicsManager = new PhysicsManager(scene);
   });

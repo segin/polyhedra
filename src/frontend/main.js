@@ -373,9 +373,6 @@ export class App {
     this.orbitControls.dampingFactor = 0.05;
 
     this.transformControls = new TransformControls(this.camera, this.renderer.domElement);
-    this.transformControls.addEventListener('change', () => {
-      this.renderer.render(this.scene, this.camera);
-    });
     this.transformControls.addEventListener('dragging-changed', (event) => {
       this.orbitControls.enabled = !event.value;
       if (!event.value && this.selectedObject) {
@@ -596,8 +593,8 @@ export class App {
   }
 
   async addBox() { return await this.addPrimitive('Box'); }
-  async addSphere() { return await this.addPrimitive('Sphere', { color: 0xff0000 }); }
-  async addCylinder() { return await this.addPrimitive('Cylinder', { color: 0x0000ff }); }
+  async addSphere() { return await this.addPrimitive('Sphere'); }
+  async addCylinder() { return await this.addPrimitive('Cylinder'); }
   async addCone() { return await this.addPrimitive('Cone'); }
   async addTorus() { return await this.addPrimitive('Torus'); }
   async addTorusKnot() { return await this.addPrimitive('TorusKnot'); }
@@ -605,7 +602,7 @@ export class App {
   async addIcosahedron() { return await this.addPrimitive('Icosahedron'); }
   async addDodecahedron() { return await this.addPrimitive('Dodecahedron'); }
   async addOctahedron() { return await this.addPrimitive('Octahedron'); }
-  async addPlane() { return await this.addPrimitive('Plane', { color: 0x00ffff }); }
+  async addPlane() { return await this.addPrimitive('Plane'); }
   async addTube() { return await this.addPrimitive('Tube'); }
   async addTeapot() { return await this.addPrimitive('Teapot'); }
   async addLathe() { return await this.addPrimitive('Lathe'); }
@@ -681,9 +678,9 @@ export class App {
   updateSceneGraph() {
     if (!this.objectsList) return;
 
-    const fragment = document.createDocumentFragment();
-    
+    // Handle Empty List Case
     if (this.objects.length === 0) {
+      this.objectsList.innerHTML = '';
       const li = document.createElement('li');
       li.setAttribute('role', 'listitem');
       li.textContent = 'No objects in scene';
@@ -691,60 +688,159 @@ export class App {
       li.style.fontStyle = 'italic';
       li.style.textAlign = 'center';
       li.style.padding = '10px';
-      fragment.appendChild(li);
-    } else {
-      this.objects.forEach((obj, idx) => {
-        const li = document.createElement('li');
-        li.setAttribute('role', 'listitem');
-        li.style.cssText = `
-          padding: 5px;
-          margin: 2px 0;
-          background: ${this.selectedObject === obj ? '#444' : '#222'};
-          border-radius: 3px;
-          cursor: pointer;
-          display: flex;
-          justify-content: space-between;
-        `;
-
-        const name = document.createElement('span');
-        name.className = 'object-name';
-        name.textContent = obj.name || `Object ${idx + 1}`;
-        li.appendChild(name);
-
-        const controls = document.createElement('div');
-
-        const visibilityBtn = document.createElement('button');
-        visibilityBtn.className = 'visibility-btn';
-        visibilityBtn.setAttribute('aria-label', obj.visible ? 'Hide object' : 'Show object');
-        visibilityBtn.setAttribute('title', obj.visible ? 'Hide object' : 'Show object');
-        visibilityBtn.textContent = obj.visible ? '👁️' : '🚫';
-        visibilityBtn.onclick = (e) => {
-          e.stopPropagation();
-          obj.visible = !obj.visible;
-          this.updateSceneGraph();
-        };
-        controls.appendChild(visibilityBtn);
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-btn';
-        deleteBtn.setAttribute('aria-label', 'Delete object');
-        deleteBtn.setAttribute('title', 'Delete object');
-        deleteBtn.textContent = '🗑️';
-        deleteBtn.onclick = (e) => {
-          e.stopPropagation();
-          this.deleteObject(obj);
-        };
-        controls.appendChild(deleteBtn);
-
-        li.appendChild(controls);
-
-        li.onclick = () => this.selectObject(obj);
-        fragment.appendChild(li);
-      });
+      this.objectsList.appendChild(li);
+      this.sceneGraphItemMap.clear();
+      return;
     }
 
-    this.objectsList.innerHTML = '';
-    this.objectsList.appendChild(fragment);
+    // Clear "No objects" if present
+    if (
+      this.objectsList.children.length > 0 &&
+      this.objectsList.children[0].textContent === 'No objects in scene'
+    ) {
+      this.objectsList.innerHTML = '';
+    }
+
+    let currentDom = this.objectsList.firstElementChild;
+
+    this.objects.forEach((obj, idx) => {
+      let li = this.sceneGraphItemMap.get(obj.uuid);
+
+      // Check if stale (bound to old object instance)
+      // @ts-ignore
+      if (li && li._boundObject !== obj) {
+        li.remove();
+        if (li === currentDom) {
+          currentDom = currentDom.nextElementSibling;
+        }
+        this.sceneGraphItemMap.delete(obj.uuid);
+        li = undefined;
+      }
+
+      if (!li) {
+        li = this.createSceneGraphItem(obj);
+        this.sceneGraphItemMap.set(obj.uuid, li);
+      }
+
+      this.updateSceneGraphItem(li, obj, idx);
+
+      // Placement
+      if (currentDom === li) {
+        currentDom = currentDom.nextElementSibling;
+      } else {
+        this.objectsList.insertBefore(li, currentDom);
+      }
+    });
+
+    // Remove remaining (stale) nodes
+    while (currentDom) {
+      const next = currentDom.nextElementSibling;
+      currentDom.remove();
+      currentDom = next;
+    }
+
+    // Cleanup Map
+    if (this.sceneGraphItemMap.size > this.objects.length) {
+      const activeUuids = new Set(this.objects.map((o) => o.uuid));
+      for (const uuid of this.sceneGraphItemMap.keys()) {
+        if (!activeUuids.has(uuid)) {
+          this.sceneGraphItemMap.delete(uuid);
+        }
+      }
+    }
+  }
+
+  createSceneGraphItem(obj) {
+    const li = document.createElement('li');
+    li.setAttribute('role', 'listitem');
+    li.style.cssText = `
+      padding: 5px;
+      margin: 2px 0;
+      border-radius: 3px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+    `;
+    // @ts-ignore
+    li._boundObject = obj;
+
+    const name = document.createElement('span');
+    name.className = 'object-name';
+    li.appendChild(name);
+    // @ts-ignore
+    li._nameSpan = name;
+
+    const controls = document.createElement('div');
+
+    const visibilityBtn = document.createElement('button');
+    visibilityBtn.className = 'visibility-btn';
+    visibilityBtn.setAttribute('aria-label', obj.visible ? 'Hide object' : 'Show object');
+    visibilityBtn.setAttribute('title', obj.visible ? 'Hide object' : 'Show object');
+    visibilityBtn.onclick = (e) => {
+      e.stopPropagation();
+      obj.visible = !obj.visible;
+      this.updateSceneGraph();
+    };
+    controls.appendChild(visibilityBtn);
+    // @ts-ignore
+    li._visibilityBtn = visibilityBtn;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.setAttribute('aria-label', 'Delete object');
+    deleteBtn.setAttribute('title', 'Delete object');
+    deleteBtn.textContent = '🗑️';
+    deleteBtn.onclick = (e) => {
+      e.stopPropagation();
+      this.deleteObject(obj);
+    };
+    controls.appendChild(deleteBtn);
+
+    li.appendChild(controls);
+
+    li.onclick = () => this.selectObject(obj);
+
+    return li;
+  }
+
+  updateSceneGraphItem(li, obj, idx) {
+    // Update Selection Style
+    const isSelected = this.selectedObject === obj;
+    const expectedBg = isSelected ? '#444' : '#222';
+    if (li.style.background !== expectedBg) { // Only update if changed (prevents style recalc if same)
+        // Note: style.background returns empty string if not set, or computed value.
+        // But setting it works.
+        // Ideally checking specific property `backgroundColor` is better but `background` shorthand is used.
+        // Let's just set it if we suspect change, or cache it?
+        // Checking style string might be flaky.
+        // But let's trust simple check.
+        // Actually, let's just set it. Setting same value is cheap in JS, browser handles DOM.
+        li.style.background = expectedBg;
+    }
+
+    // Update Name
+    // @ts-ignore
+    const nameSpan = li._nameSpan;
+    const expectedName = obj.name || `Object ${idx + 1}`;
+    if (nameSpan.textContent !== expectedName) {
+      nameSpan.textContent = expectedName;
+    }
+
+    // Update Visibility Button
+    // @ts-ignore
+    const visibilityBtn = li._visibilityBtn;
+    const expectedVisLabel = obj.visible ? 'Hide object' : 'Show object';
+    const expectedVisIcon = obj.visible ? '👁️' : '🚫';
+
+    if (visibilityBtn.getAttribute('aria-label') !== expectedVisLabel) {
+        visibilityBtn.setAttribute('aria-label', expectedVisLabel);
+    }
+    if (visibilityBtn.getAttribute('title') !== expectedVisLabel) {
+        visibilityBtn.setAttribute('title', expectedVisLabel);
+    }
+    if (visibilityBtn.textContent !== expectedVisIcon) {
+        visibilityBtn.textContent = expectedVisIcon;
+    }
   }
 
   toggleFullscreen() {

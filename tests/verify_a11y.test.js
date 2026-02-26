@@ -1,44 +1,34 @@
 /**
  * Verification test for Accessibility
  */
-import { App } from '../src/frontend/main.js';
 
-jest.mock('cannon-es', () => ({
-  World: jest.fn().mockImplementation(() => ({
-    gravity: { set: jest.fn(), x: 0, y: -9.82, z: 0 },
-    addBody: jest.fn(),
-    removeBody: jest.fn(),
-    step: jest.fn(),
-  })),
-  Vec3: jest.fn().mockImplementation((x, y, z) => ({ x, y, z, set: jest.fn() })),
-  Body: jest.fn().mockImplementation(() => ({ position: { set: jest.fn() }, quaternion: { set: jest.fn() }, addShape: jest.fn() })),
-  Box: jest.fn(),
-  Sphere: jest.fn(),
-  Cylinder: jest.fn(),
-  Shape: jest.fn(),
-  Quaternion: jest.fn().mockImplementation((x, y, z, w) => ({ x, y, z, w, set: jest.fn() })),
-}));
-
-let appInstance;
+// Mock cannon-es is handled by jest.setup.cjs
 
 describe('Accessibility Verification', () => {
     beforeEach(() => {
-        // Setup JSDOM
-        document.body.innerHTML = '<div id="scene-graph-panel"><ul id="objects-list"></ul></div>';
-
+        // Setup environment (handled by jsdom environment)
+        if (typeof document !== 'undefined') {
+            document.body.innerHTML = '<div id="scene-graph-panel"><ul id="objects-list"></ul></div><div id="scene-graph"></div><button id="fullscreen"></button><button id="save-scene"></button><button id="load-scene"></button><input type="file" id="file-input">';
+        }
+        
         global.requestAnimationFrame = jest.fn();
+        global.URL = { createObjectURL: jest.fn(), revokeObjectURL: jest.fn() };
+        global.Worker = jest.fn(() => ({
+            postMessage: jest.fn(),
+            addEventListener: jest.fn()
+        }));
 
-        appInstance = null;
         jest.clearAllMocks();
     });
 
     afterEach(() => {
-        document.body.innerHTML = '';
         jest.restoreAllMocks();
     });
 
     it('should create scene graph buttons with accessibility attributes', async () => {
-        appInstance = new App();
+        // Use App from src
+        const { App } = await import('../src/frontend/main.js');
+        const appInstance = new App();
 
         // Add a box to populate scene graph
         await appInstance.addBox();

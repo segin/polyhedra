@@ -1,123 +1,8 @@
 /**
  * Integration tests for complete workflow scenarios
  */
-import { JSDOM } from 'jsdom';
 
-// Mock THREE.js with comprehensive functionality
-jest.mock('three', () => {
-  const mockVector3 = {
-    x: 0,
-    y: 0,
-    z: 0,
-    clone: jest.fn(() => ({ x: 0, y: 0, z: 0 })),
-    copy: jest.fn(),
-    set: jest.fn(),
-  };
-
-  const mockColor = {
-    r: 1,
-    g: 0,
-    b: 0,
-    clone: jest.fn(() => ({ r: 1, g: 0, b: 0 })),
-    copy: jest.fn(),
-    getHex: jest.fn(() => 0xff0000),
-    setHex: jest.fn(),
-  };
-
-  return {
-    Scene: jest.fn(() => ({
-      add: jest.fn(),
-      remove: jest.fn(),
-    })),
-    PerspectiveCamera: jest.fn(() => ({
-      position: { set: jest.fn() },
-      lookAt: jest.fn(),
-      aspect: 1,
-      updateProjectionMatrix: jest.fn(),
-    })),
-    WebGLRenderer: jest.fn(() => ({
-      setSize: jest.fn(),
-      setPixelRatio: jest.fn(),
-      render: jest.fn(),
-      shadowMap: { enabled: false, type: null },
-      domElement: {
-        tagName: 'CANVAS',
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-      },
-    })),
-    Mesh: jest.fn(() => ({
-      position: mockVector3,
-      rotation: mockVector3,
-      scale: { x: 1, y: 1, z: 1, clone: jest.fn(() => ({ x: 1, y: 1, z: 1 })), copy: jest.fn() },
-      material: {
-        color: mockColor,
-        emissive: mockColor,
-        dispose: jest.fn(),
-        clone: jest.fn(() => ({
-          color: mockColor,
-          emissive: mockColor,
-          dispose: jest.fn(),
-        })),
-      },
-      geometry: {
-        type: 'BoxGeometry',
-        dispose: jest.fn(),
-        clone: jest.fn(),
-        parameters: { width: 1, height: 1, depth: 1 },
-      },
-      name: '',
-      visible: true,
-      uuid: 'test-uuid-123',
-      userData: { geometryParams: { width: 1, height: 1, depth: 1 } },
-      castShadow: false,
-      receiveShadow: false,
-    })),
-    Group: jest.fn(() => ({
-      add: jest.fn(),
-      name: '',
-      position: mockVector3,
-      rotation: mockVector3,
-      scale: { x: 1, y: 1, z: 1, clone: jest.fn(() => ({ x: 1, y: 1, z: 1 })) },
-    })),
-    BoxGeometry: jest.fn(() => ({
-      type: 'BoxGeometry',
-      parameters: { width: 1, height: 1, depth: 1 },
-      dispose: jest.fn(),
-    })),
-    SphereGeometry: jest.fn(() => ({
-      type: 'SphereGeometry',
-      parameters: { radius: 0.5, widthSegments: 32, heightSegments: 32 },
-      dispose: jest.fn(),
-    })),
-    MeshPhongMaterial: jest.fn(() => ({
-      color: mockColor,
-      emissive: mockColor,
-      dispose: jest.fn(),
-      clone: jest.fn(() => ({
-        color: mockColor,
-        emissive: mockColor,
-        dispose: jest.fn(),
-      })),
-    })),
-    AmbientLight: jest.fn(),
-    DirectionalLight: jest.fn(() => ({
-      position: { set: jest.fn() },
-      castShadow: false,
-      shadow: { mapSize: { width: 0, height: 0 } },
-    })),
-    GridHelper: jest.fn(),
-    AxesHelper: jest.fn(),
-    Raycaster: jest.fn(() => ({
-      setFromCamera: jest.fn(),
-      intersectObjects: jest.fn(() => []),
-    })),
-    Vector2: jest.fn(),
-    Vector3: jest.fn(() => mockVector3),
-    PCFSoftShadowMap: 'PCFSoftShadowMap',
-    DoubleSide: 'DoubleSide',
-  };
-});
+// Mock THREE is handled by jest.setup.cjs
 
 // Mock dat.gui
 const mockController = {
@@ -164,31 +49,27 @@ jest.mock('three/examples/jsm/controls/TransformControls.js', () => ({
 }));
 
 describe('Integration Tests - Complete Workflow', () => {
-  let dom, app;
+  let app;
 
   beforeEach(() => {
-    // Setup DOM
-    dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-    global.document = dom.window.document;
-    global.window = dom.window;
+    // Setup environment (handled by jsdom environment)
+    if (typeof document !== 'undefined') {
+        document.body.innerHTML = '';
+    }
+    
     global.requestAnimationFrame = jest.fn();
     global.console.log = jest.fn(); // Suppress console.log
     global.Date.now = jest.fn(() => 1234567890);
-
-    // Mock document methods
-    jest.spyOn(document.body, 'appendChild').mockImplementation();
-    jest.spyOn(window, 'addEventListener').mockImplementation();
-    jest.spyOn(document, 'createElement').mockImplementation((tagName) => ({
-      tagName: tagName.toUpperCase(),
-      style: {},
-      appendChild: jest.fn(),
-      textContent: '',
-      innerHTML: '',
-      onclick: null,
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      set cssText(value) {},
+    global.URL = { createObjectURL: jest.fn(), revokeObjectURL: jest.fn() };
+    global.Worker = jest.fn(() => ({
+        postMessage: jest.fn(),
+        addEventListener: jest.fn()
     }));
+
+    // Mock methods that might be missing or need spying
+    if (typeof window !== 'undefined') {
+        window.scrollTo = jest.fn();
+    }
 
     jest.clearAllMocks();
 
@@ -436,9 +317,7 @@ describe('Integration Tests - Complete Workflow', () => {
   });
 
   afterEach(() => {
-    if (dom) {
-      dom.window.close();
-    }
+    jest.restoreAllMocks();
   });
 
   describe('Complete Object Lifecycle', () => {
