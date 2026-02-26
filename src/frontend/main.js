@@ -373,9 +373,6 @@ export class App {
     this.orbitControls.dampingFactor = 0.05;
 
     this.transformControls = new TransformControls(this.camera, this.renderer.domElement);
-    this.transformControls.addEventListener('change', () => {
-      this.renderer.render(this.scene, this.camera);
-    });
     this.transformControls.addEventListener('dragging-changed', (event) => {
       this.orbitControls.enabled = !event.value;
       if (!event.value && this.selectedObject) {
@@ -681,10 +678,9 @@ export class App {
   updateSceneGraph() {
     if (!this.objectsList) return;
 
-    // Handle empty state
+    // Handle Empty List Case
     if (this.objects.length === 0) {
       this.objectsList.innerHTML = '';
-      this.sceneGraphItemMap.clear();
       const li = document.createElement('li');
       li.setAttribute('role', 'listitem');
       li.textContent = 'No objects in scene';
@@ -693,113 +689,157 @@ export class App {
       li.style.textAlign = 'center';
       li.style.padding = '10px';
       this.objectsList.appendChild(li);
+      this.sceneGraphItemMap.clear();
       return;
     }
 
-    // Sync if map is empty but list is not (e.g. first run or external modification)
-    if (this.sceneGraphItemMap.size === 0 && this.objectsList.children.length > 0) {
-        this.objectsList.innerHTML = '';
-    }
-
-    // Remove empty message if present
-    if (this.objectsList.children.length === 1 && this.objectsList.firstChild.textContent === 'No objects in scene') {
+    // Clear "No objects" if present
+    if (
+      this.objectsList.children.length > 0 &&
+      this.objectsList.children[0].textContent === 'No objects in scene'
+    ) {
       this.objectsList.innerHTML = '';
     }
 
-    const currentUuids = new Set();
+    let currentDom = this.objectsList.firstElementChild;
 
-    // Update existing or create new items
     this.objects.forEach((obj, idx) => {
-      currentUuids.add(obj.uuid);
       let li = this.sceneGraphItemMap.get(obj.uuid);
 
-      // 1. Create new item if needed
+      // Check if stale (bound to old object instance)
+      // @ts-ignore
+      if (li && li._boundObject !== obj) {
+        li.remove();
+        if (li === currentDom) {
+          currentDom = currentDom.nextElementSibling;
+        }
+        this.sceneGraphItemMap.delete(obj.uuid);
+        li = undefined;
+      }
+
       if (!li) {
-        li = document.createElement('li');
-        li.setAttribute('role', 'listitem');
-        li.style.cssText = `
-          padding: 5px;
-          margin: 2px 0;
-          border-radius: 3px;
-          cursor: pointer;
-          display: flex;
-          justify-content: space-between;
-        `;
-
-        const name = document.createElement('span');
-        name.className = 'object-name';
-        li.appendChild(name);
-        // @ts-ignore
-        li._nameSpan = name;
-
-        const controls = document.createElement('div');
-
-        const visibilityBtn = document.createElement('button');
-        visibilityBtn.className = 'visibility-btn';
-        // @ts-ignore
-        li._visibilityBtn = visibilityBtn;
-        controls.appendChild(visibilityBtn);
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-btn';
-        deleteBtn.setAttribute('aria-label', 'Delete object');
-        deleteBtn.textContent = '🗑️';
-        // @ts-ignore
-        li._deleteBtn = deleteBtn;
-        controls.appendChild(deleteBtn);
-
-        li.appendChild(controls);
-
+        li = this.createSceneGraphItem(obj);
         this.sceneGraphItemMap.set(obj.uuid, li);
       }
 
-      // 2. Update Item Content
-      const isSelected = this.selectedObject === obj;
-      li.style.background = isSelected ? '#444' : '#222';
-      li.onclick = () => this.selectObject(obj);
+      this.updateSceneGraphItem(li, obj, idx);
 
-      // @ts-ignore
-      if (li._nameSpan) li._nameSpan.textContent = obj.name || `Object ${idx + 1}`;
-
-      // @ts-ignore
-      if (li._visibilityBtn) {
-          // @ts-ignore
-          const btn = li._visibilityBtn;
-          btn.setAttribute('aria-label', obj.visible ? 'Hide object' : 'Show object');
-          btn.textContent = obj.visible ? '👁️' : '🚫';
-          btn.onclick = (e) => {
-              e.stopPropagation();
-              obj.visible = !obj.visible;
-              this.updateSceneGraph();
-          };
-      }
-
-      // @ts-ignore
-      if (li._deleteBtn) {
-          // @ts-ignore
-          li._deleteBtn.onclick = (e) => {
-              e.stopPropagation();
-              this.deleteObject(obj);
-          };
-      }
-
-      // 3. Ensure Order
-      const currentChild = this.objectsList.children[idx];
-      if (currentChild !== li) {
-          if (currentChild) {
-              this.objectsList.insertBefore(li, currentChild);
-          } else {
-              this.objectsList.appendChild(li);
-          }
+      // Placement
+      if (currentDom === li) {
+        currentDom = currentDom.nextElementSibling;
+      } else {
+        this.objectsList.insertBefore(li, currentDom);
       }
     });
 
-    // 4. Remove stale items
-    for (const [uuid, li] of this.sceneGraphItemMap.entries()) {
-      if (!currentUuids.has(uuid)) {
-        if (li.parentNode) li.parentNode.removeChild(li);
-        this.sceneGraphItemMap.delete(uuid);
+    // Remove remaining (stale) nodes
+    while (currentDom) {
+      const next = currentDom.nextElementSibling;
+      currentDom.remove();
+      currentDom = next;
+    }
+
+    // Cleanup Map
+    if (this.sceneGraphItemMap.size > this.objects.length) {
+      const activeUuids = new Set(this.objects.map((o) => o.uuid));
+      for (const uuid of this.sceneGraphItemMap.keys()) {
+        if (!activeUuids.has(uuid)) {
+          this.sceneGraphItemMap.delete(uuid);
+        }
       }
+    }
+  }
+
+  createSceneGraphItem(obj) {
+    const li = document.createElement('li');
+    li.setAttribute('role', 'listitem');
+    li.style.cssText = `
+      padding: 5px;
+      margin: 2px 0;
+      border-radius: 3px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+    `;
+    // @ts-ignore
+    li._boundObject = obj;
+
+    const name = document.createElement('span');
+    name.className = 'object-name';
+    li.appendChild(name);
+    // @ts-ignore
+    li._nameSpan = name;
+
+    const controls = document.createElement('div');
+
+    const visibilityBtn = document.createElement('button');
+    visibilityBtn.className = 'visibility-btn';
+    visibilityBtn.setAttribute('aria-label', obj.visible ? 'Hide object' : 'Show object');
+    visibilityBtn.setAttribute('title', obj.visible ? 'Hide object' : 'Show object');
+    visibilityBtn.onclick = (e) => {
+      e.stopPropagation();
+      obj.visible = !obj.visible;
+      this.updateSceneGraph();
+    };
+    controls.appendChild(visibilityBtn);
+    // @ts-ignore
+    li._visibilityBtn = visibilityBtn;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.setAttribute('aria-label', 'Delete object');
+    deleteBtn.setAttribute('title', 'Delete object');
+    deleteBtn.textContent = '🗑️';
+    deleteBtn.onclick = (e) => {
+      e.stopPropagation();
+      this.deleteObject(obj);
+    };
+    controls.appendChild(deleteBtn);
+
+    li.appendChild(controls);
+
+    li.onclick = () => this.selectObject(obj);
+
+    return li;
+  }
+
+  updateSceneGraphItem(li, obj, idx) {
+    // Update Selection Style
+    const isSelected = this.selectedObject === obj;
+    const expectedBg = isSelected ? '#444' : '#222';
+    if (li.style.background !== expectedBg) { // Only update if changed (prevents style recalc if same)
+        // Note: style.background returns empty string if not set, or computed value.
+        // But setting it works.
+        // Ideally checking specific property `backgroundColor` is better but `background` shorthand is used.
+        // Let's just set it if we suspect change, or cache it?
+        // Checking style string might be flaky.
+        // But let's trust simple check.
+        // Actually, let's just set it. Setting same value is cheap in JS, browser handles DOM.
+        li.style.background = expectedBg;
+    }
+
+    // Update Name
+    // @ts-ignore
+    const nameSpan = li._nameSpan;
+    const expectedName = obj.name || `Object ${idx + 1}`;
+    if (nameSpan.textContent !== expectedName) {
+      nameSpan.textContent = expectedName;
+    }
+
+    // Update Visibility Button
+    // @ts-ignore
+    const visibilityBtn = li._visibilityBtn;
+    const expectedVisLabel = obj.visible ? 'Hide object' : 'Show object';
+    const expectedVisIcon = obj.visible ? '👁️' : '🚫';
+
+    if (visibilityBtn.getAttribute('aria-label') !== expectedVisLabel) {
+        visibilityBtn.setAttribute('aria-label', expectedVisLabel);
+    }
+    if (visibilityBtn.getAttribute('title') !== expectedVisLabel) {
+        visibilityBtn.setAttribute('title', expectedVisLabel);
+    }
+    if (visibilityBtn.textContent !== expectedVisIcon) {
+        visibilityBtn.textContent = expectedVisIcon;
     }
   }
 

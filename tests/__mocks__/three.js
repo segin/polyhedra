@@ -86,6 +86,7 @@ const THREE_MOCK = {
       this.scale = new THREE_MOCK.Vector3(1, 1, 1);
       this.quaternion = new THREE_MOCK.Quaternion();
       this.type = 'Group';
+      this.isGroup = true;
       this.userData = {};
       Object.defineProperty(this, 'parent', { value: null, writable: true, enumerable: false });
       this.add = jest.fn((obj) => { 
