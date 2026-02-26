@@ -11,7 +11,21 @@ log.methodFactory = (methodName, logLevel, loggerName) => {
       message,
       extra: args,
     };
-    rawMethod(JSON.stringify(logObject));
+
+    const circularReplacer = () => {
+      const seen = new WeakSet();
+      return (key, value) => {
+        if (typeof value === 'object' && value !== null) {
+          if (seen.has(value)) {
+            return '[Circular]';
+          }
+          seen.add(value);
+        }
+        return value;
+      };
+    };
+
+    rawMethod(JSON.stringify(logObject, circularReplacer()));
   };
 };
 
