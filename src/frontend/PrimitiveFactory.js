@@ -34,77 +34,85 @@ export class PrimitiveFactory {
   }
 
   _getNormalizedParameters(type, options) {
-    const p = {};
     switch (type) {
       case 'Box':
-        p.width = options.width || 1;
-        p.height = options.height || 1;
-        p.depth = options.depth || 1;
-        break;
+        return {
+          width: options.width || 1,
+          height: options.height || 1,
+          depth: options.depth || 1,
+          widthSegments: options.widthSegments || 1,
+          heightSegments: options.heightSegments || 1,
+          depthSegments: options.depthSegments || 1,
+        };
       case 'Sphere':
-        p.radius = options.radius || 0.5;
-        p.widthSegments = options.widthSegments || 32;
-        p.heightSegments = options.heightSegments || 32;
-        break;
+        return {
+          radius: options.radius || 0.5,
+          widthSegments: options.widthSegments || 32,
+          heightSegments: options.heightSegments || 32,
+        };
       case 'Cylinder':
-        p.radiusTop = options.radiusTop || 0.5;
-        p.radiusBottom = options.radiusBottom || 0.5;
-        p.height = options.height || 1;
-        p.radialSegments = options.radialSegments || 32;
-        break;
+        return {
+          radiusTop: options.radiusTop || 0.5,
+          radiusBottom: options.radiusBottom || 0.5,
+          height: options.height || 1,
+          radialSegments: options.radialSegments || 32,
+        };
       case 'Cone':
-        p.radius = options.radius || 0.5;
-        p.height = options.height || 1;
-        p.radialSegments = options.radialSegments || 32;
-        break;
+        return {
+          radius: options.radius || 0.5,
+          height: options.height || 1,
+          radialSegments: options.radialSegments || 32,
+        };
       case 'Torus':
-        p.radius = options.radius || 0.4;
-        p.tube = options.tube || 0.2;
-        p.radialSegments = options.radialSegments || 16;
-        p.tubularSegments = options.tubularSegments || 100;
-        break;
+        return {
+          radius: options.radius || 0.4,
+          tube: options.tube || 0.2,
+          radialSegments: options.radialSegments || 16,
+          tubularSegments: options.tubularSegments || 100,
+        };
       case 'TorusKnot':
-        p.radius = options.radius || 0.4;
-        p.tube = options.tube || 0.15;
-        p.tubularSegments = options.tubularSegments || 100;
-        p.radialSegments = options.radialSegments || 16;
-        break;
+        return {
+          radius: options.radius || 0.4,
+          tube: options.tube || 0.15,
+          tubularSegments: options.tubularSegments || 100,
+          radialSegments: options.radialSegments || 16,
+        };
       case 'Tetrahedron':
       case 'Icosahedron':
       case 'Dodecahedron':
       case 'Octahedron':
-        p.radius = options.radius || 0.6;
-        break;
+        return { radius: options.radius || 0.6 };
       case 'Plane':
-        p.width = options.width || 2;
-        p.height = options.height || 2;
-        break;
+        return {
+          width: options.width || 2,
+          height: options.height || 2,
+          widthSegments: options.widthSegments || 1,
+          heightSegments: options.heightSegments || 1,
+        };
       case 'Lathe':
-        // Lathe ignores options in current implementation
-        break;
+        return { segments: 12 };
       case 'Text':
-        p.text = options.text || 'nodist3d';
-        p.size = options.size || 0.5;
-        p.height = options.height || 0.2;
-        p.curveSegments = options.curveSegments || 12;
-        p.bevelEnabled = options.bevelEnabled !== undefined ? options.bevelEnabled : true;
-        p.bevelThickness = options.bevelThickness || 0.03;
-        p.bevelSize = options.bevelSize || 0.02;
-        p.bevelOffset = options.bevelOffset || 0;
-        p.bevelSegments = options.bevelSegments || 5;
-        break;
+        return {
+          text: options.text || 'nodist3d',
+          size: options.size || 0.5,
+          height: options.height || 0.2,
+          curveSegments: options.curveSegments || 12,
+          bevelEnabled: options.bevelEnabled !== undefined ? options.bevelEnabled : true,
+          bevelThickness: options.bevelThickness || 0.03,
+          bevelSize: options.bevelSize || 0.02,
+          bevelOffset: options.bevelOffset || 0,
+          bevelSegments: options.bevelSegments || 5,
+        };
       default:
-        return null;
+        // Exclude color and other non-geometry props from key
+        // eslint-disable-next-line no-unused-vars
+        const { color, ...rest } = options;
+        return rest;
     }
-    return p;
   }
 
   _getCachedGeometry(type, options) {
     const params = this._getNormalizedParameters(type, options);
-
-    // If we can't normalize (unknown type), we don't cache or generate geometry here
-    if (!params) return null;
-
     const key = `${type}_${JSON.stringify(params)}`;
     if (this.geometryCache[key]) {
       return this.geometryCache[key];
@@ -117,13 +125,16 @@ export class PrimitiveFactory {
           params.width,
           params.height,
           params.depth,
+          params.widthSegments,
+          params.heightSegments,
+          params.depthSegments
         );
         break;
       case 'Sphere':
         geometry = new THREE.SphereGeometry(
           params.radius,
           params.widthSegments,
-          params.heightSegments,
+          params.heightSegments
         );
         break;
       case 'Cylinder':
@@ -131,14 +142,14 @@ export class PrimitiveFactory {
           params.radiusTop,
           params.radiusBottom,
           params.height,
-          params.radialSegments,
+          params.radialSegments
         );
         break;
       case 'Cone':
         geometry = new THREE.ConeGeometry(
           params.radius,
           params.height,
-          params.radialSegments,
+          params.radialSegments
         );
         break;
       case 'Torus':
@@ -146,7 +157,7 @@ export class PrimitiveFactory {
           params.radius,
           params.tube,
           params.radialSegments,
-          params.tubularSegments,
+          params.tubularSegments
         );
         break;
       case 'TorusKnot':
@@ -170,7 +181,7 @@ export class PrimitiveFactory {
         geometry = new THREE.OctahedronGeometry(params.radius);
         break;
       case 'Plane':
-        geometry = new THREE.PlaneGeometry(params.width, params.height);
+        geometry = new THREE.PlaneGeometry(params.width, params.height, params.widthSegments, params.heightSegments);
         break;
       case 'Lathe':
         const pointsLathe = [];
@@ -195,7 +206,6 @@ export class PrimitiveFactory {
         if (this.font) {
           const params = this._getNormalizedParameters('Text', options);
           const cacheKey = `Text_${JSON.stringify(params)}`;
-
           if (this.geometryCache[cacheKey]) {
               const mesh = this._createMesh(this.geometryCache[cacheKey], options.color || 0x00bfff);
               mesh.userData.primitiveType = type;
@@ -204,16 +214,16 @@ export class PrimitiveFactory {
               return;
           }
 
-          const geometry = new TextGeometry(params.text, {
+          const geometry = new TextGeometry(options.text || 'nodist3d', {
             font: this.font,
-            size: params.size,
-            depth: params.height, // TextGeometry uses depth instead of height in newer Three.js
-            curveSegments: params.curveSegments,
-            bevelEnabled: params.bevelEnabled,
-            bevelThickness: params.bevelThickness,
-            bevelSize: params.bevelSize,
-            bevelOffset: params.bevelOffset,
-            bevelSegments: params.bevelSegments,
+            size: options.size || 0.5,
+            depth: options.height || 0.2, // TextGeometry uses depth instead of height in newer Three.js
+            curveSegments: options.curveSegments || 12,
+            bevelEnabled: options.bevelEnabled || true,
+            bevelThickness: options.bevelThickness || 0.03,
+            bevelSize: options.bevelSize || 0.02,
+            bevelOffset: options.bevelOffset || 0,
+            bevelSegments: options.bevelSegments || 5,
           });
           geometry.center();
           this.geometryCache[cacheKey] = geometry;
@@ -259,7 +269,6 @@ export class PrimitiveFactory {
             teapot.name = 'Teapot';
             const teapotColor = options.color || 0x800000;
             
-            // Note: _getCachedGeometry will now use normalized params for these parts too
             teapot.add(this._createMesh(this._getCachedGeometry('Sphere', { radius: 0.4, widthSegments: 32, heightSegments: 32 }), teapotColor));
             
             const spout = this._createMesh(this._getCachedGeometry('Cylinder', { radiusTop: 0.05, radiusBottom: 0.08, height: 0.3, radialSegments: 8 }), teapotColor);

@@ -1,95 +1,28 @@
-/**
- * Tests for Undo/Redo History functionality
- */
-import { JSDOM } from 'jsdom';
 
-// Mock THREE.js
-jest.mock('three', () => {
-  const mockVector3 = {
-    x: 0,
-    y: 0,
-    z: 0,
-    set: jest.fn(function() { return this; }),
-    normalize: jest.fn(function() { return this; }),
-    clone: jest.fn(() => ({ x: 0, y: 0, z: 0, set: () => {}, normalize: () => {} })),
-    copy: jest.fn(function() { return this; }),
-  };
-
-  const mockColor = {
-    clone: jest.fn(() => ({ r: 1, g: 0, b: 0 })),
-    copy: jest.fn(),
-  };
-
-  return {
-    Vector3: jest.fn(() => mockVector3),
-    Color: jest.fn(() => mockColor),
-    Mesh: jest.fn(() => ({
-      uuid: 'mock-uuid',
-      name: '',
-      position: mockVector3,
-      rotation: mockVector3,
-      scale: mockVector3,
-      visible: true,
-      geometry: { type: 'BoxGeometry', dispose: jest.fn() },
-      material: { color: mockColor, emissive: mockColor, dispose: jest.fn(), copy: jest.fn() },
-      userData: {},
-    })),
-    BoxGeometry: jest.fn(),
-    SphereGeometry: jest.fn(),
-    MeshLambertMaterial: jest.fn(() => ({ color: mockColor, emissive: mockColor, copy: jest.fn() })),
-    Scene: jest.fn(() => ({ add: jest.fn(), remove: jest.fn() })),
-  };
-});
-
-// Mock dat.gui
-jest.mock('dat.gui', () => ({
-  GUI: jest.fn(() => ({
-    addFolder: jest.fn(() => ({
-      add: jest.fn(() => ({ name: jest.fn(() => ({ onChange: jest.fn() })) })),
-      open: jest.fn(),
-    })),
-  })),
-}));
-
-// Mock controls
-jest.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
-  OrbitControls: jest.fn(() => ({
-    enableDamping: true,
-    update: jest.fn(),
-  })),
-}));
-
-jest.mock('three/examples/jsm/controls/TransformControls.js', () => ({
-  TransformControls: jest.fn(() => ({
-    addEventListener: jest.fn(),
-    setMode: jest.fn(),
-    attach: jest.fn(),
-    detach: jest.fn(),
-  })),
-}));
+// THREE and UI mocks are handled by jest.setup.cjs
 
 describe('Undo/Redo History Functionality', () => {
-  let dom, app;
+  let app;
 
   beforeEach(() => {
-    // Setup DOM
-    dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-    global.document = dom.window.document;
-    global.window = dom.window;
+    // Setup environment (handled by jsdom environment)
+    if (typeof document !== 'undefined') {
+        document.body.innerHTML = '';
+    }
+    
     global.requestAnimationFrame = jest.fn();
     global.console.log = jest.fn(); // Suppress console.log
     global.Date.now = jest.fn(() => 1234567890);
-
-    // Mock document methods
-    jest.spyOn(document.body, 'appendChild').mockImplementation();
-    jest.spyOn(window, 'addEventListener').mockImplementation();
-    jest.spyOn(document, 'createElement').mockImplementation(() => ({
-      style: {},
-      appendChild: jest.fn(),
-      textContent: '',
-      innerHTML: '',
-      set cssText(value) {},
+    global.URL = { createObjectURL: jest.fn(), revokeObjectURL: jest.fn() };
+    global.Worker = jest.fn(() => ({
+        postMessage: jest.fn(),
+        addEventListener: jest.fn()
     }));
+
+    // Mock methods that might be missing or need spying
+    if (typeof window !== 'undefined') {
+        window.scrollTo = jest.fn();
+    }
 
     jest.clearAllMocks();
 
@@ -249,9 +182,7 @@ describe('Undo/Redo History Functionality', () => {
   });
 
   afterEach(() => {
-    if (dom) {
-      dom.window.close();
-    }
+    jest.restoreAllMocks();
   });
 
   describe('History State Management', () => {
