@@ -1,30 +1,30 @@
 
 import { App } from '../src/frontend/main.js';
 import * as THREE from 'three';
-import { JSDOM } from 'jsdom';
 
 // Mock THREE.js
 describe('Performance Benchmark: restoreState', () => {
-    let dom;
     let app;
 
     beforeEach(() => {
-        // Setup DOM
-        dom = new JSDOM('<!DOCTYPE html><html><body><div id="objects-list"></div><div id="scene-graph-panel"></div></body></html>');
-        global.document = dom.window.document;
-        global.window = dom.window;
-        global.navigator = dom.window.navigator;
+        // Setup environment (handled by jsdom environment)
+        if (typeof document !== 'undefined') {
+            document.body.innerHTML = '<div id="objects-list"></div><div id="scene-graph-panel"></div><div id="scene-graph"></div><button id="fullscreen"></button><button id="save-scene"></button><button id="load-scene"></button><input type="file" id="file-input">';
+        }
+        
         global.requestAnimationFrame = jest.fn();
         global.console.log = jest.fn(); 
+        global.URL = { createObjectURL: jest.fn(), revokeObjectURL: jest.fn() };
+        global.Worker = jest.fn(() => ({
+            postMessage: jest.fn(),
+            addEventListener: jest.fn()
+        }));
 
         app = new App();
     });
 
     afterEach(() => {
-        if (dom) {
-            dom.window.close();
-        }
-        jest.clearAllMocks();
+        jest.restoreAllMocks();
     });
 
     test('Benchmark: restoreState with 100 objects', async () => {
@@ -56,7 +56,7 @@ describe('Performance Benchmark: restoreState', () => {
         // But re-instantiation is what we want to avoid.
 
         const initialGeometryInstances = THREE.BoxGeometry.mock.instances.length;
-        const initialMaterialInstances = THREE.MeshLambertMaterial.mock.instances.length;
+        const initialMaterialInstances = THREE.MeshPhongMaterial.mock.instances.length;
 
         // 4. Measure restoreState (Undo)
         const startTime = performance.now();
@@ -68,7 +68,7 @@ describe('Performance Benchmark: restoreState', () => {
 
         // 5. Verify metrics
         const finalGeometryInstances = THREE.BoxGeometry.mock.instances.length;
-        const finalMaterialInstances = THREE.MeshLambertMaterial.mock.instances.length;
+        const finalMaterialInstances = THREE.MeshPhongMaterial.mock.instances.length;
 
         const createdGeometries = finalGeometryInstances - initialGeometryInstances;
         const createdMaterials = finalMaterialInstances - initialMaterialInstances;
