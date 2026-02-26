@@ -8,8 +8,8 @@ import crypto from 'crypto';
 import fs from 'fs';
 import rateLimit from 'express-rate-limit';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const currentFilename = fileURLToPath(import.meta.url);
+const currentDirname = path.dirname(currentFilename);
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -54,7 +54,7 @@ app.use(cors());
 app.get('/modules/three.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(
-    path.join(__dirname, '..', '..', 'node_modules', 'three', 'build', 'three.module.js'),
+    path.join(currentDirname, '..', '..', 'node_modules', 'three', 'build', 'three.module.js'),
   );
 });
 
@@ -62,7 +62,7 @@ app.get('/modules/OrbitControls.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(
     path.join(
-      __dirname,
+      currentDirname,
       '..',
       '..',
       'node_modules',
@@ -75,11 +75,62 @@ app.get('/modules/OrbitControls.js', (req, res) => {
   );
 });
 
-app.get('/modules/TransformControls.js', (req, res) => {
+app.get('/modules/OBJLoader.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(
+    path.join(
+      currentDirname,
+      '..',
+      '..',
+      'node_modules',
+      'three',
+      'examples',
+      'jsm',
+      'loaders',
+      'OBJLoader.js',
+    ),
+  );
+});
+
+app.get('/modules/GLTFLoader.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(
     path.join(
       __dirname,
+      '..',
+      '..',
+      'node_modules',
+      'three',
+      'examples',
+      'jsm',
+      'loaders',
+      'GLTFLoader.js',
+    ),
+  );
+});
+
+app.get('/utils/BufferGeometryUtils.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(
+    path.join(
+      __dirname,
+      '..',
+      '..',
+      'node_modules',
+      'three',
+      'examples',
+      'jsm',
+      'utils',
+      'BufferGeometryUtils.js',
+    ),
+  );
+});
+
+app.get('/modules/TransformControls.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(
+    path.join(
+      currentDirname,
       '..',
       '..',
       'node_modules',
@@ -95,25 +146,25 @@ app.get('/modules/TransformControls.js', (req, res) => {
 app.get('/modules/dat.gui.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(
-    path.join(__dirname, '..', '..', 'node_modules', 'dat.gui', 'build', 'dat.gui.module.js'),
+    path.join(currentDirname, '..', '..', 'node_modules', 'dat.gui', 'build', 'dat.gui.module.js'),
   );
 });
 
 app.get('/modules/jszip.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(path.join(__dirname, '..', '..', 'node_modules', 'jszip', 'dist', 'jszip.min.js'));
+  res.sendFile(path.join(currentDirname, '..', '..', 'node_modules', 'jszip', 'dist', 'jszip.min.js'));
 });
 
 // Serve three.min.js for web worker
 app.get('/modules/three.min.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(path.join(__dirname, '..', '..', 'node_modules', 'three', 'build', 'three.min.js'));
+  res.sendFile(path.join(currentDirname, '..', '..', 'node_modules', 'three', 'build', 'three.min.js'));
 });
 
 app.get('/modules/loglevel.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(
-    path.join(__dirname, '..', '..', 'node_modules', 'loglevel', 'dist', 'loglevel.min.js'),
+    path.join(currentDirname, '..', '..', 'node_modules', 'loglevel', 'dist', 'loglevel.min.js'),
   );
 });
 
@@ -121,14 +172,14 @@ app.get('/modules/loglevel.js', (req, res) => {
 app.get('/modules/cannon-es.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(
-    path.join(__dirname, '..', '..', 'node_modules', 'cannon-es', 'dist', 'cannon-es.js'),
+    path.join(currentDirname, '..', '..', 'node_modules', 'cannon-es', 'dist', 'cannon-es.js'),
   );
 });
 
 // Serve three-csg-ts
 app.get('/modules/three-csg-ts.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(path.join(__dirname, '..', '..', 'node_modules', 'three-csg-ts', 'index.js'));
+  res.sendFile(path.join(currentDirname, '..', '..', 'node_modules', 'three-csg-ts', 'index.js'));
 });
 
 // Serve extra three examples
@@ -136,7 +187,7 @@ app.get('/modules/TeapotGeometry.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(
     path.join(
-      __dirname,
+      currentDirname,
       '..',
       '..',
       'node_modules',
@@ -153,7 +204,7 @@ app.get('/modules/FontLoader.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(
     path.join(
-      __dirname,
+      currentDirname,
       '..',
       '..',
       'node_modules',
@@ -170,7 +221,7 @@ app.get('/modules/TextGeometry.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(
     path.join(
-      __dirname,
+      currentDirname,
       '..',
       '..',
       'node_modules',
@@ -183,34 +234,44 @@ app.get('/modules/TextGeometry.js', (req, res) => {
   );
 });
 
+const indexHtmlPath = path.join(currentDirname, '..', 'frontend', 'index.html');
+let indexHtmlContent = null;
+
+try {
+  indexHtmlContent = fs.readFileSync(indexHtmlPath, 'utf8');
+} catch (err) {
+  log.error('Failed to preload index.html:', err);
+}
+
+const injectNonce = (html, nonce) => {
+  return html
+    .replace(/<script /g, `<script nonce="${nonce}" `)
+    .replace(/<style>/g, `<style nonce="${nonce}">`)
+    .replace(/<link rel="stylesheet"/g, `<link rel="stylesheet" nonce="${nonce}"`);
+};
+
 // Serve index.html with injected nonce
 const serveIndex = (req, res) => {
-  const indexHtmlPath = path.join(__dirname, '..', 'frontend', 'index.html');
+  if (indexHtmlContent) {
+    res.send(injectNonce(indexHtmlContent, res.locals.cspNonce));
+    return;
+  }
+
   fs.readFile(indexHtmlPath, 'utf8', (err, data) => {
     if (err) {
       log.error('Failed to read index.html:', err);
       res.status(500).send('Internal Server Error');
       return;
     }
-    // Inject nonces into all script and style tags
-    const injectedHtml = data.replace(
-      /<script /g,
-      `<script nonce="${res.locals.cspNonce}" `
-    ).replace(
-      /<style>/g,
-      `<style nonce="${res.locals.cspNonce}">`
-    ).replace(
-      /<link rel="stylesheet"/g,
-      `<link rel="stylesheet" nonce="${res.locals.cspNonce}"`
-    );
-    res.send(injectedHtml);
+    indexHtmlContent = data;
+    res.send(injectNonce(data, res.locals.cspNonce));
   });
 };
 
 app.get('/', serveIndex);
 app.get('/index.html', serveIndex);
 
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
+app.use(express.static(path.join(currentDirname, '..', 'frontend')));
 
 app.get('/healthz', (req, res) => {
   res.status(200).send('OK');

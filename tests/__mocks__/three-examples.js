@@ -1,5 +1,7 @@
+const jest = global.jest;
+console.log('DEBUG: Loading three-examples.js mock');
 
-export class OrbitControls {
+class OrbitControls {
     constructor() {
         this.enabled = true;
         this.target = { copy: jest.fn(), clone: jest.fn(() => ({ copy: jest.fn() })) };
@@ -10,7 +12,7 @@ export class OrbitControls {
     }
 }
 
-export class TransformControls {
+class TransformControls {
     constructor() {
         this.enabled = true;
         this.attach = jest.fn();
@@ -22,7 +24,7 @@ export class TransformControls {
     }
 }
 
-export class TeapotGeometry {
+class TeapotGeometry {
     constructor() {
         this.type = 'TeapotGeometry';
         this.parameters = {};
@@ -30,13 +32,18 @@ export class TeapotGeometry {
     }
 }
 
-export class FontLoader {
+class FontLoader {
+    constructor() {
+        this.load = jest.fn((url, onLoad) => {
+            if (onLoad) onLoad({ type: 'Font' });
+        });
+    }
     load(url, onLoad) {
         if (onLoad) onLoad({ type: 'Font' });
     }
 }
 
-export class TextGeometry {
+class TextGeometry {
     constructor() {
         this.type = 'TextGeometry';
         this.parameters = {};
@@ -45,16 +52,38 @@ export class TextGeometry {
     }
 }
 
-export class GLTFLoader {
+class GLTFLoader {
     load(url, onLoad) {
         if (onLoad) onLoad({ scene: { children: [] } });
     }
 }
 
-export class OBJExporter {
+class OBJExporter {
     parse() { return ''; }
 }
 
-export class STLExporter {
+class STLExporter {
     parse() { return ''; }
 }
+
+module.exports = {
+    __esModule: true,
+    OrbitControls,
+    TransformControls,
+    TeapotGeometry,
+    FontLoader,
+    TextGeometry,
+    GLTFLoader,
+    OBJExporter,
+    STLExporter,
+    default: {
+        OrbitControls,
+        TransformControls,
+        TeapotGeometry,
+        FontLoader,
+        TextGeometry,
+        GLTFLoader,
+        OBJExporter,
+        STLExporter
+    }
+};
