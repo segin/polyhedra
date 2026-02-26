@@ -373,9 +373,6 @@ export class App {
     this.orbitControls.dampingFactor = 0.05;
 
     this.transformControls = new TransformControls(this.camera, this.renderer.domElement);
-    this.transformControls.addEventListener('change', () => {
-      this.renderer.render(this.scene, this.camera);
-    });
     this.transformControls.addEventListener('dragging-changed', (event) => {
       this.orbitControls.enabled = !event.value;
       if (!event.value && this.selectedObject) {
@@ -681,15 +678,9 @@ export class App {
   updateSceneGraph() {
     if (!this.objectsList) return;
 
-    if (!this.sceneGraphItemMap) {
-      this.sceneGraphItemMap = new Map();
-    }
-    
-    // Handle empty state
+    // Handle Empty List Case
     if (this.objects.length === 0) {
       this.objectsList.innerHTML = '';
-      this.sceneGraphItemMap.clear();
-
       const li = document.createElement('li');
       li.setAttribute('role', 'listitem');
       li.textContent = 'No objects in scene';
@@ -698,117 +689,158 @@ export class App {
       li.style.textAlign = 'center';
       li.style.padding = '10px';
       this.objectsList.appendChild(li);
+      this.sceneGraphItemMap.clear();
       return;
     }
 
-    // If coming from empty state, clear the "No objects" message
-    if (this.sceneGraphItemMap.size === 0) {
-        this.objectsList.innerHTML = '';
+    // Clear "No objects" if present
+    if (
+      this.objectsList.children.length > 0 &&
+      this.objectsList.children[0].textContent === 'No objects in scene'
+    ) {
+      this.objectsList.innerHTML = '';
     }
 
-    const fragment = document.createDocumentFragment();
-    const currentUuids = new Set();
+    let currentDom = this.objectsList.firstElementChild;
 
     this.objects.forEach((obj, idx) => {
-        currentUuids.add(obj.uuid);
-        let li = this.sceneGraphItemMap.get(obj.uuid);
+      let li = this.sceneGraphItemMap.get(obj.uuid);
 
-        // References to child elements
-        let nameSpan, visibilityBtn, deleteBtn;
-
-        if (!li) {
-            li = document.createElement('li');
-            li.setAttribute('role', 'listitem');
-
-            nameSpan = document.createElement('span');
-            nameSpan.className = 'object-name';
-            li.appendChild(nameSpan);
-
-            const controls = document.createElement('div');
-
-            visibilityBtn = document.createElement('button');
-            visibilityBtn.className = 'visibility-btn';
-            controls.appendChild(visibilityBtn);
-
-            deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-btn';
-            deleteBtn.setAttribute('aria-label', 'Delete object');
-            deleteBtn.textContent = '🗑️';
-            controls.appendChild(deleteBtn);
-
-            li.appendChild(controls);
-
-            // Cache references on the element to avoid querySelector in future updates
-            // @ts-ignore
-            li._nameSpan = nameSpan;
-            // @ts-ignore
-            li._visibilityBtn = visibilityBtn;
-            // @ts-ignore
-            li._deleteBtn = deleteBtn;
-
-            this.sceneGraphItemMap.set(obj.uuid, li);
-        } else {
-             // @ts-ignore
-             nameSpan = li._nameSpan;
-             // @ts-ignore
-             visibilityBtn = li._visibilityBtn;
-             // @ts-ignore
-             deleteBtn = li._deleteBtn;
+      // Check if stale (bound to old object instance)
+      // @ts-ignore
+      if (li && li._boundObject !== obj) {
+        li.remove();
+        if (li === currentDom) {
+          currentDom = currentDom.nextElementSibling;
         }
+        this.sceneGraphItemMap.delete(obj.uuid);
+        li = undefined;
+      }
 
-        // Apply styles
-        const isSelected = this.selectedObject === obj;
-        const bg = isSelected ? '#444' : '#222';
+      if (!li) {
+        li = this.createSceneGraphItem(obj);
+        this.sceneGraphItemMap.set(obj.uuid, li);
+      }
 
-        li.style.cssText = `
-          padding: 5px;
-          margin: 2px 0;
-          background: ${bg};
-          border-radius: 3px;
-          cursor: pointer;
-          display: flex;
-          justify-content: space-between;
-        `;
+      this.updateSceneGraphItem(li, obj, idx);
 
-        // Update Content
-        const nameText = obj.name || `Object ${idx + 1}`;
-        if (nameSpan.textContent !== nameText) nameSpan.textContent = nameText;
-
-        const visText = obj.visible ? '👁️' : '🚫';
-        const visLabel = obj.visible ? 'Hide object' : 'Show object';
-
-        if (visibilityBtn.textContent !== visText) {
-            visibilityBtn.textContent = visText;
-            visibilityBtn.setAttribute('aria-label', visLabel);
-        }
-
-        // Update Event Listeners (closures capture current `obj` instance)
-        li.onclick = () => this.selectObject(obj);
-
-        visibilityBtn.onclick = (e) => {
-          e.stopPropagation();
-          obj.visible = !obj.visible;
-          this.updateSceneGraph();
-        };
-
-        deleteBtn.onclick = (e) => {
-          e.stopPropagation();
-          this.deleteObject(obj);
-        };
-
-        fragment.appendChild(li);
+      // Placement
+      if (currentDom === li) {
+        currentDom = currentDom.nextElementSibling;
+      } else {
+        this.objectsList.insertBefore(li, currentDom);
+      }
     });
 
-    // Remove deleted items from DOM and Map
-    for (const [uuid, li] of this.sceneGraphItemMap) {
-        if (!currentUuids.has(uuid)) {
-            if (li.parentNode) li.parentNode.removeChild(li);
-            this.sceneGraphItemMap.delete(uuid);
-        }
+    // Remove remaining (stale) nodes
+    while (currentDom) {
+      const next = currentDom.nextElementSibling;
+      currentDom.remove();
+      currentDom = next;
     }
 
-    // Append fragment (this moves all valid lis to the list end, effectively sorting them)
-    this.objectsList.appendChild(fragment);
+    // Cleanup Map
+    if (this.sceneGraphItemMap.size > this.objects.length) {
+      const activeUuids = new Set(this.objects.map((o) => o.uuid));
+      for (const uuid of this.sceneGraphItemMap.keys()) {
+        if (!activeUuids.has(uuid)) {
+          this.sceneGraphItemMap.delete(uuid);
+        }
+      }
+    }
+  }
+
+  createSceneGraphItem(obj) {
+    const li = document.createElement('li');
+    li.setAttribute('role', 'listitem');
+    li.style.cssText = `
+      padding: 5px;
+      margin: 2px 0;
+      border-radius: 3px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+    `;
+    // @ts-ignore
+    li._boundObject = obj;
+
+    const name = document.createElement('span');
+    name.className = 'object-name';
+    li.appendChild(name);
+    // @ts-ignore
+    li._nameSpan = name;
+
+    const controls = document.createElement('div');
+
+    const visibilityBtn = document.createElement('button');
+    visibilityBtn.className = 'visibility-btn';
+    visibilityBtn.setAttribute('aria-label', obj.visible ? 'Hide object' : 'Show object');
+    visibilityBtn.setAttribute('title', obj.visible ? 'Hide object' : 'Show object');
+    visibilityBtn.onclick = (e) => {
+      e.stopPropagation();
+      obj.visible = !obj.visible;
+      this.updateSceneGraph();
+    };
+    controls.appendChild(visibilityBtn);
+    // @ts-ignore
+    li._visibilityBtn = visibilityBtn;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.setAttribute('aria-label', 'Delete object');
+    deleteBtn.setAttribute('title', 'Delete object');
+    deleteBtn.textContent = '🗑️';
+    deleteBtn.onclick = (e) => {
+      e.stopPropagation();
+      this.deleteObject(obj);
+    };
+    controls.appendChild(deleteBtn);
+
+    li.appendChild(controls);
+
+    li.onclick = () => this.selectObject(obj);
+
+    return li;
+  }
+
+  updateSceneGraphItem(li, obj, idx) {
+    // Update Selection Style
+    const isSelected = this.selectedObject === obj;
+    const expectedBg = isSelected ? '#444' : '#222';
+    if (li.style.background !== expectedBg) { // Only update if changed (prevents style recalc if same)
+        // Note: style.background returns empty string if not set, or computed value.
+        // But setting it works.
+        // Ideally checking specific property `backgroundColor` is better but `background` shorthand is used.
+        // Let's just set it if we suspect change, or cache it?
+        // Checking style string might be flaky.
+        // But let's trust simple check.
+        // Actually, let's just set it. Setting same value is cheap in JS, browser handles DOM.
+        li.style.background = expectedBg;
+    }
+
+    // Update Name
+    // @ts-ignore
+    const nameSpan = li._nameSpan;
+    const expectedName = obj.name || `Object ${idx + 1}`;
+    if (nameSpan.textContent !== expectedName) {
+      nameSpan.textContent = expectedName;
+    }
+
+    // Update Visibility Button
+    // @ts-ignore
+    const visibilityBtn = li._visibilityBtn;
+    const expectedVisLabel = obj.visible ? 'Hide object' : 'Show object';
+    const expectedVisIcon = obj.visible ? '👁️' : '🚫';
+
+    if (visibilityBtn.getAttribute('aria-label') !== expectedVisLabel) {
+        visibilityBtn.setAttribute('aria-label', expectedVisLabel);
+    }
+    if (visibilityBtn.getAttribute('title') !== expectedVisLabel) {
+        visibilityBtn.setAttribute('title', expectedVisLabel);
+    }
+    if (visibilityBtn.textContent !== expectedVisIcon) {
+        visibilityBtn.textContent = expectedVisIcon;
+    }
   }
 
   toggleFullscreen() {
