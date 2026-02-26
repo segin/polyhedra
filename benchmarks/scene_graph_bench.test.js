@@ -38,25 +38,6 @@ jest.mock('dat.gui', () => ({
     }))
 }));
 
-jest.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
-    OrbitControls: jest.fn(() => ({
-        enableDamping: true,
-        dampingFactor: 0.05,
-        enabled: true,
-        update: jest.fn(),
-        touches: {}
-    }))
-}));
-
-jest.mock('three/examples/jsm/controls/TransformControls.js', () => ({
-    TransformControls: jest.fn(() => ({
-        addEventListener: jest.fn(),
-        setMode: jest.fn(),
-        attach: jest.fn(),
-        detach: jest.fn(),
-        dragging: false
-    }))
-}));
 
 // Mock internal dependencies
 jest.mock('../src/frontend/SceneStorage.js', () => ({ SceneStorage: jest.fn() }));
