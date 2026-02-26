@@ -112,6 +112,20 @@ This phase focuses on solidifying the codebase foundation, ensuring maintainabil
       - [x] Replace `__dirname` (undefined in ESM) with `import { fileURLToPath } from 'url'; import { dirname } from 'path'; const __dirname = dirname(fileURLToPath(import.meta.url));`.
     - [x] **Refactor Frontend Imports**:
       - [x] Audit all frontend files (`src/frontend/**/*.js`).
+    # Final Cleanup
+- [x] Delete all local and remote branches except `main`
+- [x] Update documentation
+
+# Code Audit
+- [x] Perform security audit (CSP, rate limiting, dependency vulnerabilities)
+- [x] Perform performance audit (bottlenecks, memory leaks, brute force loops)
+- [x] Perform code quality audit (consistency, modularity, technical debt)
+- [x] Generate comprehensive `audit_report.md`
+- [/] Implement critical fixes
+    - [/] Fix `PhysicsManager` API mismatch (zombie bodies)
+    - [ ] Update dependency vulnerabilities
+    - [ ] Implement light disposal
+    - [ ] Implement geometry caching
       - [x] Ensure all local imports include the `.js` extension (e.g., `import { x } from './utils.js'`), which is mandatory for browser-native ESM.
       - [x] Verify that `three` and other dependencies are imported via their ESM entry points or mapped correctly if using an import map.
   - **Verification & Testing**:
