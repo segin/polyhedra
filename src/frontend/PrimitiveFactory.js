@@ -33,8 +33,87 @@ export class PrimitiveFactory {
     return mesh;
   }
 
+  _getNormalizedParameters(type, options) {
+    switch (type) {
+      case 'Box':
+        return {
+          width: options.width || 1,
+          height: options.height || 1,
+          depth: options.depth || 1,
+          widthSegments: options.widthSegments || 1,
+          heightSegments: options.heightSegments || 1,
+          depthSegments: options.depthSegments || 1,
+        };
+      case 'Sphere':
+        return {
+          radius: options.radius || 0.5,
+          widthSegments: options.widthSegments || 32,
+          heightSegments: options.heightSegments || 32,
+        };
+      case 'Cylinder':
+        return {
+          radiusTop: options.radiusTop || 0.5,
+          radiusBottom: options.radiusBottom || 0.5,
+          height: options.height || 1,
+          radialSegments: options.radialSegments || 32,
+        };
+      case 'Cone':
+        return {
+          radius: options.radius || 0.5,
+          height: options.height || 1,
+          radialSegments: options.radialSegments || 32,
+        };
+      case 'Torus':
+        return {
+          radius: options.radius || 0.4,
+          tube: options.tube || 0.2,
+          radialSegments: options.radialSegments || 16,
+          tubularSegments: options.tubularSegments || 100,
+        };
+      case 'TorusKnot':
+        return {
+          radius: options.radius || 0.4,
+          tube: options.tube || 0.15,
+          tubularSegments: options.tubularSegments || 100,
+          radialSegments: options.radialSegments || 16,
+        };
+      case 'Tetrahedron':
+      case 'Icosahedron':
+      case 'Dodecahedron':
+      case 'Octahedron':
+        return { radius: options.radius || 0.6 };
+      case 'Plane':
+        return {
+          width: options.width || 2,
+          height: options.height || 2,
+          widthSegments: options.widthSegments || 1,
+          heightSegments: options.heightSegments || 1,
+        };
+      case 'Lathe':
+        return { segments: 12 };
+      case 'Text':
+        return {
+          text: options.text || 'nodist3d',
+          size: options.size || 0.5,
+          height: options.height || 0.2,
+          curveSegments: options.curveSegments || 12,
+          bevelEnabled: options.bevelEnabled !== undefined ? options.bevelEnabled : true,
+          bevelThickness: options.bevelThickness || 0.03,
+          bevelSize: options.bevelSize || 0.02,
+          bevelOffset: options.bevelOffset || 0,
+          bevelSegments: options.bevelSegments || 5,
+        };
+      default:
+        // Exclude color and other non-geometry props from key
+        // eslint-disable-next-line no-unused-vars
+        const { color, ...rest } = options;
+        return rest;
+    }
+  }
+
   _getCachedGeometry(type, options) {
-    const key = `${type}_${JSON.stringify(options)}`;
+    const params = this._getNormalizedParameters(type, options);
+    const key = `${type}_${JSON.stringify(params)}`;
     if (this.geometryCache[key]) {
       return this.geometryCache[key];
     }
@@ -43,63 +122,66 @@ export class PrimitiveFactory {
     switch (type) {
       case 'Box':
         geometry = new THREE.BoxGeometry(
-          options.width || 1,
-          options.height || 1,
-          options.depth || 1,
+          params.width,
+          params.height,
+          params.depth,
+          params.widthSegments,
+          params.heightSegments,
+          params.depthSegments
         );
         break;
       case 'Sphere':
         geometry = new THREE.SphereGeometry(
-          options.radius || 0.5,
-          options.widthSegments || 32,
-          options.heightSegments || 32,
+          params.radius,
+          params.widthSegments,
+          params.heightSegments
         );
         break;
       case 'Cylinder':
         geometry = new THREE.CylinderGeometry(
-          options.radiusTop || 0.5,
-          options.radiusBottom || 0.5,
-          options.height || 1,
-          options.radialSegments || 32,
+          params.radiusTop,
+          params.radiusBottom,
+          params.height,
+          params.radialSegments
         );
         break;
       case 'Cone':
         geometry = new THREE.ConeGeometry(
-          options.radius || 0.5,
-          options.height || 1,
-          options.radialSegments || 32,
+          params.radius,
+          params.height,
+          params.radialSegments
         );
         break;
       case 'Torus':
         geometry = new THREE.TorusGeometry(
-          options.radius || 0.4,
-          options.tube || 0.2,
-          options.radialSegments || 16,
-          options.tubularSegments || 100,
+          params.radius,
+          params.tube,
+          params.radialSegments,
+          params.tubularSegments
         );
         break;
       case 'TorusKnot':
         geometry = new THREE.TorusKnotGeometry(
-          options.radius || 0.4,
-          options.tube || 0.15,
-          options.tubularSegments || 100,
-          options.radialSegments || 16
+          params.radius,
+          params.tube,
+          params.tubularSegments,
+          params.radialSegments
         );
         break;
       case 'Tetrahedron':
-        geometry = new THREE.TetrahedronGeometry(options.radius || 0.6);
+        geometry = new THREE.TetrahedronGeometry(params.radius);
         break;
       case 'Icosahedron':
-        geometry = new THREE.IcosahedronGeometry(options.radius || 0.6);
+        geometry = new THREE.IcosahedronGeometry(params.radius);
         break;
       case 'Dodecahedron':
-        geometry = new THREE.DodecahedronGeometry(options.radius || 0.6);
+        geometry = new THREE.DodecahedronGeometry(params.radius);
         break;
       case 'Octahedron':
-        geometry = new THREE.OctahedronGeometry(options.radius || 0.6);
+        geometry = new THREE.OctahedronGeometry(params.radius);
         break;
       case 'Plane':
-        geometry = new THREE.PlaneGeometry(options.width || 2, options.height || 2);
+        geometry = new THREE.PlaneGeometry(params.width, params.height, params.widthSegments, params.heightSegments);
         break;
       case 'Lathe':
         const pointsLathe = [];
@@ -122,7 +204,8 @@ export class PrimitiveFactory {
     if (type === 'Text') {
       return new Promise((resolve) => {
         if (this.font) {
-          const cacheKey = `Text_${JSON.stringify(options)}`;
+          const params = this._getNormalizedParameters('Text', options);
+          const cacheKey = `Text_${JSON.stringify(params)}`;
           if (this.geometryCache[cacheKey]) {
               const mesh = this._createMesh(this.geometryCache[cacheKey], options.color || 0x00bfff);
               mesh.userData.primitiveType = type;
