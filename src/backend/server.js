@@ -79,7 +79,7 @@ app.get('/modules/OBJLoader.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(
     path.join(
-      __dirname,
+      currentDirname,
       '..',
       '..',
       'node_modules',
