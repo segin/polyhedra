@@ -3,9 +3,16 @@ import { TeapotGeometry } from 'three/examples/jsm/geometries/TeapotGeometry.js'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
+const LATHE_POINTS = [];
+for (let i = 0; i < 10; i++) {
+  LATHE_POINTS.push(new THREE.Vector2(Math.sin(i * 0.2) * 0.5 + 0.5, (i - 5) * 0.2));
+}
+
 export class PrimitiveManager {
   constructor(scene) {
     this.scene = scene;
+    this.cachedFont = null;
+    this.fontLoadingPromise = null;
   }
 
   /**
@@ -143,11 +150,7 @@ export class PrimitiveManager {
   }
 
   addLathe() {
-    const points = [];
-    for (let i = 0; i < 10; i++) {
-      points.push(new THREE.Vector2(Math.sin(i * 0.2) * 0.5 + 0.5, (i - 5) * 0.2));
-    }
-    const geometry = new THREE.LatheGeometry(points);
+    const geometry = new THREE.LatheGeometry(LATHE_POINTS);
     return this._createMesh(geometry, 0x00ff80); // Spring Green for Lathe
   }
 
@@ -177,23 +180,39 @@ export class PrimitiveManager {
   }
 
   addText(text = "nodist3d") {
-    const loader = new FontLoader();
-    return new Promise((resolve) => {
-      loader.load('./node_modules/three/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-        const geometry = new TextGeometry(text, {
-          font: font,
-          size: 0.5,
-          depth: 0.2,
-          curveSegments: 12,
-          bevelEnabled: true,
-          bevelThickness: 0.03,
-          bevelSize: 0.02,
-          bevelOffset: 0,
-          bevelSegments: 5,
-        });
-        geometry.center();
-        resolve(this._createMesh(geometry, 0x00bfff)); // Deep Sky Blue for Text
+    const createMeshWithFont = (font) => {
+      const geometry = new TextGeometry(text, {
+        font: font,
+        size: 0.5,
+        depth: 0.2,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 0.03,
+        bevelSize: 0.02,
+        bevelOffset: 0,
+        bevelSegments: 5,
       });
-    });
+      geometry.center();
+      return this._createMesh(geometry, 0x00bfff); // Deep Sky Blue for Text
+    };
+
+    if (this.cachedFont) {
+      return Promise.resolve(createMeshWithFont(this.cachedFont));
+    }
+
+    if (!this.fontLoadingPromise) {
+      this.fontLoadingPromise = new Promise((resolve) => {
+        const loader = new FontLoader();
+        loader.load(
+          './node_modules/three/examples/fonts/helvetiker_regular.typeface.json',
+          (font) => {
+            this.cachedFont = font;
+            resolve(font);
+          },
+        );
+      });
+    }
+
+    return this.fontLoadingPromise.then(createMeshWithFont);
   }
 }

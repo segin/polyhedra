@@ -75,6 +75,57 @@ app.get('/modules/OrbitControls.js', (req, res) => {
   );
 });
 
+app.get('/modules/OBJLoader.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(
+    path.join(
+      currentDirname,
+      '..',
+      '..',
+      'node_modules',
+      'three',
+      'examples',
+      'jsm',
+      'loaders',
+      'OBJLoader.js',
+    ),
+  );
+});
+
+app.get('/modules/GLTFLoader.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(
+    path.join(
+      __dirname,
+      '..',
+      '..',
+      'node_modules',
+      'three',
+      'examples',
+      'jsm',
+      'loaders',
+      'GLTFLoader.js',
+    ),
+  );
+});
+
+app.get('/utils/BufferGeometryUtils.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.sendFile(
+    path.join(
+      __dirname,
+      '..',
+      '..',
+      'node_modules',
+      'three',
+      'examples',
+      'jsm',
+      'utils',
+      'BufferGeometryUtils.js',
+    ),
+  );
+});
+
 app.get('/modules/TransformControls.js', (req, res) => {
   res.setHeader('Content-Type', 'application/javascript');
   res.sendFile(
@@ -183,17 +234,17 @@ app.get('/modules/TextGeometry.js', (req, res) => {
   );
 });
 
-// Preload index.html
 const indexHtmlPath = path.join(currentDirname, '..', 'frontend', 'index.html');
-let indexHtmlCache;
+let indexHtmlContent = null;
+
 try {
-  indexHtmlCache = fs.readFileSync(indexHtmlPath, 'utf8');
+  indexHtmlContent = fs.readFileSync(indexHtmlPath, 'utf8');
 } catch (err) {
   log.error('Failed to preload index.html:', err);
 }
 
-const injectNonce = (content, nonce) => {
-  return content
+const injectNonce = (html, nonce) => {
+  return html
     .replace(/<script /g, `<script nonce="${nonce}" `)
     .replace(/<style>/g, `<style nonce="${nonce}">`)
     .replace(/<link rel="stylesheet"/g, `<link rel="stylesheet" nonce="${nonce}"`);
@@ -201,8 +252,8 @@ const injectNonce = (content, nonce) => {
 
 // Serve index.html with injected nonce
 const serveIndex = (req, res) => {
-  if (indexHtmlCache) {
-    res.send(injectNonce(indexHtmlCache, res.locals.cspNonce));
+  if (indexHtmlContent) {
+    res.send(injectNonce(indexHtmlContent, res.locals.cspNonce));
     return;
   }
 
@@ -212,6 +263,7 @@ const serveIndex = (req, res) => {
       res.status(500).send('Internal Server Error');
       return;
     }
+    indexHtmlContent = data;
     res.send(injectNonce(data, res.locals.cspNonce));
   });
 };
