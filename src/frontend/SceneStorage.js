@@ -48,7 +48,7 @@ export class SceneStorage {
       return {
         itemSize: this.itemSize,
         type: this.array.constructor.name,
-        array: this.array,
+        array: this.array, // TypedArray will be efficiently cloned/replaced in worker
         normalized: this.normalized
       };
     };
