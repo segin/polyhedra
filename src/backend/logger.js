@@ -1,11 +1,11 @@
-import log from 'loglevel';
+import log from "loglevel";
 
-const createCircularReplacer = () => {
+const getCircularReplacer = () => {
   const seen = new WeakSet();
   return (key, value) => {
     if (typeof value === "object" && value !== null) {
       if (seen.has(value)) {
-        return '[Circular]';
+        return "[Circular]";
       }
       seen.add(value);
     }
@@ -24,19 +24,28 @@ log.methodFactory = (methodName, logLevel, loggerName) => {
       message,
       extra: args,
     };
+
+    let json;
     try {
-      rawMethod(JSON.stringify(logObject));
+      json = JSON.stringify(logObject);
     } catch (error) {
-      try {
-        rawMethod(JSON.stringify(logObject, createCircularReplacer()));
-      } catch (err) {
-        // Fallback for extremely weird cases
-        rawMethod(`Failed to stringify log object: ${err.message}`);
+      // Fallback to safe stringify if circular reference is detected
+      if (error instanceof TypeError) {
+        try {
+          json = JSON.stringify(logObject, getCircularReplacer());
+        } catch (fallbackError) {
+          // If it still fails (e.g. BigInt), rethrow original or fallback error
+          throw fallbackError;
+        }
+      } else {
+        throw error;
       }
     }
+
+    rawMethod(json);
   };
 };
 
-log.setLevel('info'); // Set the default log level
+log.setLevel("info"); // Set the default log level
 
 export default log;

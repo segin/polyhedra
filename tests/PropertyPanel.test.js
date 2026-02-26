@@ -1,94 +1,8 @@
 /**
  * Tests for Property Panel functionality
  */
-import { JSDOM } from 'jsdom';
 
-// Mock THREE.js
-jest.mock('three', () => {
-  const mockMesh = {
-    position: { x: 0, y: 0, z: 0, copy: jest.fn() },
-    rotation: { x: 0, y: 0, z: 0, copy: jest.fn() },
-    scale: { x: 1, y: 1, z: 1, copy: jest.fn() },
-    material: {
-      color: { getHex: jest.fn(() => 0x00ff00), setHex: jest.fn() },
-      emissive: { setHex: jest.fn() },
-      clone: jest.fn(() => ({
-        color: { getHex: jest.fn(() => 0x00ff00), setHex: jest.fn() },
-        emissive: { setHex: jest.fn() },
-      })),
-    },
-    geometry: {
-      type: 'BoxGeometry',
-      clone: jest.fn(),
-      dispose: jest.fn(),
-      parameters: { width: 1, height: 1, depth: 1 },
-    },
-    userData: { geometryParams: { width: 1, height: 1, depth: 1 } },
-    name: 'TestBox',
-    castShadow: false,
-    receiveShadow: false,
-    uuid: 'test-uuid-123',
-  };
-
-  return {
-    Scene: jest.fn(() => ({
-      add: jest.fn(),
-      remove: jest.fn(),
-    })),
-    PerspectiveCamera: jest.fn(() => ({
-      position: { set: jest.fn() },
-      lookAt: jest.fn(),
-      aspect: 1,
-      updateProjectionMatrix: jest.fn(),
-    })),
-    WebGLRenderer: jest.fn(() => ({
-      setSize: jest.fn(),
-      setPixelRatio: jest.fn(),
-      render: jest.fn(),
-      shadowMap: { enabled: false, type: null },
-      domElement: {
-        tagName: 'CANVAS',
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-      },
-    })),
-    Mesh: jest.fn(() => mockMesh),
-    BoxGeometry: jest.fn(() => ({
-      type: 'BoxGeometry',
-      parameters: { width: 1, height: 1, depth: 1 },
-      dispose: jest.fn(),
-    })),
-    SphereGeometry: jest.fn(() => ({
-      type: 'SphereGeometry',
-      parameters: { radius: 0.5, widthSegments: 32, heightSegments: 32 },
-      dispose: jest.fn(),
-    })),
-    MeshLambertMaterial: jest.fn(() => ({
-      color: { getHex: jest.fn(() => 0x00ff00), setHex: jest.fn(), clone: jest.fn() },
-      emissive: { setHex: jest.fn(), clone: jest.fn() },
-      clone: jest.fn(() => ({
-        color: { getHex: jest.fn(() => 0x00ff00), setHex: jest.fn() },
-        emissive: { setHex: jest.fn() },
-      })),
-      dispose: jest.fn(),
-    })),
-    AmbientLight: jest.fn(),
-    DirectionalLight: jest.fn(() => ({
-      position: { set: jest.fn() },
-      castShadow: false,
-      shadow: { mapSize: { width: 0, height: 0 } },
-    })),
-    GridHelper: jest.fn(),
-    AxesHelper: jest.fn(),
-    Raycaster: jest.fn(() => ({
-      setFromCamera: jest.fn(),
-      intersectObjects: jest.fn(() => []),
-    })),
-    Vector2: jest.fn(),
-    PCFSoftShadowMap: 'PCFSoftShadowMap',
-    DoubleSide: 'DoubleSide',
-  };
-});
+// Mock THREE is handled by jest.setup.cjs
 
 // Mock dat.gui
 const mockController = {
@@ -135,31 +49,21 @@ jest.mock('three/examples/jsm/controls/TransformControls.js', () => ({
 }));
 
 describe('Property Panel Functionality', () => {
-  let dom, App, app;
+  let app;
 
   beforeEach(() => {
-    // Setup DOM
-    dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-    global.document = dom.window.document;
-    global.window = dom.window;
+    // Setup environment (handled by jsdom environment)
+    if (typeof document !== 'undefined') {
+        document.body.innerHTML = '';
+    }
+    
     global.requestAnimationFrame = jest.fn();
     global.console.log = jest.fn(); // Suppress console.log from saveState
 
-    // Mock document methods
-    jest.spyOn(document.body, 'appendChild').mockImplementation();
-    jest.spyOn(window, 'addEventListener').mockImplementation();
-
-    jest.spyOn(document, 'createElement').mockImplementation((tagName) => ({
-      tagName: tagName.toUpperCase(),
-      style: {},
-      appendChild: jest.fn(),
-      textContent: '',
-      innerHTML: '',
-      onclick: null,
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      set cssText(value) {},
-    }));
+    // Mock methods that might be missing or need spying
+    if (typeof window !== 'undefined') {
+        window.scrollTo = jest.fn();
+    }
 
     // Clear mocks
     jest.clearAllMocks();
@@ -214,9 +118,7 @@ describe('Property Panel Functionality', () => {
   });
 
   afterEach(() => {
-    if (dom) {
-      dom.window.close();
-    }
+    jest.restoreAllMocks();
   });
 
   describe('updatePropertiesPanel', () => {

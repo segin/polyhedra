@@ -1,67 +1,69 @@
-import { performance } from 'perf_hooks';
-
-// Suppress output BEFORE importing logger to capture it during initialization if needed
-// and to suppress the actual output during benchmark
+// We need to mock console BEFORE importing logger because loglevel binds to console methods on import/initialization.
 const originalConsoleInfo = console.info;
 const originalConsoleLog = console.log;
+const originalConsoleError = console.error;
+const originalConsoleWarn = console.warn;
 
 console.info = () => {};
 console.log = () => {};
+console.error = () => {};
+console.warn = () => {};
 
-const { default: log } = await import('../src/backend/logger.js');
+// Use dynamic import
+const { default: log } = await import("../src/backend/logger.js");
 
 const iterations = 10000;
-
-// 1. Simple Object
-const simpleObj = { id: 1, name: 'Test' };
-
-// 2. Complex Object
-const complexObj = {
-  id: 1,
-  name: 'Complex',
-  nested: {
-    a: [1, 2, 3],
-    b: { c: 'deep' }
+const simpleObject = { foo: "bar" };
+const complexObject = {
+  a: 1,
+  b: "string",
+  c: {
+    d: [1, 2, 3],
+    e: {
+      f: "nested",
+    },
   },
-  meta: {
-    timestamp: new Date(),
-    tags: ['a', 'b', 'c']
-  }
 };
 
-// 3. Circular Object
-const circularObj = { name: 'Circular' };
-circularObj.self = circularObj;
+const circularObject = { ...complexObject };
+circularObject.self = circularObject;
 
-function runBenchmark(label, obj, expectFail = false) {
-  const start = performance.now();
-  let failed = false;
-  try {
-    for (let i = 0; i < iterations; i++) {
-      log.info('Benchmark', obj);
-    }
-  } catch (e) {
-    failed = true;
-  }
-  const end = performance.now();
+// Restore console.log specifically for our output (we keep others mocked to suppress logger)
+// But wait, if I restore console.log, and the logger uses console.log (e.g. for .debug?), it might leak.
+// log.info uses console.info.
+// So I can restore console.log to print results.
+console.log = originalConsoleLog;
 
-  if (failed) {
-    if (expectFail) {
-        // Use original console to report result
-        originalConsoleLog(`${label}: Crashed (Expected for baseline)`);
-    } else {
-        originalConsoleLog(`${label}: Crashed (Unexpected!)`);
-    }
-  } else {
-    originalConsoleLog(`${label}: ${(end - start).toFixed(2)}ms`);
-  }
+console.log("Starting benchmark...");
+
+// Warmup
+for (let i = 0; i < 100; i++) {
+  log.info("Warmup", i);
 }
 
-originalConsoleLog('--- Logger Benchmark (Silent) ---');
-runBenchmark('Simple Object', simpleObj);
-runBenchmark('Complex Object', complexObj);
-runBenchmark('Circular Object', circularObj, true);
+const startSimple = process.hrtime.bigint();
+for (let i = 0; i < iterations; i++) {
+  log.info("Simple message", i);
+}
+const endSimple = process.hrtime.bigint();
 
-// Restore console
+const startComplex = process.hrtime.bigint();
+for (let i = 0; i < iterations; i++) {
+  log.info("Complex message", complexObject);
+}
+const endComplex = process.hrtime.bigint();
+
+console.log(`Simple logs: ${Number(endSimple - startSimple) / 1e6} ms`);
+console.log(`Complex logs: ${Number(endComplex - startComplex) / 1e6} ms`);
+
+try {
+  log.info("Circular message", circularObject);
+  console.log("Circular log: SUCCESS");
+} catch (e) {
+  console.log("Circular log: FAILED (" + e.message + ")");
+}
+
+// Restore all
 console.info = originalConsoleInfo;
-console.log = originalConsoleLog;
+console.error = originalConsoleError;
+console.warn = originalConsoleWarn;
