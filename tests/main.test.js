@@ -2,35 +2,62 @@ import { App } from '../src/frontend/main.js';
 
 // Mock THREE.js
 jest.mock('three', () => {
-    const mockElement = { createElement: jest.fn(() => ({ tagName: 'CANVAS' })) };
+    const mockVector3 = {
+        x: 0, y: 0, z: 0,
+        set: jest.fn(function() { return this; }),
+        clone: jest.fn(function() { return { ...this }; }),
+        copy: jest.fn(function() { return this; }),
+        normalize: jest.fn(function() { return this; }),
+        applyQuaternion: jest.fn(function() { return this; }),
+        multiplyScalar: jest.fn(function() { return this; }),
+        sub: jest.fn(function() { return this; }),
+        add: jest.fn(function() { return this; }),
+    };
+
+    const mockQuaternion = {
+        x: 0, y: 0, z: 0, w: 1,
+        set: jest.fn(function() { return this; }),
+        copy: jest.fn(function() { return this; }),
+    };
 
     const mockMesh = {
-        position: { x: 0, y: 0, z: 0, copy: jest.fn(), clone: jest.fn() },
+        position: mockVector3,
         rotation: { x: 0, y: 0, z: 0, copy: jest.fn(), clone: jest.fn() },
         scale: { x: 1, y: 1, z: 1, copy: jest.fn(), clone: jest.fn() },
+        quaternion: mockQuaternion,
         material: {
-            emissive: { setHex: jest.fn(), clone: jest.fn() },
+            emissive: { setHex: jest.fn(), clone: jest.fn(), copy: jest.fn() },
             clone: jest.fn(() => ({ emissive: { setHex: jest.fn() } })),
-            color: { set: jest.fn(), getHexString: jest.fn(), clone: jest.fn() }
+            color: { set: jest.fn(), getHexString: jest.fn(), clone: jest.fn(), copy: jest.fn() },
+            dispose: jest.fn(),
+            copy: jest.fn(),
         },
-        geometry: { clone: jest.fn(), type: 'BoxGeometry', dispose: jest.fn() },
+        geometry: { clone: jest.fn(), type: 'BoxGeometry', dispose: jest.fn(), parameters: { width: 1, height: 1, depth: 1 } },
         castShadow: false,
         receiveShadow: false,
         name: 'test',
-        uuid: 'test-uuid'
+        uuid: 'test-uuid',
+        visible: true,
+        add: jest.fn(),
+        remove: jest.fn(),
+        parent: null,
+        children: [],
+        userData: {},
     };
 
     return {
         Scene: jest.fn(() => ({
             add: jest.fn(),
             remove: jest.fn(),
-            children: []
+            children: [],
+            dispatchEvent: jest.fn(),
         })),
         PerspectiveCamera: jest.fn(() => ({
-            position: { set: jest.fn(), clone: jest.fn() },
+            position: { set: jest.fn(), clone: jest.fn(), copy: jest.fn() },
             lookAt: jest.fn(),
             aspect: 1,
             updateProjectionMatrix: jest.fn(),
+            quaternion: mockQuaternion,
         })),
         WebGLRenderer: jest.fn(() => ({
             setSize: jest.fn(),
@@ -41,40 +68,69 @@ jest.mock('three', () => {
                 tagName: 'CANVAS',
                 addEventListener: jest.fn(),
                 removeEventListener: jest.fn(),
-                parentElement: { appendChild: jest.fn() }
+                parentElement: { appendChild: jest.fn() },
+                width: 800,
+                height: 600,
             },
+            dispose: jest.fn(),
         })),
         Mesh: jest.fn(() => mockMesh),
-        BoxGeometry: jest.fn(() => ({ type: 'BoxGeometry', parameters: { width: 1, height: 1, depth: 1 } })),
-        SphereGeometry: jest.fn(() => ({ type: 'SphereGeometry', parameters: { radius: 1 } })),
-        CylinderGeometry: jest.fn(),
-        ConeGeometry: jest.fn(),
-        TorusGeometry: jest.fn(),
-        PlaneGeometry: jest.fn(),
+        Group: jest.fn(() => ({
+            add: jest.fn(),
+            remove: jest.fn(),
+            children: [],
+            position: mockVector3,
+            rotation: { x: 0, y: 0, z: 0, copy: jest.fn() },
+            scale: { x: 1, y: 1, z: 1, copy: jest.fn() },
+            quaternion: mockQuaternion,
+            userData: {},
+            name: '',
+        })),
+        BoxGeometry: jest.fn(() => ({ type: 'BoxGeometry', parameters: { width: 1, height: 1, depth: 1 }, dispose: jest.fn() })),
+        SphereGeometry: jest.fn(() => ({ type: 'SphereGeometry', parameters: { radius: 1 }, dispose: jest.fn() })),
+        CylinderGeometry: jest.fn(() => ({ type: 'CylinderGeometry', parameters: { radiusTop: 1, radiusBottom: 1, height: 1 }, dispose: jest.fn() })),
+        ConeGeometry: jest.fn(() => ({ type: 'ConeGeometry', parameters: { radius: 1, height: 1 }, dispose: jest.fn() })),
+        TorusGeometry: jest.fn(() => ({ type: 'TorusGeometry', parameters: { radius: 1, tube: 0.5 }, dispose: jest.fn() })),
+        PlaneGeometry: jest.fn(() => ({ type: 'PlaneGeometry', parameters: { width: 1, height: 1 }, dispose: jest.fn() })),
         MeshLambertMaterial: jest.fn(() => ({
-            emissive: { setHex: jest.fn() },
+            emissive: { setHex: jest.fn(), copy: jest.fn() },
+            color: { set: jest.fn(), copy: jest.fn() },
             clone: jest.fn(() => ({ emissive: { setHex: jest.fn() } })),
+            dispose: jest.fn(),
+            copy: jest.fn(),
         })),
         MeshPhongMaterial: jest.fn(() => ({
-             color: { set: jest.fn() }
+             color: { set: jest.fn(), copy: jest.fn() },
+             emissive: { setHex: jest.fn(), copy: jest.fn() },
+             dispose: jest.fn(),
+             copy: jest.fn(),
         })),
-        AmbientLight: jest.fn(),
+        AmbientLight: jest.fn(() => ({
+            dispose: jest.fn(),
+            add: jest.fn(),
+            remove: jest.fn(),
+        })),
         DirectionalLight: jest.fn(() => ({
             position: { set: jest.fn(() => ({ normalize: jest.fn() })) },
             castShadow: false,
             shadow: { mapSize: { width: 0, height: 0 } },
+            dispose: jest.fn(),
+            add: jest.fn(),
+            remove: jest.fn(),
         })),
-        GridHelper: jest.fn(),
-        AxesHelper: jest.fn(),
+        GridHelper: jest.fn(() => ({ dispose: jest.fn() })),
+        AxesHelper: jest.fn(() => ({ dispose: jest.fn() })),
         Raycaster: jest.fn(() => ({
             setFromCamera: jest.fn(),
             intersectObjects: jest.fn(() => []),
         })),
-        Vector2: jest.fn(),
-        Vector3: jest.fn(),
-        Clock: jest.fn(() => ({ getDelta: jest.fn() })),
+        Vector2: jest.fn(() => ({ x: 0, y: 0, set: jest.fn() })),
+        Vector3: jest.fn(() => mockVector3),
+        Quaternion: jest.fn(() => mockQuaternion),
+        Clock: jest.fn(() => ({ getDelta: jest.fn(() => 0.016) })),
         PCFSoftShadowMap: 'PCFSoftShadowMap',
         DoubleSide: 'DoubleSide',
+        FrontSide: 'FrontSide',
         TOUCH: { ROTATE: 1, DOLLY_PAN: 2 },
     };
 });
@@ -113,6 +169,30 @@ jest.mock('dat.gui', () => ({
     })),
 }));
 
+// Mock OrbitControls
+jest.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
+    OrbitControls: jest.fn(() => ({
+        enableDamping: true,
+        dampingFactor: 0.05,
+        enabled: true,
+        update: jest.fn(),
+        touches: {},
+        target: { clone: jest.fn(() => ({ copy: jest.fn() })), copy: jest.fn() }
+    })),
+}));
+
+// Mock TransformControls
+jest.mock('three/examples/jsm/controls/TransformControls.js', () => ({
+    TransformControls: jest.fn(() => ({
+        addEventListener: jest.fn(),
+        setMode: jest.fn(),
+        attach: jest.fn(),
+        detach: jest.fn(),
+        dragging: false,
+    })),
+}));
+
+// Mocks for three/examples/jsm/ are handled by moduleNameMapper and tests/__mocks__/three-examples.js
 
 // Mock cannon-es
 jest.mock('cannon-es', () => ({
@@ -137,8 +217,17 @@ describe('App', () => {
     let app;
 
     beforeEach(() => {
-        // Setup DOM
-        document.body.innerHTML = '<div id="scene-graph"></div><button id="fullscreen"></button><button id="save-scene"></button><button id="load-scene"></button><input type="file" id="file-input"></body>';
+        // Setup environment (handled by jsdom environment)
+        if (typeof document !== 'undefined') {
+            document.body.innerHTML = `
+                <div id="scene-graph"></div>
+                <button id="fullscreen"></button>
+                <button id="save-scene"></button>
+                <button id="load-scene"></button>
+                <input type="file" id="file-input">
+            `;
+        }
+        
         global.requestAnimationFrame = jest.fn();
         global.URL = { createObjectURL: jest.fn(), revokeObjectURL: jest.fn() };
         global.Worker = jest.fn(() => ({
@@ -146,52 +235,14 @@ describe('App', () => {
             addEventListener: jest.fn()
         }));
 
-        // Mock document.body.appendChild
-        jest.spyOn(document.body, 'appendChild').mockImplementation();
-        jest.spyOn(window, 'addEventListener').mockImplementation();
-
-        // Mock document.createDocumentFragment
-        jest.spyOn(document, 'createDocumentFragment').mockImplementation(() => ({
-            appendChild: jest.fn(),
-            children: []
-        }));
-
-        // Mock document.createElement to return proper elements
-        jest.spyOn(document, 'createElement').mockImplementation((tagName) => {
-            const element = {
-                tagName: tagName.toUpperCase(),
-                style: {},
-                appendChild: jest.fn(),
-                textContent: '',
-                innerHTML: '',
-                onclick: null,
-                addEventListener: jest.fn(),
-                removeEventListener: jest.fn(),
-                setAttribute: jest.fn(),
-                id: ''
-            };
-
-            // Add style.cssText property
-            Object.defineProperty(element.style, 'cssText', {
-                set: jest.fn(),
-                get: jest.fn(),
-            });
-
-            return element;
-        });
-        
-        // Mock getElementById
-        const originalGetElementById = document.getElementById.bind(document);
-        document.getElementById = jest.fn((id) => {
-             if (['save-scene', 'load-scene', 'file-input', 'scene-graph'].includes(id)) {
-                 return {
-                     addEventListener: jest.fn(),
-                     style: {},
-                     appendChild: jest.fn()
-                 };
-             }
-             return originalGetElementById(id);
-        });
+        // Mock methods that might be missing or need spying
+        if (typeof window !== 'undefined') {
+            window.scrollTo = jest.fn();
+            // @ts-ignore
+            if (!window.HTMLElement.prototype.scrollIntoView) {
+                window.HTMLElement.prototype.scrollIntoView = jest.fn();
+            }
+        }
 
         // Clear mocks
         jest.clearAllMocks();
