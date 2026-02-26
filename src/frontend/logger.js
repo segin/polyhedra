@@ -1,6 +1,28 @@
 // @ts-check
 import { ToastManager } from './ToastManager.js';
-import log from 'loglevel';
+
+let log;
+
+if (typeof window !== 'undefined' && window.log) {
+    log = window.log;
+} else if (typeof window !== 'undefined' && window.loglevel) {
+    log = window.loglevel;
+} else {
+    // Fallback for tests or if script failed to load
+    log = {
+        trace: console.trace,
+        debug: console.debug,
+        info: console.info,
+        warn: console.warn,
+        error: console.error,
+        setLevel: () => {},
+        setDefaultLevel: () => {},
+        enableAll: () => {},
+        disableAll: () => {},
+        methodFactory: () => {},
+        getLogger: () => log,
+    };
+}
 
 // Set default level
 try {

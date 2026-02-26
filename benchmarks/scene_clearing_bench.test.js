@@ -1,26 +1,8 @@
 jest.unmock('three'); // Use real Three.js for accurate benchmarking
 
 import * as THREE from 'three';
-import { SceneStorage } from '../src/frontend/SceneStorage.js';
-import { JSDOM } from 'jsdom';
-import JSZip from 'jszip';
 
-jest.mock('jszip');
-
-// Setup JSDOM for window/document
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
-    url: 'http://localhost/',
-    pretendToBeVisual: true
-});
-global.window = dom.window;
-global.document = dom.window.document;
-
-if (typeof URL.createObjectURL === 'undefined') {
-    Object.defineProperty(URL, 'createObjectURL', { value: jest.fn() });
-    Object.defineProperty(URL, 'revokeObjectURL', { value: jest.fn() });
-}
-
-// Mock Worker
+// Mock Worker and JSZip locally since global mocks might be minimal
 class MockWorker {
     constructor() {
         this.onmessage = null;
@@ -39,11 +21,9 @@ class MockWorker {
     }
     terminate() {}
 }
-global.Worker = MockWorker;
 
-// Mock JSZip
-JSZip.mockImplementation(() => ({
-    loadAsync: () => {
+const MockJSZip = class JSZip {
+    loadAsync() {
         return Promise.resolve({
             file: (name) => {
                 if (name === 'scene.json') return { async: () => Promise.resolve('{}') };
@@ -52,7 +32,7 @@ JSZip.mockImplementation(() => ({
             }
         });
     }
-}));
+};
 
 // Mock EventBus
 const mockEventBus = { publish: jest.fn(), subscribe: jest.fn() };
@@ -63,14 +43,35 @@ jest.mock('../src/frontend/logger.js', () => ({
     default: { error: jest.fn(), info: jest.fn() }
 }));
 
-
 describe('Scene Clearing Performance', () => {
+    let SceneStorage;
     let scene;
     let sceneStorage;
 
-    beforeEach(() => {
+    beforeEach(async () => {
+        // Setup environment (handled by jsdom environment)
+        if (typeof document !== 'undefined') {
+            document.body.innerHTML = '';
+        }
+        
+        global.Worker = MockWorker;
+        global.JSZip = MockJSZip;
+        global.window.JSZip = MockJSZip;
+
+        global.URL = {
+            createObjectURL: jest.fn(),
+            revokeObjectURL: jest.fn()
+        };
+
+        const module = await import('../src/frontend/SceneStorage.js');
+        SceneStorage = module.SceneStorage;
+
         scene = new THREE.Scene();
         sceneStorage = new SceneStorage(scene, mockEventBus);
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
     });
 
     const runBenchmark = async (count) => {

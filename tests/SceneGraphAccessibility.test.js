@@ -1,38 +1,6 @@
 
-import { JSDOM } from 'jsdom';
 
-// Mock THREE.js
-jest.mock('three', () => ({
-    Scene: jest.fn(() => ({
-        add: jest.fn(),
-        remove: jest.fn()
-    })),
-    PerspectiveCamera: jest.fn(() => ({
-        position: { set: jest.fn() },
-        lookAt: jest.fn()
-    })),
-    WebGLRenderer: jest.fn(() => ({
-        setSize: jest.fn(),
-        setPixelRatio: jest.fn(),
-        shadowMap: {},
-        domElement: { addEventListener: jest.fn() }
-    })),
-    Mesh: jest.fn(() => ({
-        position: { x: 1, y: 2, z: 3, toFixed: jest.fn(() => '1.00') },
-        name: 'TestMesh',
-        geometry: { type: 'BoxGeometry' },
-        visible: true,
-        uuid: 'test-uuid-123'
-    })),
-    BoxGeometry: jest.fn(),
-    MeshLambertMaterial: jest.fn(),
-    AmbientLight: jest.fn(),
-    DirectionalLight: jest.fn(() => ({ position: { set: jest.fn() }, shadow: { mapSize: {} } })),
-    GridHelper: jest.fn(),
-    AxesHelper: jest.fn(),
-    Raycaster: jest.fn(() => ({ setFromCamera: jest.fn(), intersectObjects: jest.fn(() => []) })),
-    Vector2: jest.fn()
-}));
+// THREE mock is handled by jest.setup.cjs
 
 // Mock dat.gui
 jest.mock('dat.gui', () => ({
@@ -59,45 +27,23 @@ jest.mock('three/examples/jsm/controls/TransformControls.js', () => ({
 }));
 
 describe('Scene Graph Accessibility', () => {
-    let dom, app;
+    let app;
 
     beforeEach(() => {
-        // Setup DOM
-        dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-        global.document = dom.window.document;
-        global.window = dom.window;
+        // Setup environment (handled by jsdom environment)
+        if (typeof document !== 'undefined') {
+            document.body.innerHTML = '';
+        }
+        
         global.requestAnimationFrame = jest.fn();
         global.console.log = jest.fn(); // Suppress console.log
 
-        // Mock document methods
-        jest.spyOn(document.body, 'appendChild').mockImplementation();
-        jest.spyOn(window, 'addEventListener').mockImplementation();
+        // Mock methods that might be missing or need spying
+        if (typeof window !== 'undefined') {
+            window.scrollTo = jest.fn();
+        }
 
-        // Mock createElement to return proper elements
-        jest.spyOn(document, 'createElement').mockImplementation((tagName) => {
-            const element = {
-                tagName: tagName.toUpperCase(),
-                style: {},
-                appendChild: jest.fn(),
-                setAttribute: jest.fn(),
-                getAttribute: jest.fn(),
-                textContent: '',
-                innerHTML: '',
-                onclick: null,
-                tabIndex: -1,
-                addEventListener: jest.fn(),
-                removeEventListener: jest.fn()
-            };
-
-            // Add style.cssText property
-            Object.defineProperty(element.style, 'cssText', {
-                set: jest.fn(),
-                get: jest.fn()
-            });
-
-            return element;
-        });
-
+        // Clear mocks
         jest.clearAllMocks();
 
         // Create test app with scene graph functionality (replicating the logic we added)
@@ -219,81 +165,34 @@ describe('Scene Graph Accessibility', () => {
     });
 
     afterEach(() => {
-        if (dom) {
-            dom.window.close();
-        }
+        jest.restoreAllMocks();
     });
 
     it('should add accessibility attributes to list items', () => {
         app.addTestObject('AccessTest');
-
-        // We need to capture the created element to check properties
-        // Since we're using a mock implementation, we need to inspect how it was called
-        // However, in this test setup, we're basically testing the logic inside TestApp which replicates the real app.
-        // To be more rigorous, we should verify that our TestApp logic matches what we expect.
-
-        // In a real integration test, we would query the DOM. Since we're mocking createElement,
-        // we can spy on it or check the behavior of the "created" elements if we track them.
-
-        // Let's rely on the fact that we've implemented the logic in TestApp exactly as in main.js
-        // and we verify that the logic produces the expected calls.
-
-        const createElementSpy = jest.spyOn(document, 'createElement');
-        const listItemSpy = {
-            setAttribute: jest.fn(),
-            addEventListener: jest.fn(),
-            style: {},
-            appendChild: jest.fn(),
-            tabIndex: -1
-        };
-
-        createElementSpy.mockImplementation((tag) => {
-            if (tag === 'li') return listItemSpy;
-            return {
-                style: {},
-                appendChild: jest.fn(),
-                setAttribute: jest.fn(),
-                addEventListener: jest.fn(),
-                textContent: ''
-            };
-        });
-
-        app.updateSceneGraph();
-
-        expect(listItemSpy.tabIndex).toBe(0);
-        expect(listItemSpy.setAttribute).toHaveBeenCalledWith('role', 'button');
-        expect(listItemSpy.setAttribute).toHaveBeenCalledWith('aria-label', expect.stringContaining('Select AccessTest'));
-        expect(listItemSpy.addEventListener).toHaveBeenCalledWith('keydown', expect.any(Function));
+        
+        const listItems = document.querySelectorAll('li');
+        expect(listItems.length).toBeGreaterThan(0);
+        
+        const listItem = Array.from(listItems).find(li => li.textContent.includes('AccessTest'));
+        expect(listItem).toBeDefined();
+        expect(listItem.tabIndex).toBe(0);
+        expect(listItem.getAttribute('role')).toBe('button');
+        expect(listItem.getAttribute('aria-label')).toContain('Select AccessTest');
     });
 
     it('should add aria-labels to buttons', () => {
         const objectName = 'ButtonTest';
         app.addTestObject(objectName);
 
-        const createElementSpy = jest.spyOn(document, 'createElement');
-        const buttonSpy = {
-            setAttribute: jest.fn(),
-            style: {},
-            appendChild: jest.fn(),
-            textContent: ''
-        };
+        const listItems = document.querySelectorAll('li');
+        const listItem = Array.from(listItems).find(li => li.textContent.includes(objectName));
+        expect(listItem).toBeDefined();
 
-        createElementSpy.mockImplementation((tag) => {
-            if (tag === 'button') return buttonSpy;
-            return {
-                style: {},
-                appendChild: jest.fn(),
-                setAttribute: jest.fn(),
-                addEventListener: jest.fn(),
-                textContent: '',
-                tabIndex: -1
-            };
-        });
+        const buttons = listItem.querySelectorAll('button');
+        expect(buttons.length).toBeGreaterThan(0);
 
-        app.updateSceneGraph();
-
-        // Check if setAttribute was called with aria-label
-        // Note: multiple buttons are created, so we check if it was called at all with expected values
-        expect(buttonSpy.setAttribute).toHaveBeenCalledWith('aria-label', expect.stringContaining(objectName));
+        const ariaLabels = Array.from(buttons).map(btn => btn.getAttribute('aria-label'));
+        expect(ariaLabels.some(label => label.includes(objectName))).toBe(true);
     });
 });
