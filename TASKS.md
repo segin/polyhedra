@@ -41,10 +41,6 @@ This document is the single source of truth for all tasks, specifications, sugge
 
 ## 2. Full Findings
 
-### Security Findings
-
-### Code Quality & Maintainability
-
 
 ### Correctness & Testing
 - [ ] **TEST-001** (Critical): Jest Worker crashes due to circular JSON serialization. (Tests (General)) -> Remediation: Ensure tests do not return/log circular Three.js objects.
