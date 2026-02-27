@@ -44,10 +44,6 @@ This document is the single source of truth for all tasks, specifications, sugge
 ### Security Findings
 
 ### Code Quality & Maintainability
-- [ ] **MAINT-001** (High): Monolithic `App` class handles UI, State, Scene, and Input. (`src/frontend/main.js`) -> Remediation: Refactor `App` into `UIManager`, `InputController`, etc.
-- [ ] **MAINT-002** (High): Cyclomatic Complexity hotspot (130). (`src/frontend/main.js`) -> Remediation: Extract methods, implement Command pattern for actions.
-- [ ] **MAINT-003** (Medium): Duplicate code in `add*` primitive methods. (`src/frontend/main.js`) -> Remediation: Create a data-driven `PrimitiveFactory` or helper method.
-- [ ] **MAINT-004** (Medium): No Linting Configuration found (created during audit). (Root) -> Remediation: Commit `eslint.config.mjs` and enforce in CI.
 
 ### Performance
 - [ ] **PERF-001** (Medium): `updateSceneGraph` clears `innerHTML` and rebuilds DOM. (`src/frontend/main.js`) -> Remediation: Implement Virtual DOM or fine-grained DOM updates.
