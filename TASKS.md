@@ -42,7 +42,6 @@ This document is the single source of truth for all tasks, specifications, sugge
 ## 2. Full Findings
 
 ### Security Findings
-- [ ] **SEC-001** (High): CSP allows `unsafe-inline` for scripts and styles. (`src/backend/server.js:15-16`) -> Remediation: Use a cryptographic nonce or hash for inline scripts (Import Maps).
 - [ ] **SEC-002** (Medium): No rate limiting configured on the Express server. (`src/backend/server.js`) -> Remediation: Implement `express-rate-limit` middleware.
 - [ ] **SEC-003** (Low): Static files served from `node_modules`. (`src/backend/server.js`) -> Remediation: Bundle assets during build or copy to `public/vendor`.
 
