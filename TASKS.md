@@ -42,35 +42,23 @@ This document is the single source of truth for all tasks, specifications, sugge
 ## 2. Full Findings
 
 ### Security Findings
-
-| ID | Severity | finding | File/Location | Remediation |
-|----|----------|---------|---------------|-------------|
-| SEC-001 | High | CSP allows `unsafe-inline` for scripts and styles. | `src/backend/server.js:15-16` | Use a cryptographic nonce or hash for inline scripts (Import Maps). |
-| SEC-002 | Medium | No rate limiting configured on the Express server. | `src/backend/server.js` | Implement `express-rate-limit` middleware. |
-| SEC-003 | Low | Static files served from `node_modules`. | `src/backend/server.js` | Bundle assets during build or copy to `public/vendor`. |
+- [ ] **SEC-001** (High): CSP allows `unsafe-inline` for scripts and styles. (`src/backend/server.js:15-16`) -> Remediation: Use a cryptographic nonce or hash for inline scripts (Import Maps).
+- [ ] **SEC-002** (Medium): No rate limiting configured on the Express server. (`src/backend/server.js`) -> Remediation: Implement `express-rate-limit` middleware.
+- [ ] **SEC-003** (Low): Static files served from `node_modules`. (`src/backend/server.js`) -> Remediation: Bundle assets during build or copy to `public/vendor`.
 
 ### Code Quality & Maintainability
-
-| ID | Severity | Finding | File/Location | Remediation |
-|----|----------|---------|---------------|-------------|
-| MAINT-001 | High | Monolithic `App` class handles UI, State, Scene, and Input. | `src/frontend/main.js` | Refactor `App` into `UIManager`, `InputController`, etc. |
-| MAINT-002 | High | Cyclomatic Complexity hotspot (130). | `src/frontend/main.js` | Extract methods, implement Command pattern for actions. |
-| MAINT-003 | Medium | Duplicate code in `add*` primitive methods. | `src/frontend/main.js` | Create a data-driven `PrimitiveFactory` or helper method. |
-| MAINT-004 | Medium | No Linting Configuration found (created during audit). | Root | Commit `eslint.config.mjs` and enforce in CI. |
+- [ ] **MAINT-001** (High): Monolithic `App` class handles UI, State, Scene, and Input. (`src/frontend/main.js`) -> Remediation: Refactor `App` into `UIManager`, `InputController`, etc.
+- [ ] **MAINT-002** (High): Cyclomatic Complexity hotspot (130). (`src/frontend/main.js`) -> Remediation: Extract methods, implement Command pattern for actions.
+- [ ] **MAINT-003** (Medium): Duplicate code in `add*` primitive methods. (`src/frontend/main.js`) -> Remediation: Create a data-driven `PrimitiveFactory` or helper method.
+- [ ] **MAINT-004** (Medium): No Linting Configuration found (created during audit). (Root) -> Remediation: Commit `eslint.config.mjs` and enforce in CI.
 
 ### Performance
-
-| ID | Severity | Finding | File/Location | Remediation |
-|----|----------|---------|---------------|-------------|
-| PERF-001 | Medium | `updateSceneGraph` clears `innerHTML` and rebuilds DOM. | `src/frontend/main.js` | Implement Virtual DOM or fine-grained DOM updates. |
-| PERF-002 | Medium | `restoreState` disposes and recreates all meshes. | `src/frontend/main.js` | Implement object pooling or diff-based state restoration. |
+- [ ] **PERF-001** (Medium): `updateSceneGraph` clears `innerHTML` and rebuilds DOM. (`src/frontend/main.js`) -> Remediation: Implement Virtual DOM or fine-grained DOM updates.
+- [ ] **PERF-002** (Medium): `restoreState` disposes and recreates all meshes. (`src/frontend/main.js`) -> Remediation: Implement object pooling or diff-based state restoration.
 
 ### Correctness & Testing
-
-| ID | Severity | Finding | File/Location | Remediation |
-|----|----------|---------|---------------|-------------|
-| TEST-001 | Critical | Jest Worker crashes due to circular JSON serialization. | Tests (General) | Ensure tests do not return/log circular Three.js objects. |
-| TEST-002 | High | Mocking failures (`eventBus.subscribe`, `three` imports). | `tests/SceneGraph.test.js` | Fix Jest mocks to match module structure. |
+- [ ] **TEST-001** (Critical): Jest Worker crashes due to circular JSON serialization. (Tests (General)) -> Remediation: Ensure tests do not return/log circular Three.js objects.
+- [ ] **TEST-002** (High): Mocking failures (`eventBus.subscribe`, `three` imports). (`tests/SceneGraph.test.js`) -> Remediation: Fix Jest mocks to match module structure.
 
 ## 3. Metrics
 *   **Total LOC:** 9341
