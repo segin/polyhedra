@@ -42,7 +42,6 @@ This document is the single source of truth for all tasks, specifications, sugge
 ## 2. Full Findings
 
 ### Security Findings
-- [ ] **SEC-003** (Low): Static files served from `node_modules`. (`src/backend/server.js`) -> Remediation: Bundle assets during build or copy to `public/vendor`.
 
 ### Code Quality & Maintainability
 - [ ] **MAINT-001** (High): Monolithic `App` class handles UI, State, Scene, and Input. (`src/frontend/main.js`) -> Remediation: Refactor `App` into `UIManager`, `InputController`, etc.
