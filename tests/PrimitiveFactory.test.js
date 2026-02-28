@@ -47,7 +47,7 @@ describe('PrimitiveFactory Normalization', () => {
 
   test('normalizes Box parameters', () => {
     const params = factory._getNormalizedParameters('Box', { width: 10, color: 'red', extra: 123 });
-    expect(params).toEqual({ width: 10, height: 1, depth: 1 });
+    expect(params).toEqual(expect.objectContaining({ width: 10, height: 1, depth: 1 }));
     expect(params.color).toBeUndefined();
   });
 

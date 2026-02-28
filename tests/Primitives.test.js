@@ -79,7 +79,7 @@ describe('3D Primitives Functionality', () => {
       const THREE = require('three');
       await app.addBox();
 
-      expect(THREE.BoxGeometry).toHaveBeenCalledWith(1, 1, 1);
+        expect(THREE.BoxGeometry).toHaveBeenCalledWith(1, 1, 1, 1, 1, 1);
     });
 
     it('should create Sphere with correct radius and segments', async () => {
@@ -134,7 +134,7 @@ describe('3D Primitives Functionality', () => {
     it('should create Plane with correct dimensions and double-sided material', () => {
         const THREE = require('three');
         app.addPlane();
-        expect(THREE.PlaneGeometry).toHaveBeenCalledWith(2, 2);
+        expect(THREE.PlaneGeometry).toHaveBeenCalledWith(2, 2, 1, 1);
         // Primitives use Phong in this version of the app
         expect(THREE.MeshPhongMaterial).toHaveBeenCalledWith(expect.objectContaining({
             color: 0x00ff00,

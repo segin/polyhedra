@@ -1,4 +1,4 @@
-const jest = global.jest;
+
 console.log('DEBUG: Loading three-examples.js mock');
 
 class OrbitControls {

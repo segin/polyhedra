@@ -1,0 +1,1786 @@
+(node:1232921) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS tests/Integration.test.js (8.09 s)
+PASS tests/UndoRedo.test.js
+(node:1232922) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:1232935) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS tests/GroupManager.test.js (10.252 s)
+PASS tests/ObjectManager.test.js (9.891 s)
+PASS tests/SceneGraphAccessibility.test.js
+(node:1232923) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS tests/SceneGraphOutliner.test.js (10.334 s)
+PASS tests/verify_scene_graph_behavior.test.js
+(node:1232941) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS tests/main.test.js (11.997 s)
+PASS tests/PropertyPanel.test.js
+FAIL tests/redundant_render_check.test.js
+  ● Test suite failed to run
+
+    TypeError: _three.Ray is not a constructor
+
+      1 | // @ts-check
+      2 | import * as THREE from 'three';
+    > 3 | import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+        | ^
+      4 | import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
+      5 | import { GUI } from 'dat.gui';
+      6 | import { SceneStorage } from './SceneStorage.js';
+
+      at Object.<anonymous> (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:24:14)
+      at Object.require (src/frontend/main.js:3:1)
+      at Object.require (tests/redundant_render_check.test.js:4:1)
+
+PASS tests/LightManager.test.js
+PASS tests/SceneStorage.test.js
+PASS tests/scene_graph_diff_verification.test.js
+PASS tests/Pointer.test.js
+PASS benchmarks/csg_bench.test.js
+  ● Console
+
+    console.log
+      Starting CSG Benchmark (Async Union)...
+
+      at Object.log (benchmarks/csg_bench.test.js:114:13)
+
+    console.log
+      CSG Initiation (Main Thread Blocking): 1.00 ms
+
+      at Object.log (benchmarks/csg_bench.test.js:122:13)
+
+    console.log
+      CSG Total Duration (Async): 44.03 ms
+
+      at Object.log (benchmarks/csg_bench.test.js:129:13)
+
+FAIL benchmarks/scene_graph_bench.test.js
+  ● SceneGraph Performance › updateSceneGraph performance with 1000 objects
+
+    TypeError: quat.clone(...).invert is not a function
+
+      369 |
+      370 |   setupControls() {
+    > 371 |     this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement);
+          |                          ^
+      372 |     this.orbitControls.enableDamping = true;
+      373 |     this.orbitControls.dampingFactor = 0.05;
+      374 |
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at App.setupControls (src/frontend/main.js:371:26)
+      at new setupControls (src/frontend/main.js:98:10)
+      at Object.<anonymous> (benchmarks/scene_graph_bench.test.js:86:21)
+
+PASS tests/PhysicsManager.test.js
+PASS tests/ShaderEditor.test.js
+PASS tests/SceneManager.test.js
+(node:1232934) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+FAIL tests/Primitives.test.js (20.583 s)
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Box with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Sphere with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Cylinder with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Cone with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Torus with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create TorusKnot with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Tetrahedron with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Icosahedron with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Dodecahedron with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Octahedron with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Plane with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Tube with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Teapot as a Group with multiple components
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Box with correct dimensions
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Sphere with correct radius and segments
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Sphere with correct radius and segments
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Cylinder with correct parameters
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Cone with correct radius and height
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Torus with correct major and minor radius
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create TorusKnot with correct parameters
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create polyhedrons with correct radius
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Plane with correct dimensions and double-sided material
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Tube with curve and correct parameters
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Object Naming and Counting › should name objects with incremental counters
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Object Naming and Counting › should maintain correct object count
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Material Properties › should assign color 0x00ff00 to primitives by default
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Material Properties › should create materials for all primitive types
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Scene Integration › should add all primitives to the scene
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Scene Integration › should select newly created objects
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Scene Integration › should call saveState for each primitive creation
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Scene Integration › should update scene graph for each primitive creation
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Shadow Properties › should enable shadows for all primitives
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Complex Primitives › should create Tube with proper curve definition
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Complex Primitives › should create Teapot with all components positioned correctly
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+PASS tests/benchmark_serialization.test.js
+  ● Console
+
+    console.log
+      Benchmarking with 100000 vertices...
+
+      at Object.log (tests/benchmark_serialization.test.js:49:17)
+
+    console.log
+      Current Method Time: 1659.77ms
+
+      at Object.log (tests/benchmark_serialization.test.js:61:17)
+
+    console.log
+      Current JSON Length: 6.09 MB
+
+      at Object.log (tests/benchmark_serialization.test.js:62:17)
+
+    console.log
+      Optimized Method Time: 0.40ms
+
+      at Object.log (tests/benchmark_serialization.test.js:84:17)
+
+    console.log
+      Optimized JSON Length: 0.00 MB
+
+      at Object.log (tests/benchmark_serialization.test.js:85:17)
+
+    console.log
+      Extracted Buffers: 2
+
+      at Object.log (tests/benchmark_serialization.test.js:86:17)
+
+    console.log
+      Speedup: 4141.82x
+
+      at Object.log (tests/benchmark_serialization.test.js:97:21)
+
+FAIL tests/benchmark_restoreState.test.js
+  ● Performance Benchmark: restoreState › Benchmark: restoreState with 100 objects
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/benchmark_restoreState.test.js:23:15)
+
+PASS tests/Toolbar.test.js (8.259 s)
+PASS tests/Logger.test.js
+PASS tests/PrimitiveFactory.test.js
+  ● Console
+
+    console.log
+      DEBUG: Loading three-examples.js mock
+
+      at Object.log (tests/__mocks__/three-examples.js:2:9)
+
+    console.log
+      Mock Exports: {
+        __esModule: true,
+        OrbitControls: [class OrbitControls],
+        TransformControls: [class TransformControls],
+        TeapotGeometry: [class TeapotGeometry],
+        FontLoader: [class FontLoader],
+        TextGeometry: [class TextGeometry],
+        GLTFLoader: [class GLTFLoader],
+        OBJExporter: [class OBJExporter],
+        STLExporter: [class STLExporter],
+        default: {
+          OrbitControls: [class OrbitControls],
+          TransformControls: [class TransformControls],
+          TeapotGeometry: [class TeapotGeometry],
+          FontLoader: [class FontLoader],
+          TextGeometry: [class TextGeometry],
+          GLTFLoader: [class GLTFLoader],
+          OBJExporter: [class OBJExporter],
+          STLExporter: [class STLExporter]
+        }
+      }
+
+      at Object.log (tests/PrimitiveFactory.test.js:39:9)
+
+PASS src/tests/StateManager.test.js
+PASS tests/Engine.test.js
+FAIL tests/benchmark_primitives.test.js
+  ● Primitive Creation Benchmark › Benchmark: addBox 1000 times
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/benchmark_primitives.test.js:64:11)
+
+PASS tests/verify_physics_update.test.js
+PASS benchmarks/scene_clearing_bench.test.js
+  ● Console
+
+    console.log
+      [BENCHMARK] Clearing 1000 objects: 117.92ms
+
+      at Object.log (benchmarks/scene_clearing_bench.test.js:94:17)
+
+    console.log
+      [BENCHMARK] Clearing 5000 objects: 18.76ms
+
+      at Object.log (benchmarks/scene_clearing_bench.test.js:99:17)
+
+    console.log
+      [BENCHMARK] Clearing 10000 objects: 15.34ms
+
+      at Object.log (benchmarks/scene_clearing_bench.test.js:104:17)
+
+FAIL tests/Accessibility.test.js
+  ● Scene Graph Accessibility › Scene graph list items should have accessibility attributes
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Accessibility.test.js:42:15)
+
+  ● Scene Graph Accessibility › Visibility and Delete buttons should have ARIA labels
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Accessibility.test.js:42:15)
+
+FAIL tests/verify_a11y.test.js
+  ● Accessibility Verification › should create scene graph buttons with accessibility attributes
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/verify_a11y.test.js:31:29)
+
+PASS benchmarks/scene_graph_diff_bench.test.js (14.391 s)
+  ● Console
+
+    console.log
+      Rebuild Time (5000 objects): 1123.451 ms
+
+      at Object.log (benchmarks/scene_graph_diff_bench.test.js:163:17)
+
+    console.log
+      Diff Update Time (1 change): 42.247 ms
+
+      at Object.log (benchmarks/scene_graph_diff_bench.test.js:164:17)
+
+PASS benchmarks/scene_serialization_bench.test.js
+  ● Console
+
+    console.log
+      [BENCHMARK] Serialization (100 segments): 60.49ms
+
+      at Object.log (benchmarks/scene_serialization_bench.test.js:96:17)
+
+    console.log
+      [BENCHMARK] Serialization (300 segments): 5.16ms
+
+      at Object.log (benchmarks/scene_serialization_bench.test.js:101:17)
+
+PASS tests/benchmark_clearScene.test.js
+  ● Console
+
+    console.log
+      [Benchmark] Clear 20000 objects using remove(children[0]): 84.70ms
+
+      at Object.log (tests/benchmark_clearScene.test.js:33:13)
+
+    console.log
+      [Benchmark] Clear 20000 objects using pop(): 8.69ms
+
+      at Object.log (tests/benchmark_clearScene.test.js:54:13)
+
+PASS tests/ToastManager.test.js
+PASS tests/EventBus.test.js
+PASS tests/logger.test.js
+PASS tests/backend.test.js
+PASS tests/mock_loader_verification_cjs_manual.test.js
+  ● Console
+
+    console.log
+      Imported: [Function: mockConstructor] {
+        _isMockFunction: true,
+        getMockImplementation: [Function (anonymous)],
+        mock: [Getter/Setter],
+        mockClear: [Function (anonymous)],
+        mockReset: [Function (anonymous)],
+        mockRestore: [Function (anonymous)],
+        mockReturnValueOnce: [Function (anonymous)],
+        mockResolvedValueOnce: [Function (anonymous)],
+        mockRejectedValueOnce: [Function (anonymous)],
+        mockReturnValue: [Function (anonymous)],
+        mockResolvedValue: [Function (anonymous)],
+        mockRejectedValue: [Function (anonymous)],
+        mockImplementationOnce: [Function (anonymous)],
+        withImplementation: [Function: bound withImplementation],
+        mockImplementation: [Function (anonymous)],
+        mockReturnThis: [Function (anonymous)],
+        mockName: [Function (anonymous)],
+        getMockName: [Function (anonymous)],
+        Symbol(Symbol.dispose): [Function (anonymous)]
+      }
+
+      at Object.log (tests/mock_loader_verification_cjs_manual.test.js:1:114)
+
+    console.log
+      Instance: {
+        load: [Function: mockConstructor] {
+          _isMockFunction: true,
+          getMockImplementation: [Function (anonymous)],
+          mock: [Getter/Setter],
+          mockClear: [Function (anonymous)],
+          mockReset: [Function (anonymous)],
+          mockRestore: [Function (anonymous)],
+          mockReturnValueOnce: [Function (anonymous)],
+          mockResolvedValueOnce: [Function (anonymous)],
+          mockRejectedValueOnce: [Function (anonymous)],
+          mockReturnValue: [Function (anonymous)],
+          mockResolvedValue: [Function (anonymous)],
+          mockRejectedValue: [Function (anonymous)],
+          mockImplementationOnce: [Function (anonymous)],
+          withImplementation: [Function: bound withImplementation],
+          mockImplementation: [Function (anonymous)],
+          mockReturnThis: [Function (anonymous)],
+          mockName: [Function (anonymous)],
+          getMockName: [Function (anonymous)],
+          Symbol(Symbol.dispose): [Function (anonymous)]
+        }
+      }
+
+      at Object.log (tests/mock_loader_verification_cjs_manual.test.js:1:185)
+
+(node:1232945) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS benchmarks/scene_graph_update_bench.test.js (30.687 s)
+  ● Console
+
+    console.log
+      Baseline with 5000 objects took: 15006.469 ms
+
+      at Object.log (benchmarks/scene_graph_update_bench.test.js:179:17)
+
+    console.log
+      Optimized with 5000 objects took: 7614.870 ms
+
+      at Object.log (benchmarks/scene_graph_update_bench.test.js:202:17)
+
+PASS tests/server_rate_limit.test.js
+  ● Console
+
+    console.log
+      Success: 95, Rate Limited: 15
+
+      at Object.log (tests/server_rate_limit.test.js:30:13)
+
+PASS benchmarks/physics_removeBody.test.js (22.946 s)
+PASS tests/benchmark_updateSceneGraph.test.js (21.172 s)
+  ● Console
+
+    console.log
+      [Benchmark] updateSceneGraph x50 with 1000 objects: 15063.14ms
+
+      at Object.log (tests/benchmark_updateSceneGraph.test.js:129:17)
+
+    console.log
+      [Benchmark] Average per call: 301.26ms
+
+      at Object.log (tests/benchmark_updateSceneGraph.test.js:130:17)
+
+PASS benchmarks/object_deletion_bench.test.js (18.442 s)
+  ● Console
+
+    console.log
+      Deleting group with 10000 children took 370.6662 ms
+
+      at Object.log (benchmarks/object_deletion_bench.test.js:76:13)
+
+PASS tests/benchmark_physics_removeBody.test.js (25.506 s)
+  ● Console
+
+    console.log
+      Average time to remove 5000 bodies over 5 runs: 198.22ms
+
+      at Object.log (tests/benchmark_physics_removeBody.test.js:48:17)
+
+A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+
+Summary of all failing tests
+FAIL tests/redundant_render_check.test.js
+  ● Test suite failed to run
+
+    TypeError: _three.Ray is not a constructor
+
+      1 | // @ts-check
+      2 | import * as THREE from 'three';
+    > 3 | import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+        | ^
+      4 | import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
+      5 | import { GUI } from 'dat.gui';
+      6 | import { SceneStorage } from './SceneStorage.js';
+
+      at Object.<anonymous> (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:24:14)
+      at Object.require (src/frontend/main.js:3:1)
+      at Object.require (tests/redundant_render_check.test.js:4:1)
+
+FAIL benchmarks/scene_graph_bench.test.js
+  ● SceneGraph Performance › updateSceneGraph performance with 1000 objects
+
+    TypeError: quat.clone(...).invert is not a function
+
+      369 |
+      370 |   setupControls() {
+    > 371 |     this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement);
+          |                          ^
+      372 |     this.orbitControls.enableDamping = true;
+      373 |     this.orbitControls.dampingFactor = 0.05;
+      374 |
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at App.setupControls (src/frontend/main.js:371:26)
+      at new setupControls (src/frontend/main.js:98:10)
+      at Object.<anonymous> (benchmarks/scene_graph_bench.test.js:86:21)
+
+FAIL tests/Primitives.test.js (20.583 s)
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Box with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Sphere with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Cylinder with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Cone with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Torus with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create TorusKnot with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Tetrahedron with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Icosahedron with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Dodecahedron with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Octahedron with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Plane with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Tube with correct properties
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Basic Primitive Creation › should create Teapot as a Group with multiple components
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Box with correct dimensions
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Sphere with correct radius and segments
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Sphere with correct radius and segments
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Cylinder with correct parameters
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Cone with correct radius and height
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Torus with correct major and minor radius
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create TorusKnot with correct parameters
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create polyhedrons with correct radius
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Plane with correct dimensions and double-sided material
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Geometry Parameters › should create Tube with curve and correct parameters
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Object Naming and Counting › should name objects with incremental counters
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Object Naming and Counting › should maintain correct object count
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Material Properties › should assign color 0x00ff00 to primitives by default
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Material Properties › should create materials for all primitive types
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Scene Integration › should add all primitives to the scene
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Scene Integration › should select newly created objects
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Scene Integration › should call saveState for each primitive creation
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Scene Integration › should update scene graph for each primitive creation
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Shadow Properties › should enable shadows for all primitives
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Complex Primitives › should create Tube with proper curve definition
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+  ● 3D Primitives Functionality › Complex Primitives › should create Teapot with all components positioned correctly
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Primitives.test.js:24:11)
+
+FAIL tests/benchmark_restoreState.test.js
+  ● Performance Benchmark: restoreState › Benchmark: restoreState with 100 objects
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/benchmark_restoreState.test.js:23:15)
+
+FAIL tests/benchmark_primitives.test.js
+  ● Primitive Creation Benchmark › Benchmark: addBox 1000 times
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/benchmark_primitives.test.js:64:11)
+
+FAIL tests/Accessibility.test.js
+  ● Scene Graph Accessibility › Scene graph list items should have accessibility attributes
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Accessibility.test.js:42:15)
+
+  ● Scene Graph Accessibility › Visibility and Delete buttons should have ARIA labels
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/Accessibility.test.js:42:15)
+
+FAIL tests/verify_a11y.test.js
+  ● Accessibility Verification › should create scene graph buttons with accessibility attributes
+
+    TypeError: quat.clone(...).invert is not a function
+
+      18 |     }
+      19 |
+    > 20 |     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+         |                     ^
+      21 |     this.controls.enableDamping = true;
+      22 |     this.controls.dampingFactor = 0.25;
+      23 |     this.controls.screenSpacePanning = true;
+
+      at invert (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:178:37)
+      at new OrbitControls (node_modules/.pnpm/three@0.164.1/node_modules/three/examples/jsm/controls/OrbitControls.js:421:4)
+      at new SceneManager (src/frontend/SceneManager.js:20:21)
+      at new App (src/frontend/main.js:71:25)
+      at Object.<anonymous> (tests/verify_a11y.test.js:31:29)
+
+
+Test Suites: 7 failed, 3 skipped, 39 passed, 46 of 49 total
+Tests:       40 failed, 7 skipped, 190 passed, 237 total
+Snapshots:   0 total
+Time:        56.715 s
+Ran all test suites.

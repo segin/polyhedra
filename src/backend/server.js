@@ -8,8 +8,8 @@ import crypto from 'crypto';
 import fs from 'fs';
 import rateLimit from 'express-rate-limit';
 
-const currentFilename = fileURLToPath(import.meta.url);
-const currentDirname = path.dirname(currentFilename);
+const currentFilename = typeof __filename !== 'undefined' ? __filename : fileURLToPath(import.meta.url);
+const currentDirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(currentFilename);
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -105,7 +105,7 @@ app.use((err, req, res, next) => {
 
 let server;
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+if (process.argv[1] === currentFilename) {
   server = app.listen(port, '0.0.0.0', () => {
     log.info(`Server listening at http://localhost:${port}`);
   });

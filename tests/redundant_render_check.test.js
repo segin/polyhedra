@@ -34,19 +34,7 @@ jest.mock('three', () => {
 });
 
 // 2. Mock the mapped module for examples
-// This handles OrbitControls, TransformControls, etc.
-jest.mock('./__mocks__/three-examples.js', () => {
-    return {
-        OrbitControls: jest.fn(),
-        TransformControls: jest.fn(),
-        TeapotGeometry: jest.fn(),
-        FontLoader: jest.fn(),
-        TextGeometry: jest.fn(),
-        GLTFLoader: jest.fn(),
-        OBJExporter: jest.fn(),
-        STLExporter: jest.fn()
-    };
-});
+// Exporters and Loaders mock removed since jest.setup.cjs handles them.
 
 // 3. Mock internal modules
 jest.mock('../src/frontend/SceneStorage.js');
@@ -135,19 +123,18 @@ describe('Redundant Render Check', () => {
              getDelta: jest.fn(() => 0.016)
         }));
 
-        // Import the mock module to set implementations
-        // Note: we import from the MAPPED path or the file path?
-        // Since we mocked the file path, we should require the file path.
-        const ThreeExamples = jest.requireMock('./__mocks__/three-examples.js');
+        // Import the actual modules that were mocked globally
+        const { OrbitControls } = require('three/examples/jsm/controls/OrbitControls.js');
+        const { TransformControls } = require('three/examples/jsm/controls/TransformControls.js');
 
-        ThreeExamples.OrbitControls.mockImplementation(() => ({
+        OrbitControls.mockImplementation(() => ({
             enableDamping: true,
             update: jest.fn(),
             target: { clone: jest.fn(), copy: jest.fn() },
             touches: {}
         }));
 
-        ThreeExamples.TransformControls.mockImplementation(() => {
+        TransformControls.mockImplementation(() => {
             const listeners = {};
             const instance = {
                 addEventListener: jest.fn((event, cb) => {
@@ -183,10 +170,10 @@ describe('Redundant Render Check', () => {
         // Instantiate App
         app = new App();
 
-        const ThreeExamples = jest.requireMock('./__mocks__/three-examples.js');
-        expect(ThreeExamples.TransformControls).toHaveBeenCalled();
+        const { TransformControls } = require('three/examples/jsm/controls/TransformControls.js');
+        expect(TransformControls).toHaveBeenCalled();
         // Use results[0].value to get the returned instance from constructor mock
-        transformControlsInstance = ThreeExamples.TransformControls.mock.results[0].value;
+        transformControlsInstance = TransformControls.mock.results[0].value;
         // console.log('Instance:', transformControlsInstance);
 
         // Check initialization

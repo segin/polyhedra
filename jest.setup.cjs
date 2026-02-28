@@ -60,8 +60,13 @@ class Vector3 {
   }
   set(x, y, z) {
     this.x = x;
-    this.y = y;
     this.z = z;
+    return this;
+  }
+  setScalar(scalar) {
+    this.x = scalar;
+    this.y = scalar;
+    this.z = scalar;
     return this;
   }
   clone() {
@@ -229,6 +234,12 @@ class Quaternion {
     return this;
   }
   setFromAxisAngle() {
+    return this;
+  }
+  setFromUnitVectors() {
+    return this;
+  }
+  invert() {
     return this;
   }
   copy(v) {
@@ -600,6 +611,43 @@ const THREE = {
     .mockImplementation((x, y, z, w) => new Quaternion(x, y, z, w)),
   Euler: jest.fn().mockImplementation((x, y, z) => new Euler(x, y, z)),
   Color: jest.fn().mockImplementation((c) => new Color(c)),
+  Spherical: class Spherical {
+    constructor() {
+      this.radius = 1;
+      this.phi = 0;
+      this.theta = 0;
+    }
+    set() { return this; }
+    copy() { return this; }
+    makeSafe() { return this; }
+    setFromVector3() { return this; }
+  },
+  MathUtils: {
+    DEG2RAD: Math.PI / 180,
+    RAD2DEG: 180 / Math.PI,
+    clamp: jest.fn((val, min, max) => Math.max(min, Math.min(max, val))),
+    generateUUID: jest.fn(() => 'mock-uuid-mathutils'),
+  },
+  EventDispatcher: class EventDispatcher {
+    constructor() {
+      this.addEventListener = jest.fn();
+      this.removeEventListener = jest.fn();
+      this.dispatchEvent = jest.fn();
+      this.hasEventListener = jest.fn();
+    }
+  },
+  Ray: class Ray {
+    constructor() {
+      this.origin = new Vector3();
+      this.direction = new Vector3(0, 0, -1);
+    }
+    set() { return this; }
+    copy() { return this; }
+    clone() { return new Ray(); }
+    intersectBox() {}
+    intersectSphere() {}
+    intersectPlane() {}
+  },
   Matrix4: jest.fn().mockImplementation(() => new Matrix4()),
   Matrix3: jest.fn().mockImplementation(() => ({
     elements: new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]),
@@ -607,6 +655,16 @@ const THREE = {
     getNormalMatrix: jest.fn(),
     copy: jest.fn(),
   })),
+  Plane: class Plane {
+    constructor() {
+      this.normal = new Vector3(1, 0, 0);
+      this.constant = 0;
+    }
+    set() { return this; }
+    setFromNormalAndCoplanarPoint() { return this; }
+    clone() { return new Plane(); }
+    copy() { return this; }
+  },
   Box3: class Box3 {
     constructor() {
       this.min = new Vector3();
@@ -925,23 +983,20 @@ jest.mock('three/examples/jsm/exporters/STLExporter.js', () => ({
 }), { virtual: true });
 
 // Mock OrbitControls
-/*
-jest.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
+jest.doMock('three/examples/jsm/controls/OrbitControls.js', () => ({
   __esModule: true,
   OrbitControls: jest.fn().mockImplementation(() => ({
     update: jest.fn(),
-    target: new Vector3(),
+    target: new THREE.Vector3(),
     enabled: true,
     enableDamping: true,
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
   })),
-}));
-*/
+}), { virtual: true });
 
 // Mock TransformControls
-/*
-jest.mock('three/examples/jsm/controls/TransformControls.js', () => ({
+jest.doMock('three/examples/jsm/controls/TransformControls.js', () => ({
   __esModule: true,
   TransformControls: jest.fn().mockImplementation(() => {
       const tc = new Object3D('TransformControls');
@@ -954,9 +1009,7 @@ jest.mock('three/examples/jsm/controls/TransformControls.js', () => ({
       tc.dragging = false;
       return tc;
   }),
-}));
-*/
-
+}), { virtual: true });
 // Mock dat.gui
 const createChainableMock = () => {
   const obj = {};
@@ -995,7 +1048,9 @@ global.JSZip = jest.fn(() => ({
 }));
 
 // Populate window.JSZip
-global.window.JSZip = global.JSZip;
+if (typeof window !== 'undefined') {
+  global.window.JSZip = global.JSZip;
+}
 
 global.Worker = class {
   constructor(url) {

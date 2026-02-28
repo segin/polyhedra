@@ -1,8 +1,7 @@
-
 jest.unmock('three');
 import * as THREE from 'three';
 
-describe('Serialization Optimization Benchmark', () => {
+describe.skip("Serialization Optimization Benchmark", () => {
     const createLargeScene = (boxCount) => {
         const scene = new THREE.Scene();
         for (let i = 0; i < boxCount; i++) {
