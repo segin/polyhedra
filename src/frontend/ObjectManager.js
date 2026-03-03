@@ -1,13 +1,14 @@
 // @ts-check
-import * as THREE from 'three';
 import { Events } from './constants.js';
+
+const TEXTURE_KEYS = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'alphaMap', 'aoMap'];
 
 /**
  * Manages 3D objects in the scene.
  */
 export class ObjectManager {
     /**
-     * @param {THREE.Scene} scene
+     * @param {import('three').Scene} scene
      * @param {any} eventBus
      * @param {any} physicsManager
      * @param {import('./PrimitiveFactory.js').PrimitiveFactory} primitiveFactory
@@ -27,7 +28,7 @@ export class ObjectManager {
 
     /**
      * Selects an object.
-     * @param {THREE.Object3D} object
+     * @param {import('three').Object3D} object
      */
     selectObject(object) {
         if (this.stateManager) {
@@ -68,8 +69,8 @@ export class ObjectManager {
 
     /**
      * Duplicates an object.
-     * @param {THREE.Object3D} object
-     * @returns {Promise<THREE.Object3D> | THREE.Object3D | null}
+     * @param {import('three').Object3D} object
+     * @returns {Promise<import('three').Object3D> | import('three').Object3D | null}
      */
     duplicateObject(object) {
         if (this.objectFactory) {
@@ -80,7 +81,7 @@ export class ObjectManager {
 
     /**
      * Updates object material properties.
-     * @param {THREE.Object3D} object
+     * @param {import('three').Object3D} object
      * @param {object} properties
      */
     updateMaterial(object, properties) {
@@ -91,7 +92,7 @@ export class ObjectManager {
 
     /**
      * Adds a texture to an object.
-     * @param {THREE.Object3D} object
+     * @param {import('three').Object3D} object
      * @param {File} file
      * @param {string} type
      */
@@ -103,7 +104,7 @@ export class ObjectManager {
 
     /**
      * Deletes an object from the scene.
-     * @param {THREE.Object3D} object
+     * @param {import('three').Object3D} object
      * @param {boolean} [detachFromParent=true]
      */
     deleteObject(object, detachFromParent = true) {
@@ -130,16 +131,14 @@ export class ObjectManager {
             // @ts-ignore
             if (object.material) {
                 // @ts-ignore
-                const materials = Array.isArray(object.material) ? object.material : [object.material];
-                materials.forEach(material => {
-                    // Dispose textures
-                    for (const key of ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'alphaMap', 'aoMap']) {
-                        if (material[key] && material[key].dispose) {
-                            material[key].dispose();
-                        }
+                const materialOrArray = object.material;
+                if (Array.isArray(materialOrArray)) {
+                    for (let i = 0; i < materialOrArray.length; i++) {
+                        this._disposeMaterial(materialOrArray[i]);
                     }
-                    material.dispose();
-                });
+                } else {
+                    this._disposeMaterial(materialOrArray);
+                }
             }
 
             // Remove from physics if manager exists
@@ -157,5 +156,22 @@ export class ObjectManager {
             }
             this.eventBus.publish(Events.OBJECT_REMOVED, object);
         }
+    }
+
+    /**
+     * @param {any} material
+     * @private
+     */
+    _disposeMaterial(material) {
+        if (!material) return;
+
+        // Dispose textures
+        for (let i = 0; i < TEXTURE_KEYS.length; i++) {
+            const key = TEXTURE_KEYS[i];
+            if (material[key] && material[key].dispose) {
+                material[key].dispose();
+            }
+        }
+        material.dispose();
     }
 }

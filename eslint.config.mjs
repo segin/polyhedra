@@ -1,5 +1,12 @@
 export default [
     {
+        ignores: [
+            "src/frontend/vendor/**",
+            "src/frontend/public/csg-worker.bundle.js",
+            "src/frontend/csg-worker.bundle.js"
+        ]
+    },
+    {
         files: ["**/*.js", "**/*.mjs"],
         languageOptions: {
             sourceType: "module",
@@ -39,7 +46,13 @@ export default [
                 test: "readonly",
                 performance: "readonly",
                 global: "readonly",
-                HTMLInputElement: "readonly"
+                HTMLInputElement: "readonly",
+                structuredClone: "readonly",
+                Headers: "readonly",
+                Request: "readonly",
+                Response: "readonly",
+                TextDecoder: "readonly",
+                TextEncoder: "readonly"
             }
         },
         rules: {
