@@ -33,11 +33,11 @@
     </script>
   </head>
   <body>
-    <canvas id="c"></canvas>
+    <canvas id="c" aria-label="3D Scene Viewer" title="3D Scene Viewer" role="region"></canvas>
     <div id="ui">
-      <button id="fullscreen">Fullscreen</button>
-      <button id="save-scene">Save Scene</button>
-      <button id="load-scene">Load Scene</button>
+      <button id="fullscreen" title="Toggle Fullscreen">Fullscreen</button>
+      <button id="save-scene" title="Save current scene to file">Save Scene</button>
+      <button id="load-scene" title="Load scene from file">Load Scene</button>
       <input type="file" id="file-input" accept=".nodist3d" style="display: none" />
     </div>
     <div id="scene-graph"></div>
