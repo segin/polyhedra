@@ -1,4 +1,4 @@
-import { ServiceContainer } from '../src/frontend/ServiceContainer.js';
+import { ServiceContainer } from '../src/frontend/utils/ServiceContainer.js';
 
 describe('ServiceContainer', () => {
   let container;
