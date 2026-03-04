@@ -107,4 +107,4 @@ Currently, there are no mandatory external 3rd-party API integrations. The appli
 
 - **CSG:** Constructive Solid Geometry (Boolean operations on 3D meshes).
 - **CSP:** Content Security Policy.
-- **Polyhedra:** The project name, referring to three-dimensional solid figures with flat polygonal faces. Formerly known as *nodist3d*.
+- **Polyhedra:** The project name, referring to three-dimensional solid figures with flat polygonal faces.

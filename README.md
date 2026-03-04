@@ -4,7 +4,7 @@ _A lightweight, web-based 3D modeling application, optimized for mobile devices.
 
 **Polyhedra** is a browser-based 3D modeling tool powered by Node.js and Three.js (WebGL). The name comes from the geometric term for three-dimensional solid figures with flat polygonal faces — a fitting name for a 3D object editor.
 
-> **Note:** This project was formerly known as *nodist3d*. It was renamed to avoid confusion with [Nodist](https://github.com/marcelklehr/nodist), an unrelated Node.js version manager for Windows.
+
 
 ---
 
