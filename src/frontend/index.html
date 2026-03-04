@@ -39,8 +39,8 @@
       <div class="menu-item">
         File
         <div class="menu-dropdown">
-          <a href="#" id="menu-file-load">Open Scene</a>
-          <a href="#" id="menu-file-save">Save Scene</a>
+          <a href="#" id="menu-file-load" title="Load scene from file">Open Scene</a>
+          <a href="#" id="menu-file-save" title="Save current scene to file">Save Scene</a>
           <a href="#" id="menu-file-import">Import Model (OBJ/GLTF)</a>
         </div>
       </div>
@@ -70,7 +70,7 @@
       <div class="menu-item">
         View
         <div class="menu-dropdown">
-          <a href="#" id="menu-view-fullscreen">Fullscreen</a>
+          <a href="#" id="menu-view-fullscreen" title="Toggle Fullscreen">Fullscreen</a>
         </div>
       </div>
     </div>
@@ -84,7 +84,7 @@
       
       <!-- Center Canvas Area -->
       <div id="viewport">
-        <canvas id="c"></canvas>
+        <canvas id="c" aria-label="3D Scene Viewer" title="3D Scene Viewer" role="region"></canvas>
       </div>
       
       <!-- Right Sidebar (Outliner & Properties) -->
