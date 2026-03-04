@@ -120,22 +120,22 @@ tasks:
         tasks:
           - id: SPEC-2.1.1
             title: Configure Jest for ESM and JSDOM
-            status: todo
+            status: done
           - id: SPEC-2.1.2
             title: Create Three.js mocks in __mocks__/three.js
-            status: todo
+            status: done
           - id: SPEC-2.2.1
             title: ObjectManager Tests (addPrimitive, duplicate, delete, updateProperty)
-            status: todo
+            status: done
           - id: SPEC-2.2.2
             title: History Tests (undo/redo empty/full, restore state, buffer limit)
-            status: todo
+            status: done
           - id: SPEC-2.2.3
             title: GroupManager Tests (group, ungroup, nested, world transforms)
-            status: todo
+            status: done
           - id: SPEC-2.2.4
             title: Integration Tests (Full Flow, Save/Load)
-            status: todo
+            status: done
 
       - title: Phase 3 - Core Feature Implementation
         tasks:
