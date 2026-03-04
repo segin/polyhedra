@@ -1,7 +1,7 @@
 {
-  "name": "nodist3d",
+  "name": "polyhedra",
   "version": "1.0.0",
-  "description": "A web-based 3D modeling program.",
+  "description": "Polyhedra — a web-based 3D modeling program.",
   "main": "src/backend/server.js",
   "scripts": {
     "start": "node src/backend/server.js",

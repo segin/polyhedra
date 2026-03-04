@@ -31,7 +31,7 @@ export class SceneStorage {
   }
 
   /**
-   * Saves the scene to a .nodist3d zip file.
+   * Saves the scene to a .polyhedra zip file.
    */
   async saveScene() {
     // @ts-ignore
@@ -107,14 +107,14 @@ export class SceneStorage {
     const url = URL.createObjectURL(content);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'scene.nodist3d';
+    a.download = 'scene.polyhedra';
     a.click();
     URL.revokeObjectURL(url);
-    this.eventBus.publish('scene_saved', { name: 'scene.nodist3d', size: content.size });
+    this.eventBus.publish('scene_saved', { name: 'scene.polyhedra', size: content.size });
   }
 
   /**
-   * Loads a scene from a .nodist3d zip file.
+   * Loads a scene from a .polyhedra zip file.
    * @param {File} file
    */
   async loadScene(file) {

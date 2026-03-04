@@ -1,4 +1,4 @@
-# nodist3d Code Audit Report
+# Polyhedra Code Audit Report
 
 **Date:** 2026-02-11
 **Status:** In Progress
