@@ -78,71 +78,71 @@ This phase focuses on solidifying the codebase foundation, ensuring maintainabil
 - **1.1.1. Standardize on ES Modules**
   - _Context_: The project currently mixes CommonJS (`require`) and ES Modules (`import`), which causes tooling friction.
   - **Action Items**:
-    - [x] **Update `package.json`**: Add `"type": "module"` property to the root object.
-    - [x] **Refactor Backend (`src/backend/server.js`)**:
-      - [x] Replace `const express = require('express')` with `import express from 'express'`.
-      - [x] Replace all `require` calls with static `import` statements where possible.
-      - [x] For conditional imports, use `await import()`.
-      - [x] Replace `__dirname` (undefined in ESM) with `import { fileURLToPath } from 'url'; import { dirname } from 'path'; const __dirname = dirname(fileURLToPath(import.meta.url));`.
-    - [x] **Refactor Frontend Imports**:
-      - [x] Audit all frontend files (`src/frontend/**/*.js`).
+    - [ ] **Update `package.json`**: Add `"type": "module"` property to the root object.
+    - [ ] **Refactor Backend (`src/backend/server.js`)**:
+      - [ ] Replace `const express = require('express')` with `import express from 'express'`.
+      - [ ] Replace all `require` calls with static `import` statements where possible.
+      - [ ] For conditional imports, use `await import()`.
+      - [ ] Replace `__dirname` (undefined in ESM) with `import { fileURLToPath } from 'url'; import { dirname } from 'path'; const __dirname = dirname(fileURLToPath(import.meta.url));`.
+    - [ ] **Refactor Frontend Imports**:
+      - [ ] Audit all frontend files (`src/frontend/**/*.js`).
     # Final Cleanup
-- [x] Delete all local and remote branches except `main`
-- [x] Update documentation
+- [ ] Delete all local and remote branches except `main`
+- [ ] Update documentation
 
 # Code Audit
-- [x] Perform security audit (CSP, rate limiting, dependency vulnerabilities)
-- [x] Perform performance audit (bottlenecks, memory leaks, brute force loops)
-- [x] Perform code quality audit (consistency, modularity, technical debt)
-- [x] Generate comprehensive `audit_report.md`
-- [/] Implement critical fixes
-    - [/] Fix `PhysicsManager` API mismatch (zombie bodies)
+- [ ] Perform security audit (CSP, rate limiting, dependency vulnerabilities)
+- [ ] Perform performance audit (bottlenecks, memory leaks, brute force loops)
+- [ ] Perform code quality audit (consistency, modularity, technical debt)
+- [ ] Generate comprehensive `audit_report.md`
+- [ ] Implement critical fixes
+    - [ ] Fix `PhysicsManager` API mismatch (zombie bodies)
     - [ ] Update dependency vulnerabilities
     - [ ] Implement light disposal
     - [ ] Implement geometry caching
-      - [x] Ensure all local imports include the `.js` extension (e.g., `import { x } from './utils.js'`), which is mandatory for browser-native ESM.
-      - [x] Verify that `three` and other dependencies are imported via their ESM entry points or mapped correctly if using an import map.
+      - [ ] Ensure all local imports include the `.js` extension (e.g., `import { x } from './utils.js'`), which is mandatory for browser-native ESM.
+      - [ ] Verify that `three` and other dependencies are imported via their ESM entry points or mapped correctly if using an import map.
   - **Verification & Testing**:
-    - [x] Run `npm start` and ensure the server boots without "require is not defined" errors.
-    - [x] Open the browser application and check the console for "Module not found" errors.
-    - [x] Run `npm test` (after updating test config) to ensure the test runner handles ESM correctly.
+    - [ ] Run `npm start` and ensure the server boots without "require is not defined" errors.
+    - [ ] Open the browser application and check the console for "Module not found" errors.
+    - [ ] Run `npm test` (after updating test config) to ensure the test runner handles ESM correctly.
 
 - **1.1.2. Implement Dependency Injection (DI) Container**
   - _Context_: Managers currently access each other via global variables or direct instantiation, leading to tight coupling and making unit testing difficult.
   - **Action Items**:
-    - [x] **Create `ServiceContainer` class**:
-      - [x] Implement a `services` Map to store instances.
-      - [x] Implement `register(name, instance)`: Throws if name already exists.
-      - [x] Implement `get(name)`: Throws error if service not found (fail fast).
-    - [x] **Refactor Manager Classes**:
-      - [x] **ObjectManager**: Constructor should accept `scene`, `eventBus`, `physicsManager`. Remove internal `new` calls.
-      - [x] **SceneManager**: Constructor should accept `renderer`, `camera`, `inputManager`.
-      - [x] **InputManager**: Constructor should accept `domElement`.
-    - [x] **Update Entry Point (`main.js`)**:
-      - [x] Create a single instance of `ServiceContainer`.
-      - [x] Instantiate `EventBus` first and register it.
-      - [x] Instantiate other managers in dependency order, passing the container or specific services.
+    - [ ] **Create `ServiceContainer` class**:
+      - [ ] Implement a `services` Map to store instances.
+      - [ ] Implement `register(name, instance)`: Throws if name already exists.
+      - [ ] Implement `get(name)`: Throws error if service not found (fail fast).
+    - [ ] **Refactor Manager Classes**:
+      - [ ] **ObjectManager**: Constructor should accept `scene`, `eventBus`, `physicsManager`. Remove internal `new` calls.
+      - [ ] **SceneManager**: Constructor should accept `renderer`, `camera`, `inputManager`.
+      - [ ] **InputManager**: Constructor should accept `domElement`.
+    - [ ] **Update Entry Point (`main.js`)**:
+      - [ ] Create a single instance of `ServiceContainer`.
+      - [ ] Instantiate `EventBus` first and register it.
+      - [ ] Instantiate other managers in dependency order, passing the container or specific services.
   - **Verification & Testing**:
-    - [x] **Unit Test**: Create `ServiceContainer.test.js`. verify `register` stores and `get` retrieves. Verify error on missing service.
-    - [x] **Integration Test**: Verify that `ObjectManager` can successfully emit events via the injected `EventBus`.
+    - [ ] **Unit Test**: Create `ServiceContainer.test.js`. verify `register` stores and `get` retrieves. Verify error on missing service.
+    - [ ] **Integration Test**: Verify that `ObjectManager` can successfully emit events via the injected `EventBus`.
 
 - **1.1.3. Centralized State Management**
   - _Context_: Application state (e.g., "is user dragging?", "current color") is scattered across DOM elements and Manager instance properties.
   - **Action Items**:
-    - [x] **Create `StateManager` class**:
-      - [x] Define initial state schema: `{ selection: [], toolMode: 'select', clipboard: null, isDragging: false, sceneDirty: false }`.
-      - [x] use `Proxy` or a simple setter pattern to detect changes.
-    - [x] **Implement State Accessors**:
-      - [x] `getState()`: Returns a read-only copy (frozen) of the state.
-      - [x] `setState(partialState)`: Merges updates and notifies listeners.
-      - [x] `subscribe(key, callback)`: specific listener for property changes.
-    - [x] **Refactor Consumers**:
-      - [x] **ObjectManager**: When selecting, call `stateManager.setState({ selection: [obj] })` instead of setting `this.selected`.
-      - [x] **PropertiesPanel**: Subscribe to `selection` changes to auto-update the UI.
+    - [ ] **Create `StateManager` class**:
+      - [ ] Define initial state schema: `{ selection: [], toolMode: 'select', clipboard: null, isDragging: false, sceneDirty: false }`.
+      - [ ] use `Proxy` or a simple setter pattern to detect changes.
+    - [ ] **Implement State Accessors**:
+      - [ ] `getState()`: Returns a read-only copy (frozen) of the state.
+      - [ ] `setState(partialState)`: Merges updates and notifies listeners.
+      - [ ] `subscribe(key, callback)`: specific listener for property changes.
+    - [ ] **Refactor Consumers**:
+      - [ ] **ObjectManager**: When selecting, call `stateManager.setState({ selection: [obj] })` instead of setting `this.selected`.
+      - [ ] **PropertiesPanel**: Subscribe to `selection` changes to auto-update the UI.
   - **Verification & Testing**:
-    - [x] **Unit Test**: Test `setState` merges correctly and fires callbacks.
-    - [x] **Unit Test**: Test that subscribers to irrelevant keys are _not_ fired.
-    - [x] **Integration**: Change selection in 3D view -> Verify Properties Panel updates.
+    - [ ] **Unit Test**: Test `setState` merges correctly and fires callbacks.
+    - [ ] **Unit Test**: Test that subscribers to irrelevant keys are _not_ fired.
+    - [ ] **Integration**: Change selection in 3D view -> Verify Properties Panel updates.
 
 ### 1.2. Code Quality & Standards
 
@@ -150,19 +150,19 @@ This phase focuses on solidifying the codebase foundation, ensuring maintainabil
 
 - **1.2.1. Linting and Formatting Setup**
   - **Action Items**:
-    - [x] **Install Tools**: `npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-promise eslint-plugin-unicorn eslint-plugin-import`.
-    - [x] **Configure ESLint (`.eslintrc.json`)**:
-      - [x] `env`: `{ browser: true, node: true, es2022: true }`.
-      - [x] `rules`: Enforce `eqeqeq`, `no-var`, `prefer-const`, `no-console` (warn), `promise/always-return`.
-    - [x] **Configure Prettier (`.prettierrc`)**:
-      - [x] `{ "semi": true, "singleQuote": true, "tabWidth": 2, "printWidth": 100 }`.
-    - [x] **Setup Husky**:
-      - [x] `npx husky install`.
-      - [x] Add `pre-commit` hook: `npx lint-staged`.
-      - [x] Configure `lint-staged` in package.json to run `eslint --fix` on `*.js` files.
+    - [ ] **Install Tools**: `npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-promise eslint-plugin-unicorn eslint-plugin-import`.
+    - [ ] **Configure ESLint (`.eslintrc.json`)**:
+      - [ ] `env`: `{ browser: true, node: true, es2022: true }`.
+      - [ ] `rules`: Enforce `eqeqeq`, `no-var`, `prefer-const`, `no-console` (warn), `promise/always-return`.
+    - [ ] **Configure Prettier (`.prettierrc`)**:
+      - [ ] `{ "semi": true, "singleQuote": true, "tabWidth": 2, "printWidth": 100 }`.
+    - [ ] **Setup Husky**:
+      - [ ] `npx husky install`.
+      - [ ] Add `pre-commit` hook: `npx lint-staged`.
+      - [ ] Configure `lint-staged` in package.json to run `eslint --fix` on `*.js` files.
   - **Verification & Testing**:
-    - [x] Deliberately introduce a lint error (e.g., `var x = 1;`). Verify commit fails.
-    - [x] Run `npm run lint`. Verify it catches issues.
+    - [ ] Deliberately introduce a lint error (e.g., `var x = 1;`). Verify commit fails.
+    - [ ] Run `npm run lint`. Verify it catches issues.
 
 - **1.2.2. Documentation & Type Safety**
   - **Action Items**:

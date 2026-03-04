@@ -1,0 +1,1630 @@
+project: Polyhedra
+version: 1.0.0
+last_updated: 2024-05-24
+
+tasks:
+  - category: Audit Findings (AUDIT_REPORT.md)
+    tasks:
+      - id: AUDIT-001
+        title: "Broken Test Suite: Fix 27% failure rate and worker crashes"
+        status: todo
+      - id: AUDIT-002
+        title: "Security: Remove 'unsafe-inline' from CSP for scripts and styles"
+        status: todo
+      - id: AUDIT-003
+        title: "Maintainability: Reduce high cyclomatic complexity (130) in src/frontend/main.js"
+        status: todo
+      - id: AUDIT-004
+        title: "Performance: Implement incremental updates for Scene Graph UI to avoid full DOM rebuilding"
+        status: todo
+      - id: AUDIT-005
+        title: "Modularity: Eliminate reliance on global THREE and JSZip objects"
+        status: todo
+      - id: AUDIT-TEST-001
+        title: "TEST-001 (Critical): Ensure tests do not return/log circular Three.js objects (Jest Worker crashes)"
+        status: todo
+      - id: AUDIT-TEST-002
+        title: "TEST-002 (High): Fix Jest mocks for eventBus.subscribe and three imports in SceneGraph.test.js"
+        status: todo
+
+  - category: Development Specification (SPECIFICATION.md)
+    subcategories:
+      - title: Phase 1 - Architecture & Quality
+        tasks:
+          - id: SPEC-1.1.1.1
+            title: Update package.json to "type": "module"
+            status: todo
+          - id: SPEC-1.1.1.2
+            title: Backend - Replace require with import in server.js
+            status: todo
+          - id: SPEC-1.1.1.3
+            title: Backend - Use static imports where possible
+            status: todo
+          - id: SPEC-1.1.1.4
+            title: Backend - Use await import() for conditional imports
+            status: todo
+          - id: SPEC-1.1.1.5
+            title: Backend - Define __dirname using import.meta.url
+            status: todo
+          - id: SPEC-1.1.1.6
+            title: Frontend - Audit all frontend files for ES Module compliance
+            status: todo
+          - id: SPEC-1.1.2.1
+            title: Create ServiceContainer class (Map, register, get)
+            status: todo
+          - id: SPEC-1.1.2.2
+            title: Refactor ObjectManager for constructor injection (scene, eventBus, physicsManager)
+            status: todo
+          - id: SPEC-1.1.2.3
+            title: Refactor SceneManager for constructor injection (renderer, camera, inputManager)
+            status: todo
+          - id: SPEC-1.1.2.4
+            title: Refactor InputManager for constructor injection (domElement)
+            status: todo
+          - id: SPEC-1.1.2.5
+            title: Update main.js to use ServiceContainer and dependency order
+            status: todo
+          - id: SPEC-1.1.3.1
+            title: Create StateManager class (initial state, Proxy/setter detection)
+            status: todo
+          - id: SPEC-1.1.3.2
+            title: Implement State accessors (getState, setState, subscribe)
+            status: todo
+          - id: SPEC-1.1.3.3
+            title: Refactor Consumers (ObjectManager, PropertiesPanel) to use StateManager
+            status: todo
+          - id: SPEC-1.2.1.1
+            title: Install ESLint, Prettier, and plugins
+            status: todo
+          - id: SPEC-1.2.1.2
+            title: Configure ESLint (.eslintrc.json)
+            status: todo
+          - id: SPEC-1.2.1.3
+            title: Configure Prettier (.prettierrc)
+            status: todo
+          - id: SPEC-1.2.1.4
+            title: Setup Husky and lint-staged (pre-commit hook)
+            status: todo
+          - id: SPEC-1.2.2.1
+            title: Implement JSDoc for all files in src/
+            status: todo
+          - id: SPEC-1.2.2.2
+            title: Setup TypeScript Migration (Phase 1 - tsconfig.json, checkJs)
+            status: todo
+          - id: SPEC-1.2.2.3
+            title: Add @ts-check to main.js and ObjectManager.js
+            status: todo
+          - id: SPEC-1.2.2.4
+            title: Create src/types.d.ts for global interfaces
+            status: todo
+          - id: SPEC-1.3.1.1
+            title: Create Logger utility (levels, timestamp, ISO string)
+            status: todo
+          - id: SPEC-1.3.1.2
+            title: Suppress DEBUG logs in production
+            status: todo
+          - id: SPEC-1.3.1.3
+            title: Replace console.log/error with Logger calls
+            status: todo
+          - id: SPEC-1.3.2.1
+            title: Add global error handler (window.error, unhandledrejection)
+            status: todo
+          - id: SPEC-1.3.2.2
+            title: Create Operation Wrappers (safeJSONParse, localStorage try/catch)
+            status: todo
+          - id: SPEC-1.3.2.3
+            title: Create ToastManager for UI error feedback
+            status: todo
+
+      - title: Phase 2 - Comprehensive Testing
+        tasks:
+          - id: SPEC-2.1.1
+            title: Configure Jest for ESM and JSDOM
+            status: todo
+          - id: SPEC-2.1.2
+            title: Create Three.js mocks in __mocks__/three.js
+            status: todo
+          - id: SPEC-2.2.1
+            title: ObjectManager Tests (addPrimitive, duplicate, delete, updateProperty)
+            status: todo
+          - id: SPEC-2.2.2
+            title: History Tests (undo/redo empty/full, restore state, buffer limit)
+            status: todo
+          - id: SPEC-2.2.3
+            title: GroupManager Tests (group, ungroup, nested, world transforms)
+            status: todo
+          - id: SPEC-2.2.4
+            title: Integration Tests (Full Flow, Save/Load)
+            status: todo
+
+      - title: Phase 3 - Core Feature Implementation
+        tasks:
+          - id: SPEC-3.1.1
+            title: Enhance OrbitControls (damping, dampingFactor UI)
+            status: todo
+          - id: SPEC-3.1.2
+            title: Implement View Cube (Front, Top, tween camera)
+            status: todo
+          - id: SPEC-3.1.3
+            title: Implement Focus Selection ('F' hotkey, bounding box)
+            status: todo
+          - id: SPEC-3.2.1
+            title: Texture Loading UI (Map, NormalMap, RoughnessMap, DataURL)
+            status: todo
+          - id: SPEC-3.2.2
+            title: Material Parameters UI (Roughness, Metalness, Wireframe, Emissive)
+            status: todo
+          - id: SPEC-3.3.1
+            title: ExtrudeGeometry (Sketch mode, THREE.Shape, depth)
+            status: todo
+          - id: SPEC-3.3.2
+            title: Constructive Solid Geometry (CSG) - Subtract, Union
+            status: todo
+          - id: SPEC-3.4.1
+            title: Integrate Cannon-es into PhysicsManager
+            status: todo
+          - id: SPEC-3.4.2
+            title: Physics Body Mapping (UUID -> Body, sync position/quaternion)
+            status: todo
+          - id: SPEC-3.4.3
+            title: Physics UI Controls (Play, Pause, Reset)
+            status: todo
+          - id: SPEC-3.5.1
+            title: Shader Editor UI (CodeMirror/Monaco, tabs)
+            status: todo
+          - id: SPEC-3.5.2
+            title: Shader Hot Reloading (THREE.ShaderMaterial, compilation error reporting)
+            status: todo
+
+      - title: Phase 4 - UI/UX & Mobile
+        tasks:
+          - id: SPEC-4.1.1
+            title: Responsive CSS Grid Layout (mobile drawer/stack)
+            status: todo
+          - id: SPEC-4.1.2
+            title: Touch Gestures (Pinch zoom, two-finger pan, long press)
+            status: todo
+          - id: SPEC-4.1.3
+            title: Large Tap Targets (44px min height/width)
+            status: todo
+          - id: SPEC-4.2.1
+            title: Draggable Hierarchy in Scene Graph (HTML5 Drag and Drop)
+            status: todo
+          - id: SPEC-4.2.2
+            title: Scrubbable Numeric Inputs (mousedown/mousemove label)
+            status: todo
+          - id: SPEC-4.3.1
+            title: Selection Halo (EffectComposer, OutlinePass)
+            status: todo
+          - id: SPEC-4.3.2
+            title: Grid/Axis Customization (Show/Hide, size, density)
+            status: todo
+
+      - title: Phase 5 - Backend, Security & DevOps
+        tasks:
+          - id: SPEC-5.1.1
+            title: Implement Helmet Middleware (CSP for blobs/data URIs)
+            status: todo
+          - id: SPEC-5.1.2
+            title: Implement Rate Limiting (express-rate-limit)
+            status: todo
+          - id: SPEC-5.1.3
+            title: Sanitize filenames in SceneStorage (path traversal)
+            status: todo
+          - id: SPEC-5.2.1
+            title: Vite Integration (bundling, dev server)
+            status: todo
+          - id: SPEC-5.2.2
+            title: Dockerization (Dockerfile, docker-compose.yml)
+            status: todo
+          - id: SPEC-5.2.3
+            title: GitHub Actions (CI - tests, linting)
+            status: todo
+
+      - title: Phase 6 - Advanced Features
+        tasks:
+          - id: SPEC-6.1.1
+            title: Google Drive API Integration
+            status: todo
+          - id: SPEC-6.2.1
+            title: WebSocket Rooms for collaboration (Socket.io)
+            status: todo
+          - id: SPEC-6.2.2
+            title: Collaborative Cursor/Movement Interpolation
+            status: todo
+          - id: SPEC-6.3.1
+            title: InstancedMesh System for performance
+            status: todo
+          - id: SPEC-6.3.2
+            title: Texture Compression (Basis/KTX2)
+            status: todo
+
+  - category: Testing Todo List (TESTING_TODO.md)
+    subcategories:
+      - title: Original 50 Tests
+        tasks:
+          - id: TEST-001
+            title: "ObjectManager: should return null when duplicating non-existent object"
+            status: todo
+          - id: TEST-002
+            title: "ObjectManager: should add texture to object's material map"
+            status: todo
+          - id: TEST-003
+            title: "ObjectManager: should add texture to object's normal map"
+            status: todo
+          - id: TEST-004
+            title: "ObjectManager: should add texture to object's roughness map"
+            status: todo
+          - id: TEST-005
+            title: "ObjectManager: should handle adding texture with no material"
+            status: todo
+          - id: TEST-006
+            title: "ObjectManager: should dispose of geometry/material on deletion"
+            status: todo
+          - id: TEST-007
+            title: "ObjectManager: should handle deletion of already deleted object"
+            status: todo
+          - id: TEST-008
+            title: "ObjectManager: should create unique name for duplicated object with no original name"
+            status: todo
+          - id: TEST-009
+            title: "ObjectManager: should successfully update material color"
+            status: todo
+          - id: TEST-010
+            title: "ObjectManager: should handle updating non-existent material property"
+            status: todo
+          - id: TEST-011
+            title: "ObjectManager: should create text object when font loaded"
+            status: todo
+          - id: TEST-012
+            title: "ObjectManager: should handle text object creation when font not loaded"
+            status: todo
+          - id: TEST-013
+            title: "LightManager: should add PointLight to scene"
+            status: todo
+          - id: TEST-014
+            title: "LightManager: should add DirectionalLight to scene"
+            status: todo
+          - id: TEST-015
+            title: "LightManager: should add AmbientLight to scene"
+            status: todo
+          - id: TEST-016
+            title: "LightManager: should remove specified light"
+            status: todo
+          - id: TEST-017
+            title: "LightManager: should update light's color property"
+            status: todo
+          - id: TEST-018
+            title: "LightManager: should update light's intensity property"
+            status: todo
+          - id: TEST-019
+            title: "LightManager: should update light's position property"
+            status: todo
+          - id: TEST-020
+            title: "LightManager: should change the type of an existing light"
+            status: todo
+          - id: TEST-021
+            title: "PhysicsManager: should add box-shaped physics body"
+            status: todo
+          - id: TEST-022
+            title: "PhysicsManager: should add sphere-shaped physics body"
+            status: todo
+          - id: TEST-023
+            title: "PhysicsManager: should add cylinder-shaped physics body"
+            status: todo
+          - id: TEST-024
+            title: "PhysicsManager: should return null for unsupported physics shape"
+            status: todo
+          - id: TEST-025
+            title: "PhysicsManager: should update mesh pos/quat after world step"
+            status: todo
+          - id: TEST-026
+            title: "GroupManager: should group two or more objects"
+            status: todo
+          - id: TEST-027
+            title: "GroupManager: should refuse to group fewer than two objects"
+            status: todo
+          - id: TEST-028
+            title: "GroupManager: should calculate group center for position"
+            status: todo
+          - id: TEST-029
+            title: "GroupManager: should successfully ungroup objects"
+            status: todo
+          - id: TEST-030
+            title: "GroupManager: should restore world positions of ungrouped objects"
+            status: todo
+          - id: TEST-031
+            title: "GroupManager: should handle ungrouping a non-group"
+            status: todo
+          - id: TEST-032
+            title: "SceneStorage: should serialize scene data to JSON"
+            status: todo
+          - id: TEST-033
+            title: "SceneStorage: should ignore non-mesh objects on save"
+            status: todo
+          - id: TEST-034
+            title: "SceneStorage: should load valid scene file"
+            status: todo
+          - id: TEST-035
+            title: "SceneStorage: should clear scene before loading new one"
+            status: todo
+          - id: TEST-036
+            title: "SceneStorage: should reconstruct objects from save file"
+            status: todo
+          - id: TEST-037
+            title: "SceneStorage: should preserve UUIDs on load"
+            status: todo
+          - id: TEST-038
+            title: "History: should save initial state"
+            status: todo
+          - id: TEST-039
+            title: "History: should successfully undo last action"
+            status: todo
+          - id: TEST-040
+            title: "History: should successfully redo action"
+            status: todo
+          - id: TEST-041
+            title: "History: should not redo if new action after undo"
+            status: todo
+          - id: TEST-042
+            title: "History: should handle undo with no history"
+            status: todo
+          - id: TEST-043
+            title: "History: should handle redo at most recent state"
+            status: todo
+          - id: TEST-044
+            title: "SceneGraph: should display mesh/light objects"
+            status: todo
+          - id: TEST-045
+            title: "SceneGraph: should not display non-mesh/light objects"
+            status: todo
+          - id: TEST-046
+            title: "SceneGraph: should rename object correctly"
+            status: todo
+          - id: TEST-047
+            title: "SceneGraph: should attach transform controls on click"
+            status: todo
+          - id: TEST-048
+            title: "SceneGraph: should delete object on button click"
+            status: todo
+          - id: TEST-049
+            title: "General: should ensure duplicated object is deep clone"
+            status: todo
+          - id: TEST-050
+            title: "General: should ensure deleting group removes children"
+            status: todo
+
+      - title: Additional 100 Tests
+        tasks:
+          - id: TEST-051
+            title: "ObjectManager: should resolve addText promise when font available"
+            status: todo
+          - id: TEST-052
+            title: "ObjectManager: should set material side to DoubleSide for planes"
+            status: todo
+          - id: TEST-053
+            title: "ObjectManager: should revokeObjectURL after texture load"
+            status: todo
+          - id: TEST-054
+            title: "ObjectManager: should handle updateMaterial for array of materials"
+            status: todo
+          - id: TEST-055
+            title: "ObjectManager: should clone material properties on duplicate"
+            status: todo
+          - id: TEST-056
+            title: "ObjectManager: should handle duplication with no geom/material"
+            status: todo
+          - id: TEST-057
+            title: "ObjectManager: should update metalness via updateMaterial"
+            status: todo
+          - id: TEST-058
+            title: "ObjectManager: should update roughness via updateMaterial"
+            status: todo
+          - id: TEST-059
+            title: "ObjectManager: should correctly add TeapotGeometry"
+            status: todo
+          - id: TEST-060
+            title: "ObjectManager: should correctly add ExtrudeGeometry"
+            status: todo
+          - id: TEST-061
+            title: "ObjectManager: should correctly add LatheGeometry"
+            status: todo
+          - id: TEST-062
+            title: "ObjectManager: should not add deleted object back on undo if invalid"
+            status: todo
+          - id: TEST-063
+            title: "ObjectManager: should dispose of textures on deletion"
+            status: todo
+          - id: TEST-064
+            title: "ObjectManager: should offset position on duplication"
+            status: todo
+          - id: TEST-065
+            title: "ObjectManager: should handle unsupported texture types gracefully"
+            status: todo
+          - id: TEST-066
+            title: "LightManager: should assign default name if none provided"
+            status: todo
+          - id: TEST-067
+            title: "LightManager: should handle removing light not in scene"
+            status: todo
+          - id: TEST-068
+            title: "LightManager: should preserve properties when changing light type"
+            status: todo
+          - id: TEST-069
+            title: "LightManager: should handle invalid light property update"
+            status: todo
+          - id: TEST-070
+            title: "LightManager: should ensure ambient lights don't have position"
+            status: todo
+          - id: TEST-071
+            title: "PhysicsManager: should create static body for mass 0"
+            status: todo
+          - id: TEST-072
+            title: "PhysicsManager: should scale shape when mesh is scaled"
+            status: todo
+          - id: TEST-073
+            title: "PhysicsManager: should orient shape when mesh is rotated"
+            status: todo
+          - id: TEST-074
+            title: "PhysicsManager: should correctly remove body from world"
+            status: todo
+          - id: TEST-075
+            title: "PhysicsManager: should not affect other bodies on removal"
+            status: todo
+          - id: TEST-076
+            title: "PhysicsManager: should sync body pos with mesh on creation"
+            status: todo
+          - id: TEST-077
+            title: "PhysicsManager: should handle geometries with no size params"
+            status: todo
+          - id: TEST-078
+            title: "PhysicsManager: should apply gravity to dynamic bodies"
+            status: todo
+          - id: TEST-079
+            title: "PhysicsManager: should handle adding same mesh multiple times"
+            status: todo
+          - id: TEST-080
+            title: "PhysicsManager: should step world with deltaTime"
+            status: todo
+          - id: TEST-081
+            title: "GroupManager: should allow grouping a group"
+            status: todo
+          - id: TEST-082
+            title: "GroupManager: should handle nested ungrouping"
+            status: todo
+          - id: TEST-083
+            title: "GroupManager: should maintain world-space transforms"
+            status: todo
+          - id: TEST-084
+            title: "GroupManager: should return empty array for non-group ungroup"
+            status: todo
+          - id: TEST-085
+            title: "GroupManager: should group objects with different parents"
+            status: todo
+          - id: TEST-086
+            title: "GroupManager: ungroupObjects should return child array"
+            status: todo
+          - id: TEST-087
+            title: "GroupManager: grouping should replace original objects"
+            status: todo
+          - id: TEST-088
+            title: "GroupManager: empty group should be removable"
+            status: todo
+          - id: TEST-089
+            title: "GroupManager: group animations should persist"
+            status: todo
+          - id: TEST-090
+            title: "GroupManager: group name should be settable"
+            status: todo
+          - id: TEST-091
+            title: "SceneStorage: should save/load lights"
+            status: todo
+          - id: TEST-092
+            title: "SceneStorage: should save/load nested groups"
+            status: todo
+          - id: TEST-093
+            title: "SceneStorage: should handle non-zip loading"
+            status: todo
+          - id: TEST-094
+            title: "SceneStorage: should handle zip missing scene.json"
+            status: todo
+          - id: TEST-095
+            title: "SceneStorage: should save/load material PBR properties"
+            status: todo
+          - id: TEST-096
+            title: "SceneStorage: should save/load empty scene"
+            status: todo
+          - id: TEST-097
+            title: "SceneStorage: should handle JSON parsing errors"
+            status: todo
+          - id: TEST-098
+            title: "SceneStorage: should restore object names"
+            status: todo
+          - id: TEST-099
+            title: "SceneStorage: should restore light types/positions"
+            status: todo
+          - id: TEST-100
+            title: "SceneStorage: load process should trigger SceneGraph update"
+            status: todo
+          - id: TEST-101
+            title: "History: should undo/redo group creation"
+            status: todo
+          - id: TEST-102
+            title: "History: should undo/redo ungrouping"
+            status: todo
+          - id: TEST-103
+            title: "History: restoreState should dispose of old resources"
+            status: todo
+          - id: TEST-104
+            title: "History: saveState should clear redo history"
+            status: todo
+          - id: TEST-105
+            title: "History: restoring state should re-render scene"
+            status: todo
+          - id: TEST-106
+            title: "History: undo should detach transform controls"
+            status: todo
+          - id: TEST-107
+            title: "History: saveState should ignore identical states"
+            status: todo
+          - id: TEST-108
+            title: "History: should handle long series of actions"
+            status: todo
+          - id: TEST-109
+            title: "History: should restore visibility states"
+            status: todo
+          - id: TEST-110
+            title: "History: should restore camera pos/rot if saved"
+            status: todo
+          - id: TEST-111
+            title: "Pointer: should dispatch selectionChange event"
+            status: todo
+          - id: TEST-112
+            title: "Pointer: should dispatch selectionChange null on deselection"
+            status: todo
+          - id: TEST-113
+            title: "Pointer: should apply selection outline"
+            status: todo
+          - id: TEST-114
+            title: "Pointer: should remove outline on deselection"
+            status: todo
+          - id: TEST-115
+            title: "Pointer: should swap outline on new selection"
+            status: todo
+          - id: TEST-116
+            title: "Pointer: isDragging flag toggle"
+            status: todo
+          - id: TEST-117
+            title: "Pointer: Raycaster update on move"
+            status: todo
+          - id: TEST-118
+            title: "Pointer: ignore UI element clicks"
+            status: todo
+          - id: TEST-119
+            title: "Pointer: removeOutline safety"
+            status: todo
+          - id: TEST-120
+            title: "Pointer: Raycast identification of front-most object"
+            status: todo
+          - id: TEST-121
+            title: "SceneManager: window resize update"
+            status: todo
+          - id: TEST-122
+            title: "SceneManager: resetCamera functionality"
+            status: todo
+          - id: TEST-123
+            title: "SceneManager: OrbitControls damping enabled"
+            status: todo
+          - id: TEST-124
+            title: "SceneManager: Grid/Axes helpers presence"
+            status: todo
+          - id: TEST-125
+            title: "SceneManager: renderer DOM element matching"
+            status: todo
+          - id: TEST-126
+            title: "ShaderEditor: createShader adds ShaderMaterial mesh"
+            status: todo
+          - id: TEST-127
+            title: "ShaderEditor: initGUI adds folder"
+            status: todo
+          - id: TEST-128
+            title: "ShaderEditor: uniform update sets needsUpdate"
+            status: todo
+          - id: TEST-129
+            title: "ShaderEditor: GLSL edit updates material"
+            status: todo
+          - id: TEST-130
+            title: "ShaderEditor: dispose previous shader on new one"
+            status: todo
+          - id: TEST-131
+            title: "Integration: Translate button mode"
+            status: todo
+          - id: TEST-132
+            title: "Integration: Rotate button mode"
+            status: todo
+          - id: TEST-133
+            title: "Integration: Scale button mode"
+            status: todo
+          - id: TEST-134
+            title: "Integration: Save as Image download"
+            status: todo
+          - id: TEST-135
+            title: "Integration: Transform gizmo creates history state"
+            status: todo
+          - id: TEST-136
+            title: "Integration: dat.gui cleared on no selection"
+            status: todo
+          - id: TEST-137
+            title: "Integration: dat.gui updates object in real-time"
+            status: todo
+          - id: TEST-138
+            title: "Integration: Snap Translation toggle"
+            status: todo
+          - id: TEST-139
+            title: "Integration: Snap Rotation toggle"
+            status: todo
+          - id: TEST-140
+            title: "Integration: Snap Scale toggle"
+            status: todo
+          - id: TEST-141
+            title: "Integration: Duplicate Selected shortcut/button"
+            status: todo
+          - id: TEST-142
+            title: "Integration: Add Point Light update"
+            status: todo
+          - id: TEST-143
+            title: "Integration: GLTF import"
+            status: todo
+          - id: TEST-144
+            title: "Integration: GLTF export"
+            status: todo
+          - id: TEST-145
+            title: "Integration: Scene Graph deletion sync"
+            status: todo
+          - id: TEST-146
+            title: "Integration: Scene Graph selection sync"
+            status: todo
+          - id: TEST-147
+            title: "Integration: Physics body addition from UI"
+            status: todo
+          - id: TEST-148
+            title: "Integration: Reset View UI"
+            status: todo
+          - id: TEST-149
+            title: "Integration: Load scene populates UI"
+            status: todo
+          - id: TEST-150
+            title: "Integration: Undo operation UI update"
+            status: todo
+
+  - category: Improvement Suggestions (SUGGESTIONS.md)
+    subcategories:
+      - title: I. Architecture & General
+        tasks:
+          - id: SUG-001
+            title: "Dependency Injection: Central container for decoupled classes"
+            status: todo
+          - id: SUG-002
+            title: "Centralized State Management: Dedicated state object for predictability"
+            status: todo
+          - id: SUG-003
+            title: "Externalize Configuration: Config file for port, URLs, limits"
+            status: todo
+          - id: SUG-004
+            title: "Consistent Module System: Standardize on ES Modules"
+            status: todo
+          - id: SUG-005
+            title: "Comprehensive Error Handling: try...catch for storage/parsing/WS"
+            status: todo
+          - id: SUG-006
+            title: "Use a Logger: Replace console.log with loglevel"
+            status: todo
+          - id: SUG-007
+            title: "Add JSDoc Comments: Document all public classes/methods"
+            status: todo
+          - id: SUG-008
+            title: "Define Constants: Prevent typos with constants.js"
+            status: todo
+          - id: SUG-009
+            title: "State Machine: Finite State Machine for application modes"
+            status: todo
+          - id: SUG-010
+            title: "Service Locator Pattern: Alternative access for shared services"
+            status: todo
+          - id: SUG-011
+            title: "Single Responsibility: Split ObjectManager into Factory/Selector/Updater"
+            status: todo
+          - id: SUG-012
+            title: "Command Pattern: Refactor History for better undo/redo logic"
+            status: todo
+          - id: SUG-013
+            title: "Data-Oriented Design: Separate app state from Three.js objects"
+            status: todo
+          - id: SUG-014
+            title: "Core Engine Class: Abstract Three.js boilerplate from main.js"
+            status: todo
+          - id: SUG-015
+            title: "Decouple UI from Logic: SceneGraph emits events instead of direct DOM manipulation"
+            status: todo
+          - id: SUG-016
+            title: "Abstract WebSocket: Dedicated NetworkManager class"
+            status: todo
+          - id: SUG-017
+            title: "Modularize Managers: True ES Modules instantiated by main.js"
+            status: todo
+          - id: SUG-018
+            title: "Avoid instanceof: Use duck typing or component-based approach"
+            status: todo
+
+      - title: II. Backend
+        tasks:
+          - id: SUG-019
+            title: "Robust File Paths: Use path.join for OS compatibility"
+            status: todo
+          - id: SUG-020
+            title: "Add Security Middleware: Implement helmet"
+            status: todo
+          - id: SUG-021
+            title: "Enable CORS: Implementing cors middleware"
+            status: todo
+          - id: SUG-022
+            title: "Handle WebSocket Errors: Listen for 'error' event on connections"
+            status: todo
+          - id: SUG-023
+            title: "Env Port: Read port from process.env.PORT"
+            status: todo
+          - id: SUG-024
+            title: "WebSocket Broadcasting: Room-based system for scaling"
+            status: todo
+          - id: SUG-025
+            title: "Graceful Shutdown: Handle server closure properly"
+            status: todo
+          - id: SUG-026
+            title: "Structured Logging: JSON logs for analysis"
+            status: todo
+          - id: SUG-027
+            title: "WebSocket Heartbeat: Ping/pong for dead connections"
+            status: todo
+          - id: SUG-028
+            title: "Health Check Endpoint: /healthz for deployments"
+            status: todo
+          - id: SUG-029
+            title: "WebSocket Versioning: Protocol version number"
+            status: todo
+          - id: SUG-030
+            title: "Centralized Error Handling: Dedicated Express error middleware"
+            status: todo
+
+      - title: III. Frontend - JavaScript & Logic
+        tasks:
+          - id: SUG-031
+            title: "Refactor WS Handler: Switch statement or handler map"
+            status: todo
+          - id: SUG-032
+            title: "Input Manager: Centralize listeners for mouse/keyboard"
+            status: todo
+          - id: SUG-033
+            title: "Modern JS: Use optional chaining, nullish coalescing"
+            status: todo
+          - id: SUG-034
+            title: "Implement Placeholders: PhysicsManager and ShaderEditor implementation"
+            status: todo
+          - id: SUG-035
+            title: "Cache Materials: Reuse materials to reduce draw calls"
+            status: todo
+          - id: SUG-036
+            title: "Pointer.js Decoupling: Pass state via methods instead of globals"
+            status: todo
+          - id: SUG-037
+            title: "main.js Clean up: Organize UI listeners into UIMediator"
+            status: todo
+          - id: SUG-038
+            title: "Class Private Fields: Use #private syntax"
+            status: todo
+          - id: SUG-039
+            title: "Avoid Default Exports: Use named exports"
+            status: todo
+          - id: SUG-040
+            title: "Object Destructuring: Concise variable assignments"
+            status: todo
+          - id: SUG-041
+            title: "async/await: Replace .then chains"
+            status: todo
+          - id: SUG-042
+            title: "Immutable State: Use Immer or similar"
+            status: todo
+          - id: SUG-043
+            title: "Null-safe Access: updatePropertiesPanel safely"
+            status: todo
+          - id: SUG-044
+            title: "Strict ESLint: eslint-plugin-promise, unicorn"
+            status: todo
+          - id: SUG-045
+            title: "Remove Dead Code: Audit variables/functions"
+            status: todo
+          - id: SUG-046
+            title: "Template Literals: Better DOM string construction"
+            status: todo
+          - id: SUG-047
+            title: "Avoid for...in: Use for...of or forEach"
+            status: todo
+          - id: SUG-048
+            title: "Explicit Coercion: Use strict equality"
+            status: todo
+
+      - title: IV. Three.js & Scene Management
+        tasks:
+          - id: SUG-049
+            title: "Built-in Serialization: Use THREE.ObjectLoader and toJSON"
+            status: todo
+          - id: SUG-050
+            title: "Complete Resource Disposal: Audit for .dispose() calls"
+            status: todo
+          - id: SUG-051
+            title: "Manage Controls: Toggle OrbitControls off when TransformControls on"
+            status: todo
+          - id: SUG-052
+            title: "Device Pixel Ratio: High DPI support"
+            status: todo
+          - id: SUG-053
+            title: "Abstract SceneGraph DOM: Smaller functions, cleaner HTML generation"
+            status: todo
+          - id: SUG-054
+            title: "Instanced Rendering: Mass performance boost with InstancedMesh"
+            status: todo
+          - id: SUG-055
+            title: "Post-Processing: Bloom, DOF, custom passes via EffectComposer"
+            status: todo
+          - id: SUG-056
+            title: "Orthographic Camera: Toggle for modeling views"
+            status: todo
+          - id: SUG-057
+            title: "Scene Fog: Atmospheric effects"
+            status: todo
+          - id: SUG-058
+            title: "Real Physics Engine: Integrate Cannon-es or Rapier"
+            status: todo
+          - id: SUG-059
+            title: "Shader Editor: Custom GLSL for objects"
+            status: todo
+          - id: SUG-060
+            title: "GLTF Loading: Support for complex models"
+            status: todo
+          - id: SUG-061
+            title: "Environment Maps: Realistic reflections"
+            status: todo
+
+      - title: V. HTML & CSS
+        tasks:
+          - id: SUG-062
+            title: "Semantic HTML: Replace tables/divs with main/section/aside"
+            status: todo
+          - id: SUG-063
+            title: "Remove Inline styles/handlers: Move to CSS/JS listeners"
+            status: todo
+          - id: SUG-064
+            title: "Responsive Layout: Flexbox, Grid, media queries"
+            status: todo
+          - id: SUG-065
+            title: "CSS Classes: Prefer over IDs"
+            status: todo
+          - id: SUG-066
+            title: "CSS Variables: Theming and maintenance"
+            status: todo
+          - id: SUG-067
+            title: "CSS Naming: Adopt BEM"
+            status: todo
+          - id: SUG-068
+            title: "Remove !important: Fix specificity issues"
+            status: todo
+          - id: SUG-069
+            title: "Accessibility (A11y): ARIA labels, semantic buttons"
+            status: todo
+
+      - title: VI. Testing & Tooling
+        tasks:
+          - id: SUG-070
+            title: "Increase Coverage: Test all public methods"
+            status: todo
+          - id: SUG-071
+            title: "Mock Dependencies: jest.mock for isolation"
+            status: todo
+          - id: SUG-072
+            title: "Backend Tests: Test WS logic and broadcasting"
+            status: todo
+          - id: SUG-073
+            title: "E2E Tests: Cypress or Playwright"
+            status: todo
+          - id: SUG-074
+            title: "Bundler: Integrate Vite or Webpack"
+            status: todo
+          - id: SUG-075
+            title: "Lint/Format: ESLint and Prettier"
+            status: todo
+          - id: SUG-076
+            title: "Pre-commit Hooks: Husky and lint-staged"
+            status: todo
+          - id: SUG-077
+            title: "Update Dependencies: Security and performance updates"
+            status: todo
+          - id: SUG-078
+            title: "Specify Node Version: package.json engines field"
+            status: todo
+          - id: SUG-079
+            title: "Snapshot Testing: For SceneGraph UI structure"
+            status: todo
+          - id: SUG-080
+            title: "Visual Regression: Storybook or Percy"
+            status: todo
+          - id: SUG-081
+            title: "Measure Coverage: Thresholds in Jest"
+            status: todo
+          - id: SUG-082
+            title: "Cross-Browser: BrowserStack integration"
+            status: todo
+          - id: SUG-083
+            title: "Edge Case Tests: History and Raycasting"
+            status: todo
+          - id: SUG-084
+            title: "Fuzz Testing: Malformed WS/UI input"
+            status: todo
+          - id: SUG-085
+            title: "Performance Benchmarks: Scene load and FPS tracking"
+            status: todo
+
+      - title: VII. Documentation & UX
+        tasks:
+          - id: SUG-086
+            title: "Enhance README: Setup, architecture, testing guide"
+            status: todo
+          - id: SUG-087
+            title: "User Feedback: Loading spinners, toasts for success"
+            status: todo
+          - id: SUG-088
+            title: "UI Ergonomics: Better panel grouping"
+            status: todo
+          - id: SUG-089
+            title: "Graceful Storage Failure: handle localStorage full/disabled"
+            status: todo
+          - id: SUG-090
+            title: "Keyboard Shortcuts: Ctrl+S, Ctrl+Z, G, Delete"
+            status: todo
+          - id: SUG-091
+            title: "Hover/Select Cues: Subtle vs Strong outlines"
+            status: todo
+          - id: SUG-092
+            title: "Custom Modals: Replace window.confirm"
+            status: todo
+          - id: SUG-093
+            title: "Tooltips: For toolbar icons"
+            status: todo
+          - id: SUG-094
+            title: "Color Picker: Proper UI component"
+            status: todo
+          - id: SUG-095
+            title: "Input Steppers: Increment arrows for numbers"
+            status: todo
+          - id: SUG-096
+            title: "Snapping/Alignment: Grid/Axis snapping tools"
+            status: todo
+          - id: SUG-097
+            title: "Welcome Modal: First-time user guide"
+            status: todo
+          - id: SUG-098
+            title: "Draggable Panels: Repositionable UI"
+            status: todo
+          - id: SUG-099
+            title: "Slow Ops Feedback: Progress bars"
+            status: todo
+          - id: SUG-100
+            title: "Search/Filter: In SceneGraph UI list"
+            status: todo
+          - id: SUG-101
+            title: "Context Menus: Right-click actions"
+            status: todo
+
+      - title: VIII. Security Hardening
+        tasks:
+          - id: SUG-102
+            title: "Input Sanitization: Prevent XSS in panels"
+            status: todo
+          - id: SUG-103
+            title: "WS Validation: Schema-based server checks"
+            status: todo
+          - id: SUG-104
+            title: "Restrictive CSP: Meta tag or header implementation"
+            status: todo
+          - id: SUG-105
+            title: "Vulnerability Scanning: npm audit in CI"
+            status: todo
+          - id: SUG-106
+            title: "Secure Links: rel='noopener noreferrer'"
+            status: todo
+          - id: SUG-107
+            title: "WS Rate Limiting: Protection against DoS"
+            status: todo
+          - id: SUG-108
+            title: "JSON Proto Security: Safe parsing"
+            status: todo
+
+      - title: IX. Build & Tooling
+        tasks:
+          - id: SUG-109
+            title: "Dev/Prod Builds: Optimized configurations"
+            status: todo
+          - id: SUG-110
+            title: "Source Maps: Production debugging"
+            status: todo
+          - id: SUG-111
+            title: "CI/CD Pipeline: GitHub Actions/GitLab CI"
+            status: todo
+          - id: SUG-112
+            title: "Containerization: Dockerfile and Compose"
+            status: todo
+          - id: SUG-113
+            title: "Tree Shaking: Eliminate unused library code"
+            status: todo
+          - id: SUG-114
+            title: "Code Splitting: Faster initial load"
+            status: todo
+          - id: SUG-115
+            title: "Auto-updates: Dependabot/Renovate"
+            status: todo
+
+      - title: X. Management & Docs
+        tasks:
+          - id: SUG-116
+            title: "Architectural Decision Records (ADR)"
+            status: todo
+          - id: SUG-117
+            title: "WS API Documentation: Clear protocol definition"
+            status: todo
+          - id: SUG-118
+            title: "CONTRIBUTING.md: Guide for others"
+            status: todo
+          - id: SUG-119
+            title: "Auto-docs: TypeDoc/JSDoc generation"
+            status: todo
+          - id: SUG-120
+            title: "Project Boards: GitHub Projects/Kanban"
+            status: todo
+          - id: SUG-121
+            title: "Changelog: Tracking versions"
+            status: todo
+          - id: SUG-122
+            title: "In-line Comments: Explaining complex logic"
+            status: todo
+          - id: SUG-123
+            title: "Build/Deploy Docs: README section"
+            status: todo
+
+      - title: XI. TypeScript & Static Analysis
+        tasks:
+          - id: SUG-124
+            title: "Incremental Migration: TS utility functions first"
+            status: todo
+          - id: SUG-125
+            title: "Core Types: Interface definitions"
+            status: todo
+          - id: SUG-126
+            title: "Mapped Types: For UI/Domain consistency"
+            status: todo
+          - id: SUG-127
+            title: "Strict Checking: tsconfig.json strict mode"
+            status: todo
+          - id: SUG-128
+            title: "Utility Types: Partial, Pick, etc."
+            status: todo
+          - id: SUG-129
+            title: "Type Guards: isMesh/isLight functions"
+            status: todo
+          - id: SUG-130
+            title: "Typed Event Bus: Validated payloads"
+            status: todo
+          - id: SUG-131
+            title: "Schema Types: From WS schema"
+            status: todo
+          - id: SUG-132
+            title: "TS Linting: @typescript-eslint"
+            status: todo
+          - id: SUG-133
+            title: "Prefer unknown: Safer any alternative"
+            status: todo
+          - id: SUG-134
+            title: "Enums: For categories like ObjectType"
+            status: todo
+
+      - title: XII. Advanced State & Data
+        tasks:
+          - id: SUG-135
+            title: "State Library: Zustand or Redux"
+            status: todo
+          - id: SUG-136
+            title: "Memoized Selectors: Performance optimization"
+            status: todo
+          - id: SUG-137
+            title: "State Normalization: Entity map pattern"
+            status: todo
+          - id: SUG-138
+            title: "Separate UI/Domain State"
+            status: todo
+          - id: SUG-139
+            title: "Optimistic UI: Network actions feedback"
+            status: todo
+          - id: SUG-140
+            title: "CRDTs: Conflict-free real-time merge"
+            status: todo
+          - id: SUG-141
+            title: "IndexedDB: For large asset storage"
+            status: todo
+          - id: SUG-142
+            title: "Migration Scripts: For saved data versions"
+            status: todo
+
+      - title: XIII. Collaboration Features
+        tasks:
+          - id: SUG-143
+            title: "Presence Indicators: Active user list"
+            status: todo
+          - id: SUG-144
+            title: "Live Cursors: Multi-user pointers"
+            status: todo
+          - id: SUG-145
+            title: "Component Locking: Editing locks"
+            status: todo
+          - id: SUG-146
+            title: "Live Chat/Annotations: Drop 3D markers"
+            status: todo
+          - id: SUG-147
+            title: "OT/CRDT: Sync strategies"
+            status: todo
+          - id: SUG-148
+            title: "Rooms: Session management"
+            status: todo
+          - id: SUG-149
+            title: "Backend Persistence: Save collab state"
+            status: todo
+          - id: SUG-150
+            title: "Roles: Editor vs Viewer"
+            status: todo
+
+      - title: XIV. UI Polish
+        tasks:
+          - id: SUG-151
+            title: "Label Scrubbing: Drag numeric labels"
+            status: todo
+          - id: SUG-152
+            title: "Theming: Dark/Light modes"
+            status: todo
+          - id: SUG-153
+            title: "Command Palette: Ctrl+P actions"
+            status: todo
+          - id: SUG-154
+            title: "Marquee Selection: Box drag selection"
+            status: todo
+          - id: SUG-155
+            title: "Viewport Display: Name labels on hover"
+            status: todo
+          - id: SUG-156
+            title: "A11y Colors: Contrast standards"
+            status: todo
+          - id: SUG-157
+            title: "UI State in URL: Context restoration"
+            status: todo
+          - id: SUG-158
+            title: "Empty States: Helpful empty messages"
+            status: todo
+          - id: SUG-159
+            title: "Micro-interactions: Subtle animations"
+            status: todo
+          - id: SUG-160
+            title: "Multi-select Editing: Common property panel"
+            status: todo
+          - id: SUG-161
+            title: "Dirty Indicator: Unsaved change warning"
+            status: todo
+
+      - title: XV. Asset Management
+        tasks:
+          - id: SUG-162
+            title: "Asset Browser: UI for textures/models"
+            status: todo
+          - id: SUG-163
+            title: "Drag-and-Drop: Asset importing"
+            status: todo
+          - id: SUG-164
+            title: "Texture Compression: KTX2/Basis Universal"
+            status: todo
+          - id: SUG-165
+            title: "Ref Counting: Memory management for assets"
+            status: todo
+          - id: SUG-166
+            title: "Lazy Loading: Load assets only on use"
+            status: todo
+          - id: SUG-167
+            title: "Preloading: Screen assets first"
+            status: todo
+
+      - title: XVI. Accessibility (A11y)
+        tasks:
+          - id: SUG-168
+            title: "Focus Management: Trap focus in modals"
+            status: todo
+          - id: SUG-169
+            title: "Live Regions: aria-live for toasts"
+            status: todo
+          - id: SUG-170
+            title: "Viewport Keynav: Camera orbiting via keys"
+            status: todo
+          - id: SUG-171
+            title: "Canvas Fallback: Text description for screen readers"
+            status: todo
+          - id: SUG-172
+            title: "High Contrast Theme"
+            status: todo
+          - id: SUG-173
+            title: "Reduce Motion: Respect prefers-reduced-motion"
+            status: todo
+          - id: SUG-174
+            title: "Icon Text: Visually hidden descriptions"
+            status: todo
+
+      - title: XVII. Structure Refinements
+        tasks:
+          - id: SUG-175
+            title: "Feature-Based Structure: Organize by feature not type"
+            status: todo
+          - id: SUG-176
+            title: "Barrel Files: index.js per directory"
+            status: todo
+          - id: SUG-177
+            title: "Separate Public/Internal API"
+            status: todo
+          - id: SUG-178
+            title: "Monorepo: npm workspaces or pnpm"
+            status: todo
+          - id: SUG-179
+            title: ".editorconfig: Consistent basics"
+            status: todo
+          - id: SUG-180
+            title: "Path Aliases: @/ shortcuts"
+            status: todo
+
+      - title: XVIII. Advanced Rendering
+        tasks:
+          - id: SUG-181
+            title: "Full PBR Support: Clearcoat, transmission, sheen"
+            status: todo
+          - id: SUG-182
+            title: "Custom Render Passes: Outlines pass"
+            status: todo
+          - id: SUG-183
+            title: "Gamma Correction Workflow: sRGB encoding"
+            status: todo
+          - id: SUG-184
+            title: "AA Techniques: SMAA/FXAA options"
+            status: todo
+          - id: SUG-185
+            title: "Multiple Viewports: Split screen views"
+            status: todo
+          - id: SUG-186
+            title: "Vertex Snapping: Grid snapping in shaders"
+            status: todo
+
+      - title: XIX. Developer Experience (DevEx)
+        tasks:
+          - id: SUG-187
+            title: "Storybook: UI component development"
+            status: todo
+          - id: SUG-188
+            title: "Hot Module Replacement (HMR)"
+            status: todo
+          - id: SUG-189
+            title: "Conventional Commits"
+            status: todo
+          - id: SUG-190
+            title: "Pluggable Architecture: Plugin system"
+            status: todo
+          - id: SUG-191
+            title: "DevTools Integration: Inspect scene/state"
+            status: todo
+          - id: SUG-192
+            title: "Semantic Release: Auto-versioning"
+            status: todo
+          - id: SUG-193
+            title: "Feature Flags: Toggle WIP features"
+            status: todo
+
+      - title: XX. Internationalization
+        tasks:
+          - id: SUG-194
+            title: "i18n Library: i18next integration"
+            status: todo
+          - id: SUG-195
+            title: "Extract Strings: To locale JSON files"
+            status: todo
+          - id: SUG-196
+            title: "Number Formatting: Locale-based"
+            status: todo
+          - id: SUG-197
+            title: "Date/Time Formatting: Locale-based"
+            status: todo
+          - id: SUG-198
+            title: "Pluralization Rules"
+            status: todo
+          - id: SUG-199
+            title: "RTL Support: Right-to-left layouts"
+            status: todo
+          - id: SUG-200
+            title: "Language Selector UI"
+            status: todo
+          - id: SUG-201
+            title: "Locale Detection: navigator.language"
+            status: todo
+          - id: SUG-202
+            title: "Character Set Support: Font strategies"
+            status: todo
+
+      - title: XXI. Extensibility
+        tasks:
+          - id: SUG-203
+            title: "Extension Points: registerTool/Panel/etc."
+            status: todo
+          - id: SUG-204
+            title: "Plugin Lifecycle Hooks"
+            status: todo
+          - id: SUG-205
+            title: "Sandboxed Plugins: WebWorkers/Iframes"
+            status: todo
+          - id: SUG-206
+            title: "Scoped Plugin CSS"
+            status: todo
+          - id: SUG-207
+            title: "Plugin API Versioning"
+            status: todo
+          - id: SUG-208
+            title: "Plugin Manager UI"
+            status: todo
+          - id: SUG-209
+            title: "Lazy Load Plugins"
+            status: todo
+          - id: SUG-210
+            title: "Read-Only Core API: For safety"
+            status: todo
+
+      - title: XXII. Monitoring
+        tasks:
+          - id: SUG-211
+            title: "Error Tracking: Sentry/Bugsnag"
+            status: todo
+          - id: SUG-212
+            title: "Performance Monitoring: Web Vitals"
+            status: todo
+          - id: SUG-213
+            title: "User Analytics: Plausible/Umami"
+            status: todo
+          - id: SUG-214
+            title: "Backend APM"
+            status: todo
+          - id: SUG-215
+            title: "Structured Frontend Logging"
+            status: todo
+          - id: SUG-216
+            title: "Context Loss Tracking"
+            status: todo
+          - id: SUG-217
+            title: "Adoption Metrics: For features"
+            status: todo
+          - id: SUG-218
+            title: "Session Replay: LogRocket"
+            status: todo
+
+      - title: XXIII. Mobile & PWA
+        tasks:
+          - id: SUG-219
+            title: "Web App Manifest: Installable PWA"
+            status: todo
+          - id: SUG-220
+            title: "Offline Caching: Service Workers"
+            status: todo
+          - id: SUG-221
+            title: "Touch Controls: Zoom/Pan gestures"
+            status: todo
+          - id: SUG-222
+            title: "Large Tap Targets: Mobile ergonomics"
+            status: todo
+          - id: SUG-223
+            title: "Viewport Resize: Keyboard handling"
+            status: todo
+          - id: SUG-224
+            title: "Wake Lock API"
+            status: todo
+          - id: SUG-225
+            title: "Conditional Rendering: Mobile quality reduction"
+            status: todo
+          - id: SUG-226
+            title: "Haptic Feedback: Vibration API"
+            status: todo
+
+      - title: XXIV. Advanced Physics
+        tasks:
+          - id: SUG-227
+            title: "Physics Debug Renderer: Wireframe collision shapes"
+            status: todo
+          - id: SUG-228
+            title: "Constraints & Joints: Hinge, Slider, Lock"
+            status: todo
+          - id: SUG-229
+            title: "Soft Body & Cloth: Deformable objects"
+            status: todo
+          - id: SUG-230
+            title: "Vehicle Simulation: Raycast-based"
+            status: todo
+          - id: SUG-231
+            title: "Deterministic Physics: For multiplayer"
+            status: todo
+          - id: SUG-232
+            title: "Physics Materials: Friction/Restitution"
+            status: todo
+
+      - title: XXV. WASM & Performance
+        tasks:
+          - id: SUG-233
+            title: "Rewrite Bottlenecks in Rust/C++: Mesh manipulation/pathfinding"
+            status: todo
+          - id: SUG-234
+            title: "JS/WASM Memory Management: Efficient copying"
+            status: todo
+          - id: SUG-235
+            title: "WASM Physics: Rapier"
+            status: todo
+          - id: SUG-236
+            title: "WASM SIMD: Parallel computations"
+            status: todo
+
+      - title: XXVI. Legal & Business
+        tasks:
+          - id: SUG-237
+            title: "User Auth: Social/Email login"
+            status: todo
+          - id: SUG-238
+            title: "Privacy Policy"
+            status: todo
+          - id: SUG-239
+            title: "Terms of Service"
+            status: todo
+          - id: SUG-240
+            title: "Cookie Consent: GDPR/CCPA"
+            status: todo
+          - id: SUG-241
+            title: "Payments Integration: Stripe/Lemon Squeezy"
+            status: todo
+          - id: SUG-242
+            title: "Tiered Access: Subscriptions"
+            status: todo
+          - id: SUG-243
+            title: "Usage Quotas"
+            status: todo
+          - id: SUG-244
+            title: "Admin Dashboard"
+            status: todo
+
+      - title: XXVII. Final Polish & Robustness
+        tasks:
+          - id: SUG-245
+            title: "Context Loss Recovery: Recreate GPU resources"
+            status: todo
+          - id: SUG-246
+            title: "Tab Inactivity: Pause rendering"
+            status: todo
+          - id: SUG-247
+            title: "Configurable History Limit"
+            status: todo
+          - id: SUG-248
+            title: "Custom 404 Page"
+            status: todo
+          - id: SUG-249
+            title: "Favicon Set: Multi-device support"
+            status: todo
+          - id: SUG-250
+            title: "robots.txt"
+            status: todo
+          - id: SUG-251
+            title: "Sitemap XML"
+            status: todo
+          - id: SUG-252
+            title: "Export Preferences: Settings backup"
+            status: todo
+          - id: SUG-253
+            title: "URL Scene Loading"
+            status: todo
+          - id: SUG-254
+            title: "Input Validation: Robust panels"
+            status: todo
+          - id: SUG-255
+            title: "High-Polling Rate Support"
+            status: todo
+          - id: SUG-256
+            title: "Clipping Plane Adjustment"
+            status: todo
+          - id: SUG-257
+            title: "Accidental Exit Prevention"
+            status: todo
+          - id: SUG-258
+            title: "Clipboard Integration: JSON copy/paste"
+            status: todo
+          - id: SUG-259
+            title: "API Retries: Backoff strategy"
+            status: todo
+          - id: SUG-260
+            title: "Unit Conversion"
+            status: todo
+          - id: SUG-261
+            title: "Safe Area Insets: Mobile notch support"
+            status: todo
+          - id: SUG-262
+            title: "Memory Profiling: detached DOM nodes"
+            status: todo
+          - id: SUG-263
+            title: "GPU Profiling: expensive shaders"
+            status: todo
+          - id: SUG-264
+            title: "Grid/Helper Customization"
+            status: todo
+          - id: SUG-265
+            title: "Recursive dispose: Comprehensive memory cleanup"
+            status: todo
+          - id: SUG-266
+            title: "Transform Space Toggling: Local/World"
+            status: todo
+          - id: SUG-267
+            title: "Property Locking"
+            status: todo
+          - id: SUG-268
+            title: "Isolate Object Mode"
+            status: todo
+          - id: SUG-269
+            title: "Camera Bookmarks"
+            status: todo
+          - id: SUG-270
+            title: "Undo/Redo Camera Movement"
+            status: todo
+          - id: SUG-271
+            title: "FileSystem Access API"
+            status: todo
+          - id: SUG-272
+            title: "WebXR: VR/AR Support"
+            status: todo
+          - id: SUG-273
+            title: "Conditional Polyfills"
+            status: todo
+          - id: SUG-274
+            title: "CSP Nonce for inline scripts"
+            status: todo
+          - id: SUG-275
+            title: "Bundle Analysis"
+            status: todo
+          - id: SUG-276
+            title: "Error Boundaries in UI"
+            status: todo
+          - id: SUG-277
+            title: "Dependency License Checker"
+            status: todo
+          - id: SUG-278
+            title: "CSS Containment: Performance boost"
+            status: todo
+          - id: SUG-279
+            title: "Image Lazy Loading in UI"
+            status: todo
+          - id: SUG-280
+            title: "Keyboard Focus Visualization"
+            status: todo
+          - id: SUG-281
+            title: "Test for Race Conditions"
+            status: todo
+          - id: SUG-282
+            title: "Scripting via Console"
+            status: todo
+          - id: SUG-283
+            title: "Automatic Scene Backups"
+            status: todo
