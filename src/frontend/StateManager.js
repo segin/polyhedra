@@ -1,3 +1,5 @@
+import { Logger } from './utils/Logger.js';
+
 export class StateManager {
   constructor() {
     this._state = {
@@ -74,7 +76,7 @@ export class StateManager {
           try {
             callback(newState[key], newState);
           } catch (error) {
-            console.error(`Error in StateManager listener for key '${key}':`, error);
+            Logger.error(`Error in StateManager listener for key '${key}':`, error);
           }
         });
       }

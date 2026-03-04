@@ -99,22 +99,22 @@ tasks:
             status: todo
           - id: SPEC-1.3.1.1
             title: Create Logger utility (levels, timestamp, ISO string)
-            status: todo
+            status: done
           - id: SPEC-1.3.1.2
             title: Suppress DEBUG logs in production
-            status: todo
+            status: done
           - id: SPEC-1.3.1.3
             title: Replace console.log/error with Logger calls
-            status: todo
+            status: done
           - id: SPEC-1.3.2.1
             title: Add global error handler (window.error, unhandledrejection)
-            status: todo
+            status: done
           - id: SPEC-1.3.2.2
             title: Create Operation Wrappers (safeJSONParse, localStorage try/catch)
-            status: todo
+            status: done
           - id: SPEC-1.3.2.3
             title: Create ToastManager for UI error feedback
-            status: todo
+            status: done
 
       - title: Phase 2 - Comprehensive Testing
         tasks:

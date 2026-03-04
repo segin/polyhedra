@@ -16,7 +16,9 @@ import { ObjectFactory } from './ObjectFactory.js';
 import { ObjectPropertyUpdater } from './ObjectPropertyUpdater.js';
 import { ToastManager } from './ToastManager.js';
 import { LightManager } from './LightManager.js';
+import { Logger } from './utils/Logger.js';
 import { ModelLoader } from './ModelLoader.js';
+import { ErrorHandler } from './ErrorHandler.js';
 
 /**
  * Simple 3D modeling application with basic primitives and transform controls
@@ -25,6 +27,7 @@ export class App {
   constructor() {
     // Initialize Core Utilities
     this.toastManager = new ToastManager();
+    ErrorHandler.init(this.toastManager);
     this.container = new ServiceContainer();
     this.clock = new THREE.Clock();
 
@@ -231,7 +234,7 @@ export class App {
           this.saveState('Import Model');
           this.toastManager.show(`Imported ${file.name}`, 'success');
       } catch (error) {
-          console.error('Import failed:', error);
+          Logger.error('Import failed:', error);
           this.toastManager.show('Import failed: ' + error.message, 'error');
       }
   }
@@ -460,7 +463,7 @@ export class App {
           try {
             await this.loadScene(file);
           } catch (err) {
-            console.error('Failed to load scene', err);
+            Logger.error('Failed to load scene', err);
           }
         }
         // @ts-ignore
@@ -822,7 +825,7 @@ export class App {
   toggleFullscreen() {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+        Logger.error(`Error attempting to enable full-screen mode: ${err.message}`);
       });
     } else {
       document.exitFullscreen();
@@ -834,7 +837,7 @@ export class App {
       await this.sceneStorage.saveScene();
       this.toastManager.show('Scene saved', 'success');
     } catch (e) {
-      console.error('Save failed', e);
+      Logger.error('Save failed', e);
       this.toastManager.show('Save failed', 'error');
     }
   }
@@ -857,7 +860,7 @@ export class App {
       this.saveState('Load Scene');
       this.toastManager.show('Scene loaded', 'success');
     } catch (e) {
-      console.error('Load failed', e);
+      Logger.error('Load failed', e);
       this.toastManager.show('Load failed', 'error');
     }
   }

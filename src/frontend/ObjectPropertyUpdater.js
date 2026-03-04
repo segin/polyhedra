@@ -1,5 +1,6 @@
 // @ts-check
 import * as THREE from 'three';
+import { Logger } from './utils/Logger.js';
 
 /**
  * Handles updating of object properties like materials, textures, and geometry.
@@ -66,7 +67,7 @@ export class ObjectPropertyUpdater {
       },
       undefined,
       (error) => {
-        console.warn('Error loading texture:', error);
+        Logger.warn('Error loading texture:', error);
         URL.revokeObjectURL(url);
       },
     );

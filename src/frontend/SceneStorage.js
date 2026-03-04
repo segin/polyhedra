@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { safeJSONParse } from './utils/OperationWrappers.js';
 import log from './logger.js';
 
 export class SceneStorage {
@@ -79,8 +80,8 @@ export class SceneStorage {
             // Send data to worker. We rely on structured cloning to copy buffers efficiently.
             this.worker.postMessage({ type: 'serialize', data: sceneData });
         });
-    } catch (error) {
-        log.error("Worker serialization failed:", error);
+      } catch (error) {
+        // Suppress json parse error and let fallback take over
         throw error;
     }
 
@@ -135,7 +136,11 @@ export class SceneStorage {
       const mappingFile = loadedZip.file('buffers.json');
       if (mappingFile) {
           const mappingJson = await mappingFile.async('string');
-          const bufferMapping = JSON.parse(mappingJson);
+          const bufferMapping = safeJSONParse(mappingJson);
+
+          if (!bufferMapping) {
+              throw new Error('buffers.json is invalid or corrupted');
+          }
 
           // Load all unique binary files
           // We can infer count from mapping max index or just check files

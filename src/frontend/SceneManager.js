@@ -1,5 +1,6 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import * as THREE from 'three';
+import { Logger } from './utils/Logger.js';
 
 export class SceneManager {
   constructor(renderer, camera, inputManager, scene) {
@@ -13,7 +14,7 @@ export class SceneManager {
 
     if (!this.scene) {
       // Fallback if not provided, though usually should be injected
-      console.warn('Scene not injected into SceneManager, creating new one.');
+      Logger.warn('Scene not injected into SceneManager, creating new one.');
       this.scene = new THREE.Scene();
     }
 
