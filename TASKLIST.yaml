@@ -54,25 +54,25 @@ tasks:
             status: done
           - id: SPEC-1.1.2.2
             title: Refactor ObjectManager for constructor injection (scene, eventBus, physicsManager)
-            status: todo
+            status: done
           - id: SPEC-1.1.2.3
             title: Refactor SceneManager for constructor injection (renderer, camera, inputManager)
-            status: todo
+            status: done
           - id: SPEC-1.1.2.4
             title: Refactor InputManager for constructor injection (domElement)
-            status: todo
+            status: done
           - id: SPEC-1.1.2.5
             title: Update main.js to use ServiceContainer and dependency order
-            status: todo
+            status: done
           - id: SPEC-1.1.3.1
             title: Create StateManager class (initial state, Proxy/setter detection)
-            status: todo
+            status: done
           - id: SPEC-1.1.3.2
             title: Implement State accessors (getState, setState, subscribe)
-            status: todo
+            status: done
           - id: SPEC-1.1.3.3
             title: Refactor Consumers (ObjectManager, PropertiesPanel) to use StateManager
-            status: todo
+            status: done
           - id: SPEC-1.2.1.1
             title: Install ESLint, Prettier, and plugins
             status: todo
