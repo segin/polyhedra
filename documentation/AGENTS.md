@@ -9,7 +9,7 @@
 End of Context from: AGENTS.md ---
 
 --- Context from: AGENTS.md ---
-Create a web-based 3D modeling program using Node.js to host the backend and WebGL to render everything in the browser. Include support for all the basic 3D primitives, including cubes, spheres, triangles, and any other shapes you can think of. Come up with a list of 3D primitives to include in the default set. Your list of primitives is too short. Create a Git repository in this directory if one does not exist - use the Unix `find` command to check. Meticulously add each of these items to a central `README.md` document which you will first create blank, commit, and then commit after adding all check boxes. Each primitive object shall be a new check box in the list. Make sure to optimize the application interface for mobile. Make sure the node.js webserver listens on localhost for a browser to connect to in order to show the frontend interface. Make sure to optimize the code. Use a custom zip file format with JSON data inside for persistent local storage. Create a `CONTEXT.md` file that you store all of your working context, ideas, and progress in, but treat it as a cache - once you're done with something in those working notes, clear it out. Commit changes to `CONTEXT.md` to the Git repository. Check for the existence of `gh` using Termux `pkg` commands. Take note of all install `pkg` and `npm` packages before getting started. Create a GitHub repository `nodist3d` and push each commit there as it happens. Explain that the name is Node.js + -ist + 3D. Create a suite of unit tests and a full test harness and test the full codebase. Make sure there is an interface button on the user controls of the web frontend to easily enter and leave full screen mode. Save this original prompt as `PROMPT.md`, commit it, and then never change it.
+Create a web-based 3D modeling program using Node.js to host the backend and WebGL to render everything in the browser. Include support for all the basic 3D primitives, including cubes, spheres, triangles, and any other shapes you can think of. Come up with a list of 3D primitives to include in the default set. Your list of primitives is too short. Create a Git repository in this directory if one does not exist - use the Unix `find` command to check. Meticulously add each of these items to a central `README.md` document which you will first create blank, commit, and then commit after adding all check boxes. Each primitive object shall be a new check box in the list. Make sure to optimize the application interface for mobile. Make sure the node.js webserver listens on localhost for a browser to connect to in order to show the frontend interface. Make sure to optimize the code. Use a custom zip file format with JSON data inside for persistent local storage. Create a `CONTEXT.md` file that you store all of your working context, ideas, and progress in, but treat it as a cache - once you're done with something in those working notes, clear it out. Commit changes to `CONTEXT.md` to the Git repository. Check for the existence of `gh` using Termux `pkg` commands. Take note of all install `pkg` and `npm` packages before getting started. Create a GitHub repository `Polyhedra` and push each commit there as it happens. Explain that the name is Node.js + -ist + 3D. Create a suite of unit tests and a full test harness and test the full codebase. Make sure there is an interface button on the user controls of the web frontend to easily enter and leave full screen mode. Save this original prompt as `PROMPT.md`, commit it, and then never change it.
 
 ---
 
@@ -20,7 +20,7 @@ _Directive: After every `git commit`, the immediate next action should be a `git
 _Directive: When implementing test cases, it is a requirement to implement only one at a time. You must only check off one completed test unit per `git commit` and `git push`._
 _Directive: Scan the codebase and suggest 500 possible improvements. Combine them with suggestions file. Make the whole thing a checklist. Implement only one item at a time, then make `git commit` and `git push` before moving on to the next item._
 
-## Working Context, Ideas, and Progress for nodist3d
+## Working Context, Ideas, and Progress for Polyhedra
 
 _Directive: This section must be updated by the AI agent after each significant change to maintain working state continuity._
 _Directive: The AI agent must update the "Current Focus" section to reflect the exact task being worked on._
@@ -54,12 +54,12 @@ _Directive: The AI agent must update "Next Steps" with the immediate next action
 - ✅ COMPLETED: Comprehensive test suite implementation with 124 passing tests - commit 6a3f11e
 - ✅ COMPLETED: Three.js Mock Stabilization and Test Resolution (37 passing tests) - commit [STABILIZE_COMMIT]
 - ✅ COMPLETED: Fullscreen mode functionality with cross-browser support - commit 21c05de
-- ✅ COMPLETED: Custom .nodist3d zip file storage format with JSON - commit b645ee8
+- ✅ COMPLETED: Custom .polyhedra zip file storage format with JSON - commit b645ee8
 - ✅ COMPLETED: Comprehensive mobile interface optimization - commit 3e3bdd4
 - ✅ COMPLETED: Merge PR #65 (Resolve conflicts and unify implementations) - commit [LATEST_COMMIT]
 - ✅ COMPLETED: Renamed GEMINI.md to AGENTS.md and created ARCHITECTURE.md - commit [LATEST_COMMIT]
 - ✅ COMPLETED: Merged all pending remote optimization branches into main - commit [LATEST_COMMIT]
-- ✅ COMPLETED: Resolved final remaining Jest test suite mock collisions (TEST-001, TEST-002) - commit [LATEST_COMMIT]
+- ✅ COMPLETED: Renamed project to Polyhedra - commit [LATEST_COMMIT]
 
 
 ### Implementation Strategy:

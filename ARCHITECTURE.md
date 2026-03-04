@@ -1,13 +1,13 @@
 # Architecture Overview
 
-This document serves as a critical, living template designed to equip agents and developers with a rapid and comprehensive understanding of the **nodist3d** codebase's architecture, enabling efficient navigation and effective contribution from day one. Update this document as the codebase evolves.
+This document serves as a critical, living template designed to equip agents and developers with a rapid and comprehensive understanding of the **Polyhedra** codebase's architecture, enabling efficient navigation and effective contribution from day one. Update this document as the codebase evolves.
 
 ## 1. Project Structure
 
 This section provides a high-level overview of the project's directory and file structure, categorized by architectural layer or major functional area.
 
 ```text
-nodist3d/
+polyhedra/
 ├── src/
 │   ├── backend/          # Node.js server to host the application
 │   │   └── server.js     # Express server handling static files, CSP, and rate limiting
@@ -18,7 +18,7 @@ nodist3d/
 │       ├── ObjectManager.js
 │       ├── PrimitiveFactory.js
 │       ├── SceneManager.js
-│       ├── SceneStorage.js # Local storage and .nodist3d zip file handling
+│       ├── SceneStorage.js # Local storage and .polyhedra zip file handling
 │       ├── index.html    # Main HTML entry point
 │       └── style.css     # Vanilla CSS styling
 ├── tests/                # Unit and integration tests (Jest)
@@ -38,14 +38,14 @@ The architecture is currently a client-heavy web application with a lightweight 
 [User] <--> [Browser Interface (HTML/CSS/JS + WebGL Canvas)] <--> [Express Backend Server]
                   |
                   v
-       [Local Storage / .nodist3d Zip Files]
+       [Local Storage / .polyhedra Zip Files]
 ```
 
 ## 3. Core Components
 
 ### 3.1. Frontend Web App
 
-- **Name:** nodist3d Web Editor
+- **Name:** Polyhedra Web Editor
 - **Description:** The main user interface for interacting with the 3D scene, creating primitives, manipulating objects, managing history, and saving/loading projects.
 - **Technologies:** Vanilla HTML/CSS/JavaScript, Three.js (WebGL), dat.gui (UI controls), cannon-es (Physics).
 - **Deployment:** Served statically via the backend, but can be deployed to any static host (Netlify, Vercel, GitHub Pages).
@@ -53,7 +53,7 @@ The architecture is currently a client-heavy web application with a lightweight 
 ### 3.2. Backend Services
 
 #### 3.2.1. Static File Server
-- **Name:** nodist3d Express Server
+- **Name:** Polyhedra Express Server
 - **Description:** Handles static file serving for the frontend application, injects generated CSP nonces for security, and implements basic rate limiting to prevent abuse.
 - **Technologies:** Node.js, Express, Helmet, express-rate-limit.
 - **Deployment:** Docker container, local Node.js runtime, or standard PaaS environments.
@@ -62,10 +62,10 @@ The architecture is currently a client-heavy web application with a lightweight 
 
 ### 4.1. Browser Target Storage
 - **Name:** Key-Value Store & Filesystem Downloads
-- **Type:** Browser `localStorage` / Custom `.nodist3d` ZIP files.
+- **Type:** Browser `localStorage` / Custom `.polyhedra` ZIP files.
 - **Purpose:** 
   - `localStorage` is used to persist the user's workspace temporarily between page reloads.
-  - `.nodist3d` files use `JSZip` to store `scene.json` and associated resources for sharing and durable storage.
+  - `.polyhedra` files use `JSZip` to store `scene.json` and associated resources for sharing and durable storage.
 
 ## 5. External Integrations / APIs
 
@@ -98,13 +98,13 @@ Currently, there are no mandatory external 3rd-party API integrations. The appli
 
 ## 10. Project Identification
 
-- **Project Name:** nodist3d (Node + -ist + 3D)
-- **Repository URL:** https://github.com/segin/nodist3d
+- **Project Name:** Polyhedra
+- **Repository URL:** https://github.com/segin/polyhedra
 - **Primary Contact/Team:** Kirn Gill II 
-- **Date of Last Update:** 2026-02-27
+- **Date of Last Update:** 2026-03-03
 
 ## 11. Glossary / Acronyms
 
 - **CSG:** Constructive Solid Geometry (Boolean operations on 3D meshes).
 - **CSP:** Content Security Policy.
-- **nodist3d:** Node.js + -ist + 3D modeling tool.
+- **Polyhedra:** The project name, referring to three-dimensional solid figures with flat polygonal faces.

@@ -1,7 +1,7 @@
-# Nodist3d Architecture
+# Polyhedra Architecture
 
 ## Overview
-**Nodist3d** is a web-based 3D modeling application that leverages **Node.js** for the backend and **Three.js** (WebGL) for the frontend. It is designed to be a lightweight, responsive, and mobile-optimized tool for creating and manipulating 3D primitives directly in the browser.
+**Polyhedra** is a web-based 3D modeling application that leverages **Node.js** for the backend and **Three.js** (WebGL) for the frontend. It is designed to be a lightweight, responsive, and mobile-optimized tool for creating and manipulating 3D primitives directly in the browser.
 
 ## Core Technology Stack
 - **Frontend**:
@@ -13,7 +13,7 @@
   - **Node.js**: Serves the application and static assets.
   - **Express** (implied/likely): Web server framework.
 - **Storage**:
-  - **JSZip**: Used for creating custom `.nodist3d` project files.
+  - **JSZip**: Used for creating custom `.polyhedra` project files.
   - **JSON**: Scene graph and metadata serialization.
   - **Binary Buffers**: Efficient storage for geometry attributes (vertices, normals, UVs).
 
@@ -49,7 +49,7 @@ The frontend is built using a modular service-based architecture.
 
 ## Data Formats
 
-### **.nodist3d File Format**
+### **.polyhedra File Format**
 The application uses a custom ZIP-based container for project files.
 - **`scene.json`**: Contains the scene hierarchy, object metadata, and material properties.
 - **`buffers.json`**: A mapping file that correlates geometry attributes to binary files.

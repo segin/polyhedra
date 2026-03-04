@@ -73,7 +73,7 @@ describe('PrimitiveFactory Normalization', () => {
 
   test('normalizes Text parameters with defaults', () => {
     const params = factory._getNormalizedParameters('Text', {});
-    expect(params.text).toBe('nodist3d');
+    expect(params.text).toBe('Polyhedra');
     expect(params.bevelEnabled).toBe(true);
   });
 

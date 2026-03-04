@@ -93,7 +93,7 @@ export class PrimitiveFactory {
         return { segments: 12 };
       case 'Text':
         return {
-          text: options.text || 'nodist3d',
+          text: options.text || 'Polyhedra',
           size: options.size || 0.5,
           height: options.height || 0.2,
           curveSegments: options.curveSegments || 12,
@@ -214,7 +214,7 @@ export class PrimitiveFactory {
               return;
           }
 
-          const geometry = new TextGeometry(options.text || 'nodist3d', {
+          const geometry = new TextGeometry(options.text || 'Polyhedra', {
             font: this.font,
             size: options.size || 0.5,
             depth: options.height || 0.2, // TextGeometry uses depth instead of height in newer Three.js

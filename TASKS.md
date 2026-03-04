@@ -1,11 +1,11 @@
-# nodist3d Master Task List
+# Polyhedra Master Task List
 
-This document is the single source of truth for all tasks, specifications, suggestions, and audit findings for the **nodist3d** project.
+This document is the single source of truth for all tasks, specifications, suggestions, and audit findings for the **Polyhedra** project.
 
 ---
 
 ## I. Original Context & Ideas (from CONTEXT.md)
-# nodist3d Project Context
+# Polyhedra Project Context
 
 ## Current Status
 - **Test Stability**: achieved 100% pass rate for critical suites (Primitives, Accessibility, Benchmark).
@@ -24,7 +24,7 @@ This document is the single source of truth for all tasks, specifications, sugge
 ---
 
 ## II. Audit Report (from AUDIT_REPORT.md)
-# Codebase Audit Report: Nodist3d
+# Codebase Audit Report: Polyhedra
 **Date:** 2024-05-24
 **Commit SHA:** (Current HEAD)
 **Branch:** main (assumed)
@@ -61,9 +61,9 @@ This document is the single source of truth for all tasks, specifications, sugge
 ---
 
 ## III. Development Specification (from SPECIFICATION.md)
-# Comprehensive Development Specification for nodist3d
+# Comprehensive Development Specification for Polyhedra
 
-This specification document aggregates and massively expands upon all roadmap items, todo lists, testing requirements, and code improvement suggestions found in `README.md`, `SUGGESTIONS.md`, and `TESTING_TODO.md`. It serves as the granular master plan for the continued development of **nodist3d**.
+This specification document aggregates and massively expands upon all roadmap items, todo lists, testing requirements, and code improvement suggestions found in `README.md`, `SUGGESTIONS.md`, and `TESTING_TODO.md`. It serves as the granular master plan for the continued development of **Polyhedra**.
 
 ---
 
@@ -451,7 +451,7 @@ Items from the "Roadmap" section in README.
   - [ ] **Google Drive API**:
     - [ ] Register GCP Project.
     - [ ] Implement `GoogleAuth` client in frontend.
-    - [ ] Map `.nodist3d` MIME type to app.
+    - [ ] Map `.Polyhedra` MIME type to app.
 - **Verification**:
   - [ ] **Manual**: "Save to Drive" button opens Google Picker.
 
@@ -481,7 +481,7 @@ Items from the "Roadmap" section in README.
 ---
 
 ## IV. Testing Todo List (from TESTING_TODO.md)
-# Expanded Unit Test Suite for nodist3d
+# Expanded Unit Test Suite for Polyhedra
 
 ## Original 50 Tests
 
@@ -694,9 +694,9 @@ Items from the "Roadmap" section in README.
 ---
 
 ## V. Code Improvement Suggestions (from SUGGESTIONS.md)
-# Exhaustive Code Improvement Suggestions for nodist3d (300+ Items)
+# Exhaustive Code Improvement Suggestions for Polyhedra (300+ Items)
 
-This document provides a detailed list of over 300 suggested improvements for the nodist3d repository. The suggestions are categorized to cover architecture, backend, frontend logic, UI/UX, testing, tooling, and many advanced concepts.
+This document provides a detailed list of over 300 suggested improvements for the Polyhedra repository. The suggestions are categorized to cover architecture, backend, frontend logic, UI/UX, testing, tooling, and many advanced concepts.
 
 ---
 

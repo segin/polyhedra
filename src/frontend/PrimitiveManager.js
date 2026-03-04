@@ -179,7 +179,7 @@ export class PrimitiveManager {
     return this._createMesh(geometry, 0xff6347); // Tomato for Extrude
   }
 
-  addText(text = "nodist3d") {
+  addText(text = "Polyhedra") {
     const createMeshWithFont = (font) => {
       const geometry = new TextGeometry(text, {
         font: font,

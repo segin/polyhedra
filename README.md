@@ -1,21 +1,19 @@
-# nodist3d
+# Polyhedra
 
 _A lightweight, web-based 3D modeling application, optimized for mobile devices._
 
-The name "nodist3d" is a combination of:
+**Polyhedra** is a browser-based 3D modeling tool powered by Node.js and Three.js (WebGL). The name comes from the geometric term for three-dimensional solid figures with flat polygonal faces — a fitting name for a 3D object editor.
 
-- **Nod**e.js: The backend runtime environment.
-- **-ist**: A suffix denoting a person who uses or is an expert in something.
-- **3D**: For three-dimensional modeling.
+
 
 ---
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/segin/nodist3d)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/segin/polyhedra)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
-[![GitHub issues](https://img.shields.io/github/issues/segin/nodist3d)](https://github.com/segin/nodist3d/issues)
-[![GitHub stars](https://img.shields.io/github/stars/segin/nodist3d)](https://github.com/segin/nodist3d/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/segin/polyhedra)](https://github.com/segin/polyhedra/issues)
+[![GitHub stars](https://img.shields.io/github/stars/segin/polyhedra)](https://github.com/segin/polyhedra/stargazers)
 
-**[Live Demo](https://segin.github.io/nodist3d/)** (coming soon)
+**[Live Demo](https://segin.github.io/polyhedra/)** (coming soon)
 
 ## Screenshots
 
@@ -39,7 +37,7 @@ _(Coming soon)_
   - [ ] Teapot
 - **Mobile-First Design:** The user interface is fully responsive and optimized for touch-based interactions on mobile devices.
 - **Fullscreen Mode:** A dedicated button allows you to easily enter and exit fullscreen mode for an immersive modeling experience.
-- **File-based Storage:** Your 3D scenes are saved in a custom `.nodist3d` zip file, which contains the scene data in a `scene.json` file.
+- **File-based Storage:** Your 3D scenes are saved in a custom `.polyhedra` zip file, which contains the scene data in a `scene.json` file.
 - **Intuitive User Interface:** A clean and user-friendly interface makes it easy to add, manipulate, and combine 3D objects.
 
 ## Tech Stack
@@ -59,11 +57,11 @@ _(Coming soon)_
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/segin/nodist3d.git
+    git clone https://github.com/segin/polyhedra.git
     ```
 2.  Navigate to the project directory:
     ```bash
-    cd nodist3d
+    cd polyhedra
     ```
 3.  Install the dependencies:
     ```bash
@@ -137,7 +135,7 @@ This checklist meticulously tracks all requirements and tasks derived from the i
 
 ## Roadmap
 
-This section outlines potential future enhancements and features for nodist3d.
+This section outlines potential future enhancements and features for Polyhedra.
 
 ### User Interface & Experience
 

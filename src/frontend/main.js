@@ -14,7 +14,6 @@ import { PhysicsManager } from './PhysicsManager.js';
 import { PrimitiveFactory } from './PrimitiveFactory.js';
 import { ObjectFactory } from './ObjectFactory.js';
 import { ObjectPropertyUpdater } from './ObjectPropertyUpdater.js';
-import log from './logger.js';
 import { ToastManager } from './ToastManager.js';
 import { LightManager } from './LightManager.js';
 import { ModelLoader } from './ModelLoader.js';
@@ -43,7 +42,8 @@ export class App {
       0.1,
       1000,
     );
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    const canvas = document.querySelector('#c');
+    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 
     // Register Three.js Core objects
     this.container.register('Scene', this.scene);
@@ -98,12 +98,17 @@ export class App {
     this.setupControls();
     this.setupSceneGraph();
     this.setupGUI();
+    this.setupMenu();
+    this.setupToolbar();
     this.setupLighting();
     this.setupHelpers();
     this.setupMobileOptimizations();
 
-    // Initialize scene storage
     this.sceneStorage = new SceneStorage(this.scene, EventBus);
+
+    // Initialize Model Loader
+    this.modelLoader = new ModelLoader(this.scene, EventBus);
+    this.container.register('ModelLoader', this.modelLoader);
 
     // Bind animation loop
     this.animate = this.animate.bind(this);
@@ -268,42 +273,14 @@ export class App {
       this.sceneGraphPanel.id = 'scene-graph-panel';
       document.body.appendChild(this.sceneGraphPanel);
     }
-    
-    this.sceneGraphPanel.style.cssText = `
-      position: fixed;
-      top: 70px;
-      left: 10px;
-      width: 250px;
-      max-height: 400px;
-      background: rgba(0, 0, 0, 0.8);
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      font-family: monospace;
-      font-size: 12px;
-      overflow-y: auto;
-      z-index: 1000;
-    `;
-
-    const title = document.createElement('h3');
-    title.textContent = 'Scene Graph';
-    title.style.margin = '0 0 10px 0';
 
     this.objectsList = document.getElementById('objects-list');
     if (!this.objectsList) {
       this.objectsList = document.createElement('ul');
       this.objectsList.id = 'objects-list';
+      this.sceneGraphPanel.appendChild(this.objectsList);
     }
-    this.objectsList.style.cssText = `
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    `;
 
-    if (!title.parentElement) this.sceneGraphPanel.appendChild(title);
-    if (!this.objectsList.parentElement) this.sceneGraphPanel.appendChild(this.objectsList);
-    if (!this.sceneGraphPanel.parentElement) document.body.appendChild(this.sceneGraphPanel);
-    
     this.updateSceneGraph();
   }
 
@@ -347,8 +324,12 @@ export class App {
       },
     ];
 
-    const container = document.getElementById('ui');
-    if (!container) return;
+    let container = document.getElementById('toolbar');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toolbar';
+      document.body.appendChild(container);
+    }
 
     tools.forEach((tool) => {
       const btn = document.createElement('button');
@@ -421,129 +402,84 @@ export class App {
       }
     });
 
-    const fullscreenButton = document.getElementById('fullscreen');
-    if (fullscreenButton) {
-      fullscreenButton.addEventListener('click', () => this.toggleFullscreen());
-    }
+    // Removed old floating button listeners.
+    // Fullscreen and Save/Load logic moved to setupMenu()
 
-    const saveButton = document.getElementById('save-scene');
-    if (saveButton) {
-      saveButton.addEventListener('click', async () => {
-        const originalText = saveButton.textContent;
-        saveButton.textContent = 'Saving...';
-        // @ts-ignore
-        saveButton.disabled = true;
-        saveButton.style.cursor = 'wait';
 
+  }
+
+  setupGUI() {
+    this.gui = new GUI({ autoPlace: false });
+    const propsPanel = document.getElementById('properties-panel');
+    if (propsPanel && this.gui.domElement) {
         try {
-          await this.saveScene();
-        } finally {
-          saveButton.textContent = originalText;
-          // @ts-ignore
-          saveButton.disabled = false;
-          saveButton.style.cursor = '';
-        }
-      });
+            propsPanel.appendChild(this.gui.domElement);
+        } catch(e) {}
     }
+
+    this.propertiesFolder = this.gui.addFolder('Properties');
+    this.propertiesFolder.open();
+  }
+
+  setupMenu() {
+    const bindMenu = (id, action) => {
+      const el = document.getElementById(id);
+      if (el) el.onclick = action;
+    };
+
+    // File
+    bindMenu('menu-file-load', () => document.getElementById('file-input').click());
+    bindMenu('menu-file-save', () => this.saveScene());
+    bindMenu('menu-file-import', () => document.getElementById('model-import-input').click());
+
+    // Edit
+    bindMenu('menu-edit-undo', () => this.undo());
+    bindMenu('menu-edit-redo', () => this.redo());
+    bindMenu('menu-edit-delete', () => this.deleteSelectedObject());
+    bindMenu('menu-edit-duplicate', () => this.duplicateSelectedObject());
+
+    // Add
+    bindMenu('menu-add-box', () => this.addBox());
+    bindMenu('menu-add-sphere', () => this.addSphere());
+    bindMenu('menu-add-cylinder', () => this.addCylinder());
+    bindMenu('menu-add-cone', () => this.addCone());
+    bindMenu('menu-add-torus', () => this.addTorus());
+    bindMenu('menu-add-plane', () => this.addPlane());
+    bindMenu('menu-add-teapot', () => this.addTeapot());
+
+    // View
+    bindMenu('menu-view-fullscreen', () => this.toggleFullscreen());
     
-    const loadButton = document.getElementById('load-scene');
+    // File Inputs
     const loadInput = document.getElementById('file-input');
-
     if (loadInput) {
-      if (loadButton) {
-          loadButton.addEventListener('click', () => {
-              loadInput.click();
-          });
-      }
-
       loadInput.addEventListener('change', async (e) => {
         // @ts-ignore
         const file = e.target.files[0];
         if (file) {
-            if (loadButton) {
-                const originalText = loadButton.textContent;
-                loadButton.textContent = 'Loading...';
-                // @ts-ignore
-                loadButton.disabled = true;
-                loadButton.style.cursor = 'wait';
-                try {
-                  await this.loadScene(file);
-                } finally {
-                  loadButton.textContent = originalText;
-                  // @ts-ignore
-                  loadButton.disabled = false;
-                  loadButton.style.cursor = '';
-                }
-            } else {
-                await this.loadScene(file);
-            }
+          try {
+            await this.loadScene(file);
+          } catch (err) {
+            console.error('Failed to load scene', err);
+          }
         }
-        // Reset input value so same file can be loaded again if needed
         // @ts-ignore
         e.target.value = '';
       });
     }
-  }
 
-  setupGUI() {
-    this.gui = new GUI();
-
-    const primitiveFolder = this.gui.addFolder('Add Primitives');
-    primitiveFolder.add(this, 'addBox').name('Add Box');
-    primitiveFolder.add(this, 'addSphere').name('Add Sphere');
-    primitiveFolder.add(this, 'addCylinder').name('Add Cylinder');
-    primitiveFolder.add(this, 'addCone').name('Add Cone');
-    primitiveFolder.add(this, 'addTorus').name('Add Torus');
-    primitiveFolder.add(this, 'addTorusKnot').name('Add Torus Knot');
-    primitiveFolder.add(this, 'addTetrahedron').name('Add Tetrahedron');
-    primitiveFolder.add(this, 'addIcosahedron').name('Add Icosahedron');
-    primitiveFolder.add(this, 'addDodecahedron').name('Add Dodecahedron');
-    primitiveFolder.add(this, 'addOctahedron').name('Add Octahedron');
-    primitiveFolder.add(this, 'addPlane').name('Add Plane');
-    primitiveFolder.add(this, 'addTube').name('Add Tube');
-    primitiveFolder.add(this, 'addTeapot').name('Add Teapot');
-    primitiveFolder.open();
-
-    const transformFolder = this.gui.addFolder('Transform');
-    const transformModes = { mode: 'translate' };
-    transformFolder
-      .add(transformModes, 'mode', ['translate', 'rotate', 'scale'])
-      .onChange((value) => this.transformControls.setMode(value));
-    transformFolder.open();
-
-    const objectFolder = this.gui.addFolder('Object');
-    objectFolder.add(this, 'deleteSelectedObject').name('Delete Selected');
-    objectFolder.add(this, 'duplicateSelectedObject').name('Duplicate Selected');
-    
-    // Add Import Model button
-    const fileFolder = this.gui.addFolder('File');
-    const fileParams = {
-        importModel: () => {
-             const input = document.createElement('input');
-             input.type = 'file';
-             input.accept = '.obj,.glb,.gltf';
-             input.onchange = (e) => {
-                 // @ts-ignore
-                 if (e.target.files && e.target.files[0]) {
-                     // @ts-ignore
-                     this.importModel(e.target.files[0]);
-                 }
-             };
-             input.click();
-        }
-    };
-    fileFolder.add(fileParams, 'importModel').name('Import Model (OBJ/GLTF)');
-    fileFolder.open();
-
-    objectFolder.open();
-
-    const historyFolder = this.gui.addFolder('History');
-    historyFolder.add(this, 'undo').name('Undo');
-    historyFolder.add(this, 'redo').name('Redo');
-    historyFolder.open();
-
-    this.propertiesFolder = this.gui.addFolder('Properties');
-    this.propertiesFolder.open();
+    const importInput = document.getElementById('model-import-input');
+    if (importInput) {
+        importInput.onchange = (e) => {
+            // @ts-ignore
+            if (e.target.files && e.target.files[0]) {
+                // @ts-ignore
+                this.importModel(e.target.files[0]);
+            }
+            // @ts-ignore
+            e.target.value = '';
+        };
+    }
   }
 
   setupMobileOptimizations() {
@@ -664,7 +600,47 @@ export class App {
         // @ts-ignore
         object.material.color.set(val);
       });
+
+      // Texture Support
+      const textureOptions = {
+        uploadMap: () => this.triggerTextureUpload(object, 'map'),
+        uploadNormalMap: () => this.triggerTextureUpload(object, 'normalMap'),
+        uploadRoughnessMap: () => this.triggerTextureUpload(object, 'roughnessMap')
+      };
+      mat.add(textureOptions, 'uploadMap').name('Set Albedo Map');
+      mat.add(textureOptions, 'uploadNormalMap').name('Set Normal Map');
+      mat.add(textureOptions, 'uploadRoughnessMap').name('Set Rough. Map');
     }
+  }
+
+  triggerTextureUpload(object, mapType) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      // @ts-ignore
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new window.FileReader();
+        reader.onload = (event) => {
+          const textureLoader = new THREE.TextureLoader();
+          // @ts-ignore
+          textureLoader.load(event.target.result, (texture) => {
+            // @ts-ignore
+            if (object.material) {
+                // @ts-ignore
+                object.material[mapType] = texture;
+                // @ts-ignore
+                object.material.needsUpdate = true;
+                this.saveState(`Upload ${mapType}`);
+                this.toastManager.show('Texture applied!', 'success');
+            }
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
   }
 
   clearPropertiesPanel() {

@@ -71,7 +71,7 @@ jest.mock('../src/frontend/ToastManager.js');
 describe('Toolbar', () => {
   beforeEach(() => {
     // Setup DOM
-    document.body.innerHTML = '<div id="ui"></div>';
+    document.body.innerHTML = '<div id="toolbar"></div>';
   });
 
   test('setupToolbar creates buttons correctly', () => {
@@ -88,7 +88,7 @@ describe('Toolbar', () => {
     mockApp.setupToolbar();
 
     // Verify buttons exist
-    const ui = document.getElementById('ui');
+    const ui = document.getElementById('toolbar');
     expect(ui.querySelectorAll('button').length).toBe(6);
 
     const translateBtn = document.getElementById('translate-btn');
