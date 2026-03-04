@@ -1,5 +1,6 @@
 // @ts-check
 import * as THREE from 'three';
+import * as TWEEN from '@tweenjs/tween.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { GUI } from 'dat.gui';
@@ -10,6 +11,7 @@ import EventBus from './EventBus.js';
 import { ObjectManager } from './ObjectManager.js';
 import { SceneManager } from './SceneManager.js';
 import { InputManager } from './InputManager.js';
+import { Events } from './constants.js';
 import { PhysicsManager } from './PhysicsManager.js';
 import { PrimitiveFactory } from './PrimitiveFactory.js';
 import { ObjectFactory } from './ObjectFactory.js';
@@ -19,6 +21,7 @@ import { LightManager } from './LightManager.js';
 import { Logger } from './utils/Logger.js';
 import { ModelLoader } from './ModelLoader.js';
 import { ErrorHandler } from './ErrorHandler.js';
+import { ViewCube } from './ViewCube.js';
 
 /**
  * Simple 3D modeling application with basic primitives and transform controls
@@ -117,6 +120,9 @@ export class App {
     this.animate = this.animate.bind(this);
     this.animate();
 
+    // Initialize ViewCube
+    this.viewCube = new ViewCube(this.camera, this.sceneManager.controls, document.body);
+
     // Subscribe to selection changes
     if (this.stateManager) {
       this.stateManager.subscribe('selection', (selection) => {
@@ -130,6 +136,12 @@ export class App {
           this.clearPropertiesPanel();
         }
         this.updateSceneGraph();
+      });
+
+      EventBus.subscribe(Events.FOCUS_OBJECT, () => {
+        if (this.selectedObject) {
+           this.sceneManager.focusOnObject(this.selectedObject);
+        }
       });
     }
 
@@ -417,8 +429,14 @@ export class App {
     if (propsPanel && this.gui.domElement) {
         try {
             propsPanel.appendChild(this.gui.domElement);
-        } catch(e) {}
+        } catch(err) {
+            void err; // Ignore in test environs
+        }
     }
+
+    this.cameraFolder = this.gui.addFolder('Camera Settings');
+    this.cameraFolder.add(this.sceneManager, 'dampingEnabled').name('Enable Damping').onChange(() => this.sceneManager.controls.update());
+    this.cameraFolder.add(this.sceneManager, 'dampingFactor', 0.01, 1.0).name('Damping Factor');
 
     this.propertiesFolder = this.gui.addFolder('Properties');
     this.propertiesFolder.open();
@@ -1034,6 +1052,9 @@ export class App {
   animate() {
     requestAnimationFrame(this.animate);
     const delta = this.clock.getDelta();
+
+    TWEEN.update();
+    if (this.viewCube) this.viewCube.update();
     if (this.physicsManager) this.physicsManager.update(delta);
     this.orbitControls.update();
     this.renderer.render(this.scene, this.camera);

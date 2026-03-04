@@ -12,6 +12,7 @@ export const Events = {
   SCENE_GRAPH_NEEDS_UPDATE: 'sceneGraphNeedsUpdate',
   UNDO: 'undo',
   REDO: 'redo',
+  FOCUS_OBJECT: 'focusObject',
 };
 
 export const ObjectTypes = {

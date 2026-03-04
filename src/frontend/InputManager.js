@@ -29,6 +29,10 @@ export class InputManager {
       case 'Backspace':
         this.eventBus.publish(Events.DELETE_OBJECT);
         break;
+      case 'f':
+      case 'F':
+        this.eventBus.publish(Events.FOCUS_OBJECT);
+        break;
     }
   }
 }

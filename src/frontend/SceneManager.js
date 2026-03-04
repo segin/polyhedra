@@ -1,5 +1,6 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import * as THREE from 'three';
+import * as TWEEN from '@tweenjs/tween.js';
 import { Logger } from './utils/Logger.js';
 
 export class SceneManager {
@@ -47,6 +48,63 @@ export class SceneManager {
     this.camera.position.copy(this.initialCameraPosition);
     this.controls.target.copy(this.initialControlsTarget);
     this.controls.update();
+  }
+
+  get dampingEnabled() {
+    return this.controls.enableDamping;
+  }
+  set dampingEnabled(value) {
+    this.controls.enableDamping = value;
+  }
+
+  get dampingFactor() {
+    return this.controls.dampingFactor;
+  }
+  set dampingFactor(value) {
+    this.controls.dampingFactor = value;
+  }
+
+  focusOnObject(object) {
+    if (!object) return;
+    
+    // Calculate bounding box
+    const box = new THREE.Box3().setFromObject(object);
+    if (box.isEmpty()) return;
+    
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    
+    const maxDim = Math.max(size.x, size.y, size.z);
+    
+    // Calculate distance
+    const fov = this.camera.fov * (Math.PI / 180);
+    // Fit to 80% of screen using trigonometry, fallback to a small distance if point-size
+    let cameraZ = maxDim === 0 ? 5 : Math.abs(maxDim / 2 / Math.tan(fov / 2)) * 1.5;
+    
+    // Clamp
+    cameraZ = Math.max(cameraZ, this.controls.minDistance);
+    cameraZ = Math.min(cameraZ, this.controls.maxDistance);
+    
+    const direction = this.camera.position.clone().sub(this.controls.target).normalize();
+    if (direction.lengthSq() < 0.001) {
+      direction.set(0, 0, 1);
+    }
+    const targetPosition = center.clone().add(direction.multiplyScalar(cameraZ));
+
+    // Tween target
+    new TWEEN.Tween(this.controls.target)
+      .to({ x: center.x, y: center.y, z: center.z }, 500)
+      .easing(TWEEN.Easing.Cubic.Out)
+      .start();
+
+    // Tween camera
+    new TWEEN.Tween(this.camera.position)
+      .to({ x: targetPosition.x, y: targetPosition.y, z: targetPosition.z }, 500)
+      .easing(TWEEN.Easing.Cubic.Out)
+      .onUpdate(() => this.controls.update())
+      .start();
   }
 
   onWindowResize() {
