@@ -43,7 +43,8 @@ export class App {
       0.1,
       1000,
     );
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    const canvas = document.querySelector('#c');
+    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 
     // Register Three.js Core objects
     this.container.register('Scene', this.scene);
@@ -98,12 +99,16 @@ export class App {
     this.setupControls();
     this.setupSceneGraph();
     this.setupGUI();
+    this.setupToolbar();
     this.setupLighting();
     this.setupHelpers();
     this.setupMobileOptimizations();
 
-    // Initialize scene storage
     this.sceneStorage = new SceneStorage(this.scene, EventBus);
+
+    // Initialize Model Loader
+    this.modelLoader = new ModelLoader(this.scene, EventBus);
+    this.container.register('ModelLoader', this.modelLoader);
 
     // Bind animation loop
     this.animate = this.animate.bind(this);

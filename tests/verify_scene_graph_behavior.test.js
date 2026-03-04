@@ -83,7 +83,7 @@ describe('Scene Graph Behavior Verification', () => {
              this.renderer.shadowMap = {};
              this.camera = { aspect: 1, updateProjectionMatrix: jest.fn(), position: { set: jest.fn(), lookAt: jest.fn() } };
         });
-        jest.spyOn(App.prototype, 'initRemaining').mockImplementation(() => {});
+        // Mock methods that might interfere with tests
         jest.spyOn(App.prototype, 'setupControls').mockImplementation(() => {});
         jest.spyOn(App.prototype, 'setupGUI').mockImplementation(() => {});
         jest.spyOn(App.prototype, 'setupLighting').mockImplementation(() => {});
