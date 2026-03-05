@@ -660,6 +660,30 @@ export class App {
       mat.add(textureOptions, 'uploadNormalMap').name('Set Normal Map');
       mat.add(textureOptions, 'uploadRoughnessMap').name('Set Rough. Map');
     }
+
+    if (object.userData && object.userData.primitiveType === 'Extrude') {
+      const g = this.propertiesFolder.addFolder('Extrude Settings');
+      const opts = object.userData.primitiveOptions || {};
+      const params = {
+        depth: opts.depth !== undefined ? opts.depth : 0.2,
+        steps: opts.steps !== undefined ? opts.steps : 2,
+        bevelEnabled: opts.bevelEnabled !== undefined ? opts.bevelEnabled : true,
+        bevelThickness: opts.bevelThickness !== undefined ? opts.bevelThickness : 0.1,
+        bevelSize: opts.bevelSize !== undefined ? opts.bevelSize : 0.1,
+        bevelSegments: opts.bevelSegments !== undefined ? opts.bevelSegments : 1,
+      };
+      const updateExtrude = () => {
+        object.userData.primitiveOptions = { ...opts, ...params };
+        this.objectPropertyUpdater.updatePrimitive(object, object.userData.primitiveOptions);
+      };
+      const finishChange = () => this.saveState('Change Extrude');
+      g.add(params, 'depth', 0.1, 10).name('Depth').onChange(updateExtrude).onFinishChange(finishChange);
+      g.add(params, 'steps', 1, 20, 1).name('Steps').onChange(updateExtrude).onFinishChange(finishChange);
+      g.add(params, 'bevelEnabled').name('Bevel').onChange(updateExtrude).onFinishChange(finishChange);
+      g.add(params, 'bevelThickness', 0, 2).name('Bevel Thick').onChange(updateExtrude).onFinishChange(finishChange);
+      g.add(params, 'bevelSize', 0, 2).name('Bevel Size').onChange(updateExtrude).onFinishChange(finishChange);
+      g.add(params, 'bevelSegments', 1, 10, 1).name('Bevel Segs').onChange(updateExtrude).onFinishChange(finishChange);
+    }
   }
 
   triggerTextureUpload(object, mapType) {

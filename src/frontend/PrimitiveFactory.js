@@ -103,6 +103,19 @@ export class PrimitiveFactory {
           bevelOffset: options.bevelOffset || 0,
           bevelSegments: options.bevelSegments || 5,
         };
+      case 'Extrude':
+        return {
+          steps: options.steps || 2,
+          depth: options.depth || 0.2,
+          bevelEnabled: options.bevelEnabled !== undefined ? options.bevelEnabled : true,
+          bevelThickness: options.bevelThickness || 0.1,
+          bevelSize: options.bevelSize || 0.1,
+          bevelOffset: options.bevelOffset || 0,
+          bevelSegments: options.bevelSegments || 1,
+          shapePoints: options.shapePoints || [
+            { x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 1, y: 0 }
+          ]
+        };
       default:
         // Exclude color and other non-geometry props from key
         // eslint-disable-next-line no-unused-vars
@@ -291,27 +304,35 @@ export class PrimitiveFactory {
             break;
           case 'Extrude':
             const extrudeSettings = {
-              steps: 2,
-              depth: 0.2,
-              bevelEnabled: true,
-              bevelThickness: 0.1,
-              bevelSize: 0.1,
-              bevelOffset: 0,
-              bevelSegments: 1,
+              steps: options.steps || 2,
+              depth: options.depth || 0.2,
+              bevelEnabled: options.bevelEnabled !== undefined ? options.bevelEnabled : true,
+              bevelThickness: options.bevelThickness || 0.1,
+              bevelSize: options.bevelSize || 0.1,
+              bevelOffset: options.bevelOffset || 0,
+              bevelSegments: options.bevelSegments || 1,
             };
             const shape = new THREE.Shape();
-            shape.moveTo(0, 0);
-            shape.lineTo(0, 1);
-            shape.lineTo(1, 1);
-            shape.lineTo(1, 0);
-            shape.lineTo(0, 0);
-            const hole = new THREE.Path();
-            hole.moveTo(0.2, 0.2);
-            hole.lineTo(0.8, 0.2);
-            hole.lineTo(0.8, 0.8);
-            hole.lineTo(0.2, 0.8);
-            hole.lineTo(0.2, 0.2);
-            shape.holes.push(hole);
+            const points = options.shapePoints || [
+              { x: 0, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 1, y: 0 }
+            ];
+            if (points.length > 0) {
+              shape.moveTo(points[0].x, points[0].y);
+              for (let i = 1; i < points.length; i++) {
+                shape.lineTo(points[i].x, points[i].y);
+              }
+              shape.lineTo(points[0].x, points[0].y); // close
+            }
+            // Remove holes for simplicity unless we want to support them parametricaly
+            if (!options.shapePoints) {
+              const hole = new THREE.Path();
+              hole.moveTo(0.2, 0.2);
+              hole.lineTo(0.8, 0.2);
+              hole.lineTo(0.8, 0.8);
+              hole.lineTo(0.2, 0.8);
+              hole.lineTo(0.2, 0.2);
+              shape.holes.push(hole);
+            }
             geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
             color = options.color || 0xff6347;
             mesh = this._createMesh(geometry, color);
