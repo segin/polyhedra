@@ -285,5 +285,31 @@ describe('App', () => {
         }
     });
 
+    it('should handle triggerTextureUpload correctly', () => {
+        const mockObject = {
+            material: {
+                map: null,
+                needsUpdate: false
+            }
+        };
+
+        const mockInput = {
+            type: '',
+            accept: '',
+            click: jest.fn(),
+            onchange: null
+        };
+        const createEleSpy = jest.spyOn(document, 'createElement').mockReturnValue(mockInput);
+
+        app.triggerTextureUpload(mockObject, 'map');
+
+        expect(createEleSpy).toHaveBeenCalledWith('input');
+        expect(mockInput.type).toBe('file');
+        expect(mockInput.accept).toBe('image/*');
+        expect(mockInput.click).toHaveBeenCalled();
+
+        createEleSpy.mockRestore();
+    });
+
     // Add more tests as needed
 });
