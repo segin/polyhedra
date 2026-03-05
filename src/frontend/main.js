@@ -22,6 +22,7 @@ import { Logger } from './utils/Logger.js';
 import { ModelLoader } from './ModelLoader.js';
 import { ErrorHandler } from './ErrorHandler.js';
 import { ViewCube } from './ViewCube.js';
+import { CSG } from 'three-csg-ts';
 
 /**
  * Simple 3D modeling application with basic primitives and transform controls
@@ -549,6 +550,51 @@ export class App {
     }
   }
 
+  performCSG(baseObject, targetUuid, operation) {
+    if (!baseObject || !targetUuid) return;
+    const targetObject = this.objects.find(o => o.uuid === targetUuid);
+    if (!targetObject) {
+      Logger.warn('CSG Target not found');
+      return;
+    }
+
+    try {
+      baseObject.updateMatrixWorld(true);
+      targetObject.updateMatrixWorld(true);
+
+      let resultMesh;
+      if (operation === 'union') resultMesh = CSG.union(baseObject, targetObject);
+      else if (operation === 'subtract') resultMesh = CSG.subtract(baseObject, targetObject);
+      else if (operation === 'intersect') resultMesh = CSG.intersect(baseObject, targetObject);
+
+      if (resultMesh) {
+        resultMesh.name = `${baseObject.name}_${operation}_${targetObject.name}`;
+        resultMesh.castShadow = true;
+        resultMesh.receiveShadow = true;
+        if (baseObject.material) {
+          resultMesh.material = Array.isArray(baseObject.material) 
+            ? baseObject.material.map(m => m.clone()) 
+            : baseObject.material.clone();
+        }
+        
+        // Remove old objects
+        this.deleteObject(baseObject);
+        this.deleteObject(targetObject);
+        
+        this.scene.add(resultMesh);
+        this.objects.push(resultMesh);
+        this.selectObject(resultMesh);
+        
+        this.updateSceneGraph();
+        this.saveState(`CSG ${operation}`);
+        this.toastManager.show(`CSG ${operation} successful!`, 'success');
+      }
+    } catch (err) {
+      Logger.error(`CSG ${operation} failed:`, err);
+      this.toastManager.show(`CSG failed: ${err.message}`, 'error');
+    }
+  }
+
   async addBox() { return await this.addPrimitive('Box'); }
   async addSphere() { return await this.addPrimitive('Sphere'); }
   async addCylinder() { return await this.addPrimitive('Cylinder'); }
@@ -683,6 +729,27 @@ export class App {
       g.add(params, 'bevelThickness', 0, 2).name('Bevel Thick').onChange(updateExtrude).onFinishChange(finishChange);
       g.add(params, 'bevelSize', 0, 2).name('Bevel Size').onChange(updateExtrude).onFinishChange(finishChange);
       g.add(params, 'bevelSegments', 1, 10, 1).name('Bevel Segs').onChange(updateExtrude).onFinishChange(finishChange);
+    }
+
+    // CSG Operations
+    // filter to find other meshes that have geometry
+    const otherObjects = this.objects.filter(o => o !== object && o.parent === this.scene && o.isMesh !== false && Boolean(o.geometry));
+    if (otherObjects.length > 0) {
+      const csgFolder = this.propertiesFolder.addFolder('CSG Operations');
+      const objectOptions = {};
+      otherObjects.forEach(o => { objectOptions[o.name || o.uuid] = o.uuid; });
+      
+      const csgParams = {
+         targetUuid: otherObjects[0].uuid,
+         union: () => this.performCSG(object, csgParams.targetUuid, 'union'),
+         subtract: () => this.performCSG(object, csgParams.targetUuid, 'subtract'),
+         intersect: () => this.performCSG(object, csgParams.targetUuid, 'intersect')
+      };
+      
+      csgFolder.add(csgParams, 'targetUuid', objectOptions).name('Target Object');
+      csgFolder.add(csgParams, 'union').name('CSG Union');
+      csgFolder.add(csgParams, 'subtract').name('CSG Subtract');
+      csgFolder.add(csgParams, 'intersect').name('CSG Intersect');
     }
   }
 

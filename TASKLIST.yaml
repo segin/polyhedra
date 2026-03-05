@@ -159,7 +159,7 @@ tasks:
             status: done
           - id: SPEC-3.3.2
             title: Constructive Solid Geometry (CSG) - Subtract, Union
-            status: todo
+            status: done
           - id: SPEC-3.4.1
             title: Integrate Cannon-es into PhysicsManager
             status: todo
