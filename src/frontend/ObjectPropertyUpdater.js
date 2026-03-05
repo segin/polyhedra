@@ -26,11 +26,11 @@ export class ObjectPropertyUpdater {
       materials.forEach((material) => {
         for (const key in properties) {
           if (Object.prototype.hasOwnProperty.call(properties, key)) {
-            if (key === 'color') {
+            if (key === 'color' || key === 'emissive') {
               if (typeof properties[key] === 'string') {
-                material.color.set(properties[key]);
+                material[key].set(properties[key]);
               } else {
-                material.color.setHex(properties[key]);
+                material[key].setHex(properties[key]);
               }
             } else if (material[key] !== undefined) {
               material[key] = properties[key];

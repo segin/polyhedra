@@ -153,7 +153,7 @@ tasks:
             status: todo
           - id: SPEC-3.2.2
             title: Material Parameters UI (Roughness, Metalness, Wireframe, Emissive)
-            status: todo
+            status: done
           - id: SPEC-3.3.1
             title: ExtrudeGeometry (Sketch mode, THREE.Shape, depth)
             status: todo

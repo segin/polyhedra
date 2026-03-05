@@ -135,8 +135,8 @@ describe('3D Primitives Functionality', () => {
         const THREE = require('three');
         app.addPlane();
         expect(THREE.PlaneGeometry).toHaveBeenCalledWith(2, 2, 1, 1);
-        // Primitives use Phong in this version of the app
-        expect(THREE.MeshPhongMaterial).toHaveBeenCalledWith(expect.objectContaining({
+        // Primitives use Standard in this version of the app
+        expect(THREE.MeshStandardMaterial).toHaveBeenCalledWith(expect.objectContaining({
             color: 0x00ff00,
             side: THREE.DoubleSide,
         }));
@@ -180,18 +180,18 @@ describe('3D Primitives Functionality', () => {
       const THREE = require('three');
 
       app.addBox();
-      expect(THREE.MeshPhongMaterial).toHaveBeenCalledWith(expect.objectContaining({ color: 0x00ff00 }));
+      expect(THREE.MeshStandardMaterial).toHaveBeenCalledWith(expect.objectContaining({ color: 0x00ff00 }));
 
       app.addSphere();
-      expect(THREE.MeshPhongMaterial).toHaveBeenCalledWith(expect.objectContaining({ color: 0x00ff00 }));
+      expect(THREE.MeshStandardMaterial).toHaveBeenCalledWith(expect.objectContaining({ color: 0x00ff00 }));
 
       app.addCylinder();
-      expect(THREE.MeshPhongMaterial).toHaveBeenCalledWith(expect.objectContaining({ color: 0x00ff00 }));
+      expect(THREE.MeshStandardMaterial).toHaveBeenCalledWith(expect.objectContaining({ color: 0x00ff00 }));
     });
 
     it('should create materials for all primitive types', () => {
       const THREE = require('three');
-      const materialCalls = THREE.MeshPhongMaterial.mock.calls.length;
+      const materialCalls = THREE.MeshStandardMaterial.mock.calls.length;
 
       // Add all primitives
       app.addBox();
@@ -209,7 +209,7 @@ describe('3D Primitives Functionality', () => {
       app.addTeapot();
 
       // Should have created materials for all primitives (teapot creates multiple materials)
-      expect(THREE.MeshPhongMaterial.mock.calls.length).toBeGreaterThan(materialCalls + 12);
+      expect(THREE.MeshStandardMaterial.mock.calls.length).toBeGreaterThan(materialCalls + 12);
     });
   });
 

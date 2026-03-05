@@ -615,12 +615,40 @@ export class App {
       const mat = this.propertiesFolder.addFolder('Material');
       const materialData = {
         // @ts-ignore
-        color: '#' + object.material.color.getHexString()
+        color: '#' + object.material.color.getHexString(),
+        // @ts-ignore
+        emissive: object.material.emissive ? '#' + object.material.emissive.getHexString() : '#000000'
       };
       mat.addColor(materialData, 'color').name('Color').onChange((val) => {
         // @ts-ignore
         object.material.color.set(val);
-      });
+      }).onFinishChange(() => this.saveState('Change Color'));
+
+      // @ts-ignore
+      if (object.material.emissive !== undefined) {
+        mat.addColor(materialData, 'emissive').name('Emissive').onChange((val) => {
+          // @ts-ignore
+          object.material.emissive.set(val);
+        }).onFinishChange(() => this.saveState('Change Emissive'));
+      }
+
+      // @ts-ignore
+      if (object.material.roughness !== undefined) {
+        // @ts-ignore
+        mat.add(object.material, 'roughness', 0, 1).name('Roughness').onFinishChange(() => this.saveState('Change Roughness'));
+      }
+      
+      // @ts-ignore
+      if (object.material.metalness !== undefined) {
+        // @ts-ignore
+        mat.add(object.material, 'metalness', 0, 1).name('Metalness').onFinishChange(() => this.saveState('Change Metalness'));
+      }
+
+      // @ts-ignore
+      if (object.material.wireframe !== undefined) {
+        // @ts-ignore
+        mat.add(object.material, 'wireframe').name('Wireframe').onFinishChange(() => this.saveState('Toggle Wireframe'));
+      }
 
       // Texture Support
       const textureOptions = {

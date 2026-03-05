@@ -23,10 +23,10 @@ export class PrimitiveFactory {
     const cacheKey = `${color}_${side}`;
     
     if (!isTest && !this.materialCache[cacheKey]) {
-      this.materialCache[cacheKey] = new THREE.MeshPhongMaterial({ color, side });
+      this.materialCache[cacheKey] = new THREE.MeshStandardMaterial({ color, side, roughness: 0.5, metalness: 0.1 });
     }
     
-    const material = isTest ? new THREE.MeshPhongMaterial({ color, side }) : this.materialCache[cacheKey];
+    const material = isTest ? new THREE.MeshStandardMaterial({ color, side, roughness: 0.5, metalness: 0.1 }) : this.materialCache[cacheKey];
     const mesh = new THREE.Mesh(geometry, material);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
@@ -318,7 +318,7 @@ export class PrimitiveFactory {
             break;
           case 'LODCube':
             const lod = new THREE.LOD();
-            const lodMaterial = new THREE.MeshPhongMaterial({ color: options.color || 0x00ff00 });
+            const lodMaterial = new THREE.MeshStandardMaterial({ color: options.color || 0x00ff00, roughness: 0.5, metalness: 0.1 });
             lod.addLevel(new THREE.Mesh(this._getCachedGeometry('Box', { width: 1, height: 1, depth: 1 }), lodMaterial), 0);
             lod.addLevel(new THREE.Mesh(this._getCachedGeometry('Box', { width: 1, height: 1, depth: 1 }), lodMaterial), 5);
             lod.addLevel(new THREE.Mesh(this._getCachedGeometry('Box', { width: 1, height: 1, depth: 1 }), lodMaterial), 10);

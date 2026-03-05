@@ -105,6 +105,14 @@ jest.mock('three', () => {
              dispose: jest.fn(),
              copy: jest.fn(),
         })),
+        MeshStandardMaterial: jest.fn(() => ({
+             color: { set: jest.fn(), copy: jest.fn() },
+             emissive: { setHex: jest.fn(), copy: jest.fn() },
+             roughness: 1,
+             metalness: 0,
+             dispose: jest.fn(),
+             copy: jest.fn(),
+        })),
         AmbientLight: jest.fn(() => ({
             dispose: jest.fn(),
             add: jest.fn(),

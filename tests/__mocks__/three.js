@@ -180,6 +180,16 @@ const THREE_MOCK = {
     this.dispose = jest.fn();
     this.clone = jest.fn(() => new THREE_MOCK.MeshPhongMaterial(opt));
   }),
+  MeshStandardMaterial: jest.fn().mockImplementation(function(opt) {
+    this.type = 'MeshStandardMaterial';
+    this.color = new THREE_MOCK.Color(opt?.color || 0xffffff);
+    this.emissive = new THREE_MOCK.Color(opt?.emissive || 0x000000);
+    this.roughness = opt?.roughness !== undefined ? opt.roughness : 1;
+    this.metalness = opt?.metalness !== undefined ? opt.metalness : 0;
+    this.wireframe = opt?.wireframe || false;
+    this.dispose = jest.fn();
+    this.clone = jest.fn(() => new THREE_MOCK.MeshStandardMaterial(opt));
+  }),
   MeshBasicMaterial: jest.fn().mockImplementation(function(opt) {
     this.type = 'MeshBasicMaterial';
     this.color = new THREE_MOCK.Color(opt?.color || 0xffffff);
