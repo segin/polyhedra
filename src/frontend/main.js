@@ -439,6 +439,18 @@ export class App {
     this.cameraFolder.add(this.sceneManager, 'dampingEnabled').name('Enable Damping').onChange(() => this.sceneManager.controls.update());
     this.cameraFolder.add(this.sceneManager, 'dampingFactor', 0.01, 1.0).name('Damping Factor');
 
+    if (this.physicsManager) {
+        this.physicsFolder = this.gui.addFolder('Physics Controls');
+        const physicsParams = {
+            play: () => this.physicsManager.play(),
+            pause: () => this.physicsManager.pause(),
+            reset: () => this.physicsManager.reset()
+        };
+        this.physicsFolder.add(physicsParams, 'play').name('Play Simulation');
+        this.physicsFolder.add(physicsParams, 'pause').name('Pause Simulation');
+        this.physicsFolder.add(physicsParams, 'reset').name('Reset Simulation');
+    }
+
     this.propertiesFolder = this.gui.addFolder('Properties');
     this.propertiesFolder.open();
   }
@@ -750,6 +762,41 @@ export class App {
       csgFolder.add(csgParams, 'union').name('CSG Union');
       csgFolder.add(csgParams, 'subtract').name('CSG Subtract');
       csgFolder.add(csgParams, 'intersect').name('CSG Intersect');
+    }
+
+    // Physics Settings (Per Object)
+    if (this.physicsManager) {
+        const physFolder = this.propertiesFolder.addFolder('Physics');
+        const hasBody = this.physicsManager.meshToBodyMap.has(object);
+        const currentBody = hasBody ? this.physicsManager.meshToBodyMap.get(object) : null;
+        
+        let initialShapeType = 'box';
+        if (currentBody && currentBody.shapes.length > 0) {
+            const cannonShape = currentBody.shapes[0];
+            if (cannonShape.type === 1) initialShapeType = 'sphere'; // CANNON.Shape.types.SPHERE
+            else if (cannonShape.type === 4) initialShapeType = 'box'; // CANNON.Shape.types.BOX
+            else if (cannonShape.type === 8) initialShapeType = 'cylinder'; // CANNON.Shape.types.CYLINDER
+        }
+
+        const physParams = {
+            enabled: hasBody,
+            mass: currentBody ? currentBody.mass : 1,
+            shape: initialShapeType
+        };
+
+        const updatePhysics = () => {
+            if (physParams.enabled) {
+                this.physicsManager.removeObject(object);
+                this.physicsManager.addBody(object, physParams.mass, physParams.shape);
+            } else {
+                this.physicsManager.removeObject(object);
+            }
+            this.saveState('Update Physics');
+        };
+
+        physFolder.add(physParams, 'enabled').name('Enable Physics').onChange(updatePhysics);
+        physFolder.add(physParams, 'mass', 0, 100).name('Mass (0=Static)').onFinishChange(updatePhysics);
+        physFolder.add(physParams, 'shape', ['box', 'sphere', 'cylinder']).name('Collision Shape').onChange(updatePhysics);
     }
   }
 

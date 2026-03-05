@@ -72,6 +72,7 @@ describe('PhysicsManager', () => {
     body.quaternion.z = 0.5;
     body.quaternion.w = 0.5;
 
+    physicsManager.play();
     physicsManager.update(1 / 60);
 
     expect(cube.position.x).toBeCloseTo(body.position.x);
@@ -116,6 +117,7 @@ describe('PhysicsManager', () => {
     physicsManager.bodies[0].body.position.y = initialY;
 
     const deltaTime = 1.0;
+    physicsManager.play();
     physicsManager.update(deltaTime);
 
     const expectedY = initialY + physicsManager.world.gravity.y * deltaTime;

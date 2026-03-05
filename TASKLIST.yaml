@@ -162,13 +162,13 @@ tasks:
             status: done
           - id: SPEC-3.4.1
             title: Integrate Cannon-es into PhysicsManager
-            status: todo
+            status: done
           - id: SPEC-3.4.2
             title: Physics Body Mapping (UUID -> Body, sync position/quaternion)
-            status: todo
+            status: done
           - id: SPEC-3.4.3
             title: Physics UI Controls (Play, Pause, Reset)
-            status: todo
+            status: done
           - id: SPEC-3.5.1
             title: Shader Editor UI (CodeMirror/Monaco, tabs)
             status: todo

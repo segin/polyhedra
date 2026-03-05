@@ -36,7 +36,8 @@ describe("PhysicsManager update() correctness", () => {
     body.position.set(10, 20, 30);
     body.quaternion.set(0, 0.707, 0, 0.707); // 90 deg rotation around Y
 
-    // 4. Call update()
+    // 4. Call play and update()
+    physicsManager.play();
     physicsManager.update(16);
 
     // 5. Verify mesh updated
@@ -70,6 +71,7 @@ describe("PhysicsManager update() correctness", () => {
     body1.position.set(1, 2, 3);
     body2.position.set(4, 5, 6);
 
+    physicsManager.play();
     physicsManager.update(16);
 
     expect(mesh1.position.x).toBe(1);
