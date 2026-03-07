@@ -171,10 +171,10 @@ tasks:
             status: done
           - id: SPEC-3.5.1
             title: Shader Editor UI (CodeMirror/Monaco, tabs)
-            status: todo
+            status: done
           - id: SPEC-3.5.2
             title: Shader Hot Reloading (THREE.ShaderMaterial, compilation error reporting)
-            status: todo
+            status: done
 
       - title: Phase 4 - UI/UX & Mobile
         tasks:

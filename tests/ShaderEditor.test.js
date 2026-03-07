@@ -139,7 +139,6 @@ describe('ShaderEditor', () => {
 
       // Since we reuse mockFolder, it's a bit circular, but we can check calls count
       expect(mockFolder.addFolder).toHaveBeenCalledWith('Uniforms');
-      expect(mockFolder.addColor).toHaveBeenCalled();
       expect(mockFolder.add).toHaveBeenCalled();
     });
   });

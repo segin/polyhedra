@@ -1,0 +1,102 @@
+
+/* Shader Editor UI */
+#shader-editor-ui {
+    display: none;
+    position: absolute;
+    bottom: 20px;
+    right: 320px; /* Offset from dat.gui */
+    width: 600px;
+    height: 400px;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #e0e0e0;
+    display: flex; /* overridden by JS block/none */
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#shader-editor-ui .shader-header {
+    background: #252526;
+    padding: 10px 15px;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+}
+
+#shader-editor-ui .shader-tabs {
+    display: flex;
+    gap: 10px;
+}
+
+#shader-editor-ui .shader-tabs button {
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+#shader-editor-ui .shader-tabs button:hover {
+    color: #e0e0e0;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#shader-editor-ui .shader-tabs button.active {
+    color: #fff;
+    background: #007acc;
+}
+
+#codemirror-container {
+    flex-grow: 1;
+    overflow: auto;
+    font-size: 14px;
+}
+
+/* Override default CodeMirror height to fill container */
+#codemirror-container .cm-editor {
+    height: 100%;
+}
+
+#shader-editor-ui .shader-footer {
+    background: #252526;
+    padding: 10px 15px;
+    border-top: 1px solid #333;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+#shader-editor-ui .shader-footer button {
+    background: transparent;
+    border: 1px solid #555;
+    color: #ccc;
+    cursor: pointer;
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+#shader-editor-ui .shader-footer button:hover {
+    background: #333;
+}
+
+#shader-editor-ui .shader-footer button.primary {
+    background: #007acc;
+    border-color: #007acc;
+    color: white;
+}
+
+#shader-editor-ui .shader-footer button.primary:hover {
+    background: #005999;
+    border-color: #005999;
+}

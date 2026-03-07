@@ -23,6 +23,7 @@ import { ModelLoader } from './ModelLoader.js';
 import { ErrorHandler } from './ErrorHandler.js';
 import { ViewCube } from './ViewCube.js';
 import { CSG } from 'three-csg-ts';
+import { ShaderEditor } from './ShaderEditor.js';
 
 /**
  * Simple 3D modeling application with basic primitives and transform controls
@@ -438,6 +439,8 @@ export class App {
     this.cameraFolder = this.gui.addFolder('Camera Settings');
     this.cameraFolder.add(this.sceneManager, 'dampingEnabled').name('Enable Damping').onChange(() => this.sceneManager.controls.update());
     this.cameraFolder.add(this.sceneManager, 'dampingFactor', 0.01, 1.0).name('Damping Factor');
+
+    this.shaderEditor = new ShaderEditor(this.gui, this.renderer, this.scene, this.camera, EventBus, this.toastManager);
 
     if (this.physicsManager) {
         this.physicsFolder = this.gui.addFolder('Physics Controls');
