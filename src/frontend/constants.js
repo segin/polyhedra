@@ -12,7 +12,11 @@ export const Events = {
   SCENE_GRAPH_NEEDS_UPDATE: 'sceneGraphNeedsUpdate',
   UNDO: 'undo',
   REDO: 'redo',
-  FOCUS_OBJECT: 'focusObject',
+  FOCUS_OBJECT: 'focus-object',
+  TOUCH_PINCH_START: 'touch-pinch-start',
+  TOUCH_PINCH: 'touch-pinch',
+  TOUCH_PAN: 'touch-pan',
+  TOUCH_LONG_PRESS: 'touch-long-press'
 };
 
 export const ObjectTypes = {

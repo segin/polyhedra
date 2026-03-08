@@ -111,6 +111,7 @@ export class App {
     this.setupLighting();
     this.setupHelpers();
     this.setupMobileOptimizations();
+    this.setupTouchEvents();
 
     this.sceneStorage = new SceneStorage(this.scene, EventBus);
 
@@ -523,12 +524,54 @@ export class App {
     const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (isTouch) {
       this.orbitControls.enableKeys = false;
+      // Let Hammer.js handle Zoom and Pan (TWO pointers)
+      // OrbitControls will still handle Rotation (ONE pointer)
       this.orbitControls.touches = {
         ONE: THREE.TOUCH.ROTATE,
-        TWO: THREE.TOUCH.DOLLY_PAN,
+        TWO: THREE.TOUCH.DOLLY_PAN, // Keeping this as fallback or disabling if needed
       };
+      
+      // If we want Hammer to fully take over Two-finger pan/zoom, 
+      // we might want to set TWO: null, but let's see.
+      
       document.body.classList.add('mobile-optimized');
     }
+  }
+
+  setupTouchEvents() {
+    let initialZoom = 1;
+
+    EventBus.subscribe(Events.TOUCH_PINCH_START, () => {
+      initialZoom = this.camera.zoom;
+    });
+
+    EventBus.subscribe(Events.TOUCH_PINCH, (scale) => {
+      this.camera.zoom = initialZoom * scale;
+      this.camera.updateProjectionMatrix();
+      this.orbitControls.update();
+    });
+
+
+    EventBus.subscribe(Events.TOUCH_PAN, (delta) => {
+      const factor = 0.01 / this.camera.zoom;
+      // We need to rotate the delta by the camera's rotation to pan correctly in world space
+      const offset = new THREE.Vector3(-delta.x * factor, delta.y * factor, 0);
+      offset.applyQuaternion(this.camera.quaternion);
+      this.orbitControls.target.add(offset);
+      this.orbitControls.update();
+    });
+
+    EventBus.subscribe(Events.TOUCH_LONG_PRESS, (pos) => {
+      this.mouse.x = (pos.x / window.innerWidth) * 2 - 1;
+      this.mouse.y = -(pos.y / window.innerHeight) * 2 + 1;
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      const intersects = this.raycaster.intersectObjects(this.objects);
+      if (intersects.length > 0) {
+        this.selectObject(intersects[0].object);
+        // Toast for feedback
+        this.toastManager.show(`Selected ${intersects[0].object.name}`, 'info');
+      }
+    });
   }
 
   selectObject(object) {

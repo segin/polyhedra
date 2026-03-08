@@ -183,7 +183,7 @@ tasks:
             status: done
           - id: SPEC-4.1.2
             title: Touch Gestures (Pinch zoom, two-finger pan, long press)
-            status: todo
+            status: done
           - id: SPEC-4.1.3
             title: Large Tap Targets (44px min height/width)
             status: todo

@@ -1,16 +1,62 @@
+import Hammer from 'hammerjs';
 import { Events } from './constants.js';
 
 export class InputManager {
   constructor(eventBus, domElement) {
     this.eventBus = eventBus;
-    this.domElement = domElement || window; // Fallback to window if not provided
-    // Spec says "Constructor should accept domElement".
-    // Usually we attach listeners to domElement (like canvas) for mouse, but for keydown usually window/document.
-    // However, to be specific:
+    this.domElement = domElement || window;
+
+    // Keyboard Listeners
     (this.domElement.ownerDocument || window).addEventListener(
       'keydown',
       this.onKeyDown.bind(this),
     );
+
+    // Hammer.js Touch Listeners
+    if (typeof window !== 'undefined' && this.domElement !== window) {
+      this.setupTouchGestures();
+    }
+  }
+
+  setupTouchGestures() {
+    this.hammer = new Hammer.Manager(this.domElement);
+    
+    // Add Recognizers
+    this.hammer.add(new Hammer.Pinch());
+    this.hammer.add(new Hammer.Pan({ threshold: 10, pointers: 2 }));
+    this.hammer.add(new Hammer.Press({ time: 500 })); // 500ms for long press
+    this.hammer.add(new Hammer.Tap({ event: 'doubletap', taps: 2 }));
+
+    // Interaction State
+    let initialZoom = 1;
+
+    // Pinch (Zoom)
+    this.hammer.on('pinchstart', () => {
+      initialZoom = 1; // reset for next pinch
+      this.eventBus.publish(Events.TOUCH_PINCH_START);
+    });
+
+    this.hammer.on('pinchmove', (e) => {
+      this.eventBus.publish(Events.TOUCH_PINCH, e.scale);
+    });
+
+
+    // Two-finger Pan
+    this.hammer.on('panmove', (e) => {
+      if (e.pointers.length === 2) {
+        this.eventBus.publish(Events.TOUCH_PAN, { x: e.deltaX, y: e.deltaY });
+      }
+    });
+
+    // Long Press (Context Menu or special selection)
+    this.hammer.on('press', (e) => {
+      this.eventBus.publish(Events.TOUCH_LONG_PRESS, { x: e.center.x, y: e.center.y });
+    });
+
+    // Double Tap (Focus)
+    this.hammer.on('doubletap', () => {
+      this.eventBus.publish(Events.FOCUS_OBJECT);
+    });
   }
 
   onKeyDown(event) {
@@ -36,3 +82,4 @@ export class InputManager {
     }
   }
 }
+
