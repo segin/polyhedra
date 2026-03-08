@@ -68,8 +68,15 @@ body {
   padding: 5px 0;
 }
 
-.menu-item:hover .menu-dropdown {
+.menu-item:hover .menu-dropdown,
+.menu-item:focus-within .menu-dropdown {
   display: block;
+}
+
+.menu-item:focus-visible,
+.menu-dropdown a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 .menu-dropdown a {
