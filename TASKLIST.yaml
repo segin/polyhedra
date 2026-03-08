@@ -189,7 +189,7 @@ tasks:
             status: done
           - id: SPEC-4.2.1
             title: Draggable Hierarchy in Scene Graph (HTML5 Drag and Drop)
-            status: todo
+            status: done
           - id: SPEC-4.2.2
             title: Scrubbable Numeric Inputs (mousedown/mousemove label)
             status: todo

@@ -1009,10 +1009,87 @@ export class App {
 
     li.onclick = () => this.selectObject(obj);
 
+    // Drag and Drop
+    li.draggable = true;
+    li.addEventListener('dragstart', (e) => {
+      // @ts-ignore
+      e.dataTransfer.setData('text/plain', obj.uuid);
+      // @ts-ignore
+      e.dataTransfer.effectAllowed = 'move';
+      li.style.opacity = '0.5';
+    });
+
+    li.addEventListener('dragend', () => {
+      li.style.opacity = '1';
+      // Cleanup all borders
+      const items = this.objectsList.querySelectorAll('li');
+      items.forEach(item => {
+        // @ts-ignore
+        item.style.borderTop = '';
+        // @ts-ignore
+        item.style.borderBottom = '';
+      });
+    });
+
+    li.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      // @ts-ignore
+      e.dataTransfer.dropEffect = 'move';
+      
+      // Visual Feedback
+      const rect = li.getBoundingClientRect();
+      const midpoint = rect.top + rect.height / 2;
+      if (e.clientY < midpoint) {
+        li.style.borderTop = '2px solid var(--accent)';
+        li.style.borderBottom = '';
+      } else {
+        li.style.borderTop = '';
+        li.style.borderBottom = '2px solid var(--accent)';
+      }
+    });
+
+    li.addEventListener('dragleave', () => {
+      li.style.borderTop = '';
+      li.style.borderBottom = '';
+    });
+
+    li.addEventListener('drop', (e) => {
+      e.preventDefault();
+      li.style.borderTop = '';
+      li.style.borderBottom = '';
+      // @ts-ignore
+      const draggedUuid = e.dataTransfer.getData('text/plain');
+      if (draggedUuid !== obj.uuid) {
+        const rect = li.getBoundingClientRect();
+        const isAfter = e.clientY > (rect.top + rect.height / 2);
+        this.reorderObjects(draggedUuid, obj.uuid, isAfter);
+      }
+    });
+
     return li;
   }
 
+  reorderObjects(draggedUuid, targetUuid, isAfter) {
+    const draggedIdx = this.objects.findIndex(o => o.uuid === draggedUuid);
+    let targetIdx = this.objects.findIndex(o => o.uuid === targetUuid);
+
+    if (draggedIdx !== -1 && targetIdx !== -1) {
+      const [draggedObj] = this.objects.splice(draggedIdx, 1);
+      
+      // Adjust targetIdx if it changed due to splice
+      targetIdx = this.objects.findIndex(o => o.uuid === targetUuid);
+      
+      const insertIdx = isAfter ? targetIdx + 1 : targetIdx;
+      this.objects.splice(insertIdx, 0, draggedObj);
+      
+      this.updateSceneGraph();
+      this.saveState('Reorder objects');
+      this.toastManager.show('Hierarchy reordered', 'success');
+    }
+  }
+
   updateSceneGraphItem(li, obj, idx) {
+
     // Update Selection Style
     const isSelected = this.selectedObject === obj;
     const expectedBg = isSelected ? '#444' : '#222';
