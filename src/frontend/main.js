@@ -489,7 +489,32 @@ export class App {
 
     this.propertiesFolder = this.gui.addFolder('Properties');
     this.propertiesFolder.open();
+
+    const viewFolder = this.gui.addFolder('View Settings');
+    const viewParams = {
+        showGrid: true,
+        gridSize: 10,
+        gridDivisions: 10,
+        showAxes: true
+    };
+    
+    const updateGrid = () => {
+        if (this.gridHelper) this.scene.remove(this.gridHelper);
+        if (viewParams.showGrid) {
+            this.gridHelper = new THREE.GridHelper(viewParams.gridSize, viewParams.gridDivisions);
+            this.scene.add(this.gridHelper);
+        }
+        this.saveState('Update Grid Settings');
+    };
+    
+    viewFolder.add(viewParams, 'showGrid').name('Show Grid').onChange(updateGrid);
+    viewFolder.add(viewParams, 'gridSize', 1, 100).name('Grid Size').onFinishChange(updateGrid);
+    viewFolder.add(viewParams, 'gridDivisions', 1, 100, 1).name('Divisions').onFinishChange(updateGrid);
+    viewFolder.add(viewParams, 'showAxes').name('Show Axes').onChange((val) => {
+        if (this.axesHelper) this.axesHelper.visible = val;
+    });
   }
+
 
   setupMenu() {
     const bindMenu = (id, action) => {

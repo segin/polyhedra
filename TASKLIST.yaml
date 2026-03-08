@@ -198,7 +198,7 @@ tasks:
             status: done
           - id: SPEC-4.3.2
             title: Grid/Axis Customization (Show/Hide, size, density)
-            status: todo
+            status: done
 
       - title: Phase 5 - Backend, Security & DevOps
         tasks:
