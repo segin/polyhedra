@@ -844,7 +844,67 @@ export class App {
         physFolder.add(physParams, 'mass', 0, 100).name('Mass (0=Static)').onFinishChange(updatePhysics);
         physFolder.add(physParams, 'shape', ['box', 'sphere', 'cylinder']).name('Collision Shape').onChange(updatePhysics);
     }
+
+    // Apply scrubbing to all numeric controllers
+    this.applyScrubbingToFolder(this.propertiesFolder);
   }
+
+  applyScrubbingToFolder(folder) {
+    folder.__controllers.forEach(c => this.applyScrubbing(c));
+    if (folder.__folders) {
+      Object.values(folder.__folders).forEach(f => this.applyScrubbingToFolder(f));
+    }
+  }
+
+  applyScrubbing(controller) {
+    if (typeof controller.getValue() !== 'number') return;
+    
+    const container = controller.domElement.closest('li');
+    if (!container) return;
+    
+    const label = container.querySelector('.property-name');
+    if (!label || label.dataset.scrubbingInitialized) return;
+
+    label.style.cursor = 'ew-resize';
+    label.style.userSelect = 'none';
+    label.dataset.scrubbingInitialized = 'true';
+
+    let startX = 0;
+    let startValue = 0;
+
+    const onMouseMove = (e) => {
+      const delta = e.clientX - startX;
+      let sensitivity = 0.01;
+      if (e.shiftKey) sensitivity = 0.001;
+      if (e.altKey) sensitivity = 0.1;
+      
+      const newValue = startValue + delta * sensitivity;
+      controller.setValue(newValue);
+      if (controller.__onChange) {
+          controller.__onChange.call(controller, newValue);
+      }
+    };
+
+    const onMouseUp = () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      if (controller.__onFinishChange) {
+          controller.__onFinishChange.call(controller, controller.getValue());
+      }
+      document.body.style.cursor = '';
+    };
+
+    label.addEventListener('mousedown', (e) => {
+      startX = e.clientX;
+      startValue = controller.getValue();
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+      document.body.style.cursor = 'ew-resize';
+      e.preventDefault();
+    });
+  }
+
+
 
   triggerTextureUpload(object, mapType) {
     const input = document.createElement('input');
