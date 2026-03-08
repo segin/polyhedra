@@ -186,7 +186,7 @@ tasks:
             status: done
           - id: SPEC-4.1.3
             title: Large Tap Targets (44px min height/width)
-            status: todo
+            status: done
           - id: SPEC-4.2.1
             title: Draggable Hierarchy in Scene Graph (HTML5 Drag and Drop)
             status: todo

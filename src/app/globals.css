@@ -227,11 +227,25 @@ body {
 
 /* Mobile Responsiveness */
 @media (max-width: 900px) {
+  :root {
+    --menubar-height: 48px;
+    --toolbar-width: 60px;
+    --sidebar-width: 280px;
+  }
+
   .app-container {
     grid-template-columns: 1fr;
     grid-template-areas:
       "menubar"
       "viewport";
+  }
+
+  #menubar {
+    font-size: 15px;
+  }
+
+  .menu-item {
+    padding: 0 18px;
   }
 
   #toolbar {
@@ -242,6 +256,15 @@ body {
     width: var(--toolbar-width);
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding-top: 20px;
+    gap: 12px;
+  }
+
+  #toolbar button {
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+    border-radius: 8px;
   }
 
   #sidebar {
@@ -249,7 +272,7 @@ body {
     right: 0;
     top: var(--menubar-height);
     bottom: 0;
-    width: 280px;
+    width: var(--sidebar-width);
     transform: translateX(100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -258,11 +281,18 @@ body {
     transform: translateX(0);
   }
 
-  /* Tap target improvements */
-  .menu-item {
-    padding: 0 16px;
+  #objects-list li {
+    padding: 12px 16px;
+    min-height: 44px;
+    font-size: 15px;
+  }
+  
+  #scene-graph-panel h3 {
+    padding: 16px;
+    font-size: 13px;
   }
 }
+
 
 /* Toasts */
 #toast-container {
