@@ -1,1 +1,10 @@
 .next/
+public/modules/
+node_modules/
+dist/
+build/
+coverage/
+jest.dom.cjs
+jest.setup.cjs
+jest.config.cjs
+babel.config.cjs

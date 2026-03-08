@@ -33,6 +33,7 @@
     "dat.gui": "^0.7.9",
     "express": "^4.19.2",
     "express-rate-limit": "^7.1.5",
+    "hammerjs": "^2.0.8",
     "helmet": "^8.1.0",
     "jszip": "^3.10.1",
     "loglevel": "^1.9.2",

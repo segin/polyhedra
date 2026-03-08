@@ -180,7 +180,7 @@ tasks:
         tasks:
           - id: SPEC-4.1.1
             title: Responsive CSS Grid Layout (mobile drawer/stack)
-            status: todo
+            status: done
           - id: SPEC-4.1.2
             title: Touch Gestures (Pinch zoom, two-finger pan, long press)
             status: todo
