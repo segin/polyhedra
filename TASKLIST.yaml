@@ -195,7 +195,7 @@ tasks:
             status: done
           - id: SPEC-4.3.1
             title: Selection Halo (EffectComposer, OutlinePass)
-            status: todo
+            status: done
           - id: SPEC-4.3.2
             title: Grid/Axis Customization (Show/Hide, size, density)
             status: todo

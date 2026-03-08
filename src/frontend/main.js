@@ -21,9 +21,13 @@ import { LightManager } from './LightManager.js';
 import { Logger } from './utils/Logger.js';
 import { ModelLoader } from './ModelLoader.js';
 import { ErrorHandler } from './ErrorHandler.js';
+import { ShaderEditor } from './ShaderEditor.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
 import { ViewCube } from './ViewCube.js';
 import { CSG } from 'three-csg-ts';
-import { ShaderEditor } from './ShaderEditor.js';
+
 
 /**
  * Simple 3D modeling application with basic primitives and transform controls
@@ -69,6 +73,8 @@ export class App {
     this.container.register('ObjectPropertyUpdater', this.objectPropertyUpdater);
 
     this.initRenderer();
+    this.initPostProcessing();
+
 
     this.inputManager = new InputManager(EventBus, this.renderer.domElement);
     this.container.register('InputManager', this.inputManager);
@@ -259,8 +265,9 @@ export class App {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
     if (!this.renderer.domElement.parentElement) {
-        document.body.appendChild(this.renderer.domElement);
+      document.body.appendChild(this.renderer.domElement);
     }
 
     this.camera.position.set(5, 5, 5);
@@ -270,8 +277,33 @@ export class App {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(window.innerWidth, window.innerHeight);
+      if (this.composer) {
+        this.composer.setSize(window.innerWidth, window.innerHeight);
+      }
     });
   }
+
+  initPostProcessing() {
+    this.composer = new EffectComposer(this.renderer);
+    
+    const renderPass = new RenderPass(this.scene, this.camera);
+    this.composer.addPass(renderPass);
+
+    this.outlinePass = new OutlinePass(
+        new THREE.Vector2(window.innerWidth, window.innerHeight),
+        this.scene,
+        this.camera
+    );
+    this.outlinePass.edgeStrength = 4.0;
+    this.outlinePass.edgeGlow = 1.0;
+    this.outlinePass.edgeThickness = 2.0;
+    this.outlinePass.pulsePeriod = 2.0;
+    this.outlinePass.visibleEdgeColor.set('#00ffff'); // Cyan halo
+    this.outlinePass.hiddenEdgeColor.set('#190a05');
+    
+    this.composer.addPass(this.outlinePass);
+  }
+
 
   setupLighting() {
     this.lighting = new LightManager(this.scene, EventBus);
@@ -575,11 +607,25 @@ export class App {
   }
 
   selectObject(object) {
+    this.selectedObject = object; // Ensure selectedObject is updated
     this.objectManager.selectObject(object);
+    this.updatePropertiesPanel(object);
+    this.updateSceneGraph();
+    
+    if (this.outlinePass) {
+        this.outlinePass.selectedObjects = object ? [object] : [];
+    }
   }
 
   deselectObject() {
+    this.selectedObject = null;
     this.objectManager.deselectObject();
+    this.updatePropertiesPanel(null);
+    this.updateSceneGraph();
+    
+    if (this.outlinePass) {
+        this.outlinePass.selectedObjects = [];
+    }
   }
 
   deleteObject(object) {
@@ -1406,6 +1452,12 @@ export class App {
     if (this.viewCube) this.viewCube.update();
     if (this.physicsManager) this.physicsManager.update(delta);
     this.orbitControls.update();
-    this.renderer.render(this.scene, this.camera);
+    
+    if (this.composer) {
+        this.composer.render();
+    } else {
+        this.renderer.render(this.scene, this.camera);
+    }
   }
+
 }
