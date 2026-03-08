@@ -5,18 +5,22 @@ This document is the single source of truth for all tasks, specifications, sugge
 ---
 
 ## I. Original Context & Ideas (from CONTEXT.md)
+
 # Polyhedra Project Context
 
 ## Current Status
+
 - **Test Stability**: achieved 100% pass rate for critical suites (Primitives, Accessibility, Benchmark).
 - **Architecture**: stabilized Three.js mocks using class-based structures in `jest.setup.cjs`.
 - **Logic**: refactored `main.js` and `PrimitiveFactory.js` for asynchronous operations and parameter alignment.
 
 ## Working Notes
-- **Recent Success**: Resolved the `TypeError` and `ReferenceError` avalanche by standardizing global mocks. 
+
+- **Recent Success**: Resolved the `TypeError` and `ReferenceError` avalanche by standardizing global mocks.
 - **Next Steps**: Monitor for regressions during further feature development (e.g., Physics, CSG).
 
 ## Ideas
+
 - Integrate `cannon-es` more deeply for object interaction.
 - Implement Boolean operations using `three-bvh-csg`.
 - Add a material library/palette for easier styling.
@@ -24,43 +28,49 @@ This document is the single source of truth for all tasks, specifications, sugge
 ---
 
 ## II. Audit Report (from AUDIT_REPORT.md)
+
 # Codebase Audit Report: Polyhedra
+
 **Date:** 2024-05-24
 **Commit SHA:** (Current HEAD)
 **Branch:** main (assumed)
 **Auditor:** Jules (AI Agent)
 
 ## 1. Executive Summary
-*   **Overall Health Score:** 45/100 (High Risk)
-*   **Top Risks:**
-    1.  **Broken Test Suite:** 27% of tests (45/165) failed, with critical worker crashes preventing full execution.
-    2.  **Security Misconfiguration:** Content Security Policy (CSP) enables `'unsafe-inline'` for scripts and styles, increasing XSS risk.
-    3.  **Maintainability:** High cyclomatic complexity in `src/frontend/main.js` (Complexity: 130) indicates a "God Class" anti-pattern.
-    4.  **Inefficient Rendering Updates:** The Scene Graph UI performs full DOM rebuilding on every update, posing a performance risk for large scenes.
-    5.  **Unmanaged Globals:** Reliance on global `THREE` and `JSZip` objects in some modules complicates testing and modularity.
+
+- **Overall Health Score:** 45/100 (High Risk)
+- **Top Risks:**
+  1.  **Broken Test Suite:** 27% of tests (45/165) failed, with critical worker crashes preventing full execution.
+  2.  **Security Misconfiguration:** Content Security Policy (CSP) enables `'unsafe-inline'` for scripts and styles, increasing XSS risk.
+  3.  **Maintainability:** High cyclomatic complexity in `src/frontend/main.js` (Complexity: 130) indicates a "God Class" anti-pattern.
+  4.  **Inefficient Rendering Updates:** The Scene Graph UI performs full DOM rebuilding on every update, posing a performance risk for large scenes.
+  5.  **Unmanaged Globals:** Reliance on global `THREE` and `JSZip` objects in some modules complicates testing and modularity.
 
 ## 2. Full Findings
 
-
 ### Correctness & Testing
+
 - [ ] **TEST-001** (Critical): Jest Worker crashes due to circular JSON serialization. (Tests (General)) -> Remediation: Ensure tests do not return/log circular Three.js objects.
 - [ ] **TEST-002** (High): Mocking failures (`eventBus.subscribe`, `three` imports). (`tests/SceneGraph.test.js`) -> Remediation: Fix Jest mocks to match module structure.
 
 ## 3. Metrics
-*   **Total LOC:** 9341
-*   **Top Complexity:** `src/frontend/main.js` (130)
-*   **Vulnerabilities (SCA):** 0 found (via `pnpm audit`).
-*   **Secrets:** 0 found.
-*   **Test Pass Rate:** 72.7% (120 passed / 45 failed).
+
+- **Total LOC:** 9341
+- **Top Complexity:** `src/frontend/main.js` (130)
+- **Vulnerabilities (SCA):** 0 found (via `pnpm audit`).
+- **Secrets:** 0 found.
+- **Test Pass Rate:** 72.7% (120 passed / 45 failed).
 
 ## 4. Evidence Bundle
-*   **Tool Output:** `eslint_report.json` (Generated)
-*   **Tool Output:** `test_results.json` (Generated)
-*   **Custom Scans:** `scripts/audit_secrets.cjs`, `scripts/audit_metrics.cjs`
+
+- **Tool Output:** `eslint_report.json` (Generated)
+- **Tool Output:** `test_results.json` (Generated)
+- **Custom Scans:** `scripts/audit_secrets.cjs`, `scripts/audit_metrics.cjs`
 
 ---
 
 ## III. Development Specification (from SPECIFICATION.md)
+
 # Comprehensive Development Specification for Polyhedra
 
 This specification document aggregates and massively expands upon all roadmap items, todo lists, testing requirements, and code improvement suggestions found in `README.md`, `SUGGESTIONS.md`, and `TESTING_TODO.md`. It serves as the granular master plan for the continued development of **Polyhedra**.
@@ -91,17 +101,18 @@ This phase focuses on solidifying the codebase foundation, ensuring maintainabil
 - [ ] Update documentation
 
 # Code Audit
+
 - [ ] Perform security audit (CSP, rate limiting, dependency vulnerabilities)
 - [ ] Perform performance audit (bottlenecks, memory leaks, brute force loops)
 - [ ] Perform code quality audit (consistency, modularity, technical debt)
 - [ ] Generate comprehensive `audit_report.md`
 - [ ] Implement critical fixes
-    - [ ] Fix `PhysicsManager` API mismatch (zombie bodies)
-    - [ ] Update dependency vulnerabilities
-    - [ ] Implement light disposal
-    - [ ] Implement geometry caching
-      - [ ] Ensure all local imports include the `.js` extension (e.g., `import { x } from './utils.js'`), which is mandatory for browser-native ESM.
-      - [ ] Verify that `three` and other dependencies are imported via their ESM entry points or mapped correctly if using an import map.
+  - [ ] Fix `PhysicsManager` API mismatch (zombie bodies)
+  - [ ] Update dependency vulnerabilities
+  - [ ] Implement light disposal
+  - [ ] Implement geometry caching
+    - [ ] Ensure all local imports include the `.js` extension (e.g., `import { x } from './utils.js'`), which is mandatory for browser-native ESM.
+    - [ ] Verify that `three` and other dependencies are imported via their ESM entry points or mapped correctly if using an import map.
   - **Verification & Testing**:
     - [ ] Run `npm start` and ensure the server boots without "require is not defined" errors.
     - [ ] Open the browser application and check the console for "Module not found" errors.
@@ -481,6 +492,7 @@ Items from the "Roadmap" section in README.
 ---
 
 ## IV. Testing Todo List (from TESTING_TODO.md)
+
 # Expanded Unit Test Suite for Polyhedra
 
 ## Original 50 Tests
@@ -694,6 +706,7 @@ Items from the "Roadmap" section in README.
 ---
 
 ## V. Code Improvement Suggestions (from SUGGESTIONS.md)
+
 # Exhaustive Code Improvement Suggestions for Polyhedra (300+ Items)
 
 This document provides a detailed list of over 300 suggested improvements for the Polyhedra repository. The suggestions are categorized to cover architecture, backend, frontend logic, UI/UX, testing, tooling, and many advanced concepts.

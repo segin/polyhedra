@@ -1,4 +1,4 @@
-import { Events } from './constants.js';
+import { Events } from "./constants.js";
 
 export class ObjectFactory {
   constructor(scene, primitiveFactory, eventBus) {
@@ -38,14 +38,18 @@ export class ObjectFactory {
     // If the object has a material, clone it
     if (object.material) {
       if (Array.isArray(object.material)) {
-        newObject.material = object.material.map((material) => material.clone());
+        newObject.material = object.material.map((material) =>
+          material.clone(),
+        );
       } else {
         newObject.material = object.material.clone();
       }
     }
 
     // Set a new name for the duplicated object
-    newObject.name = object.name ? `${object.name}_copy` : `${object.uuid}_copy`;
+    newObject.name = object.name
+      ? `${object.name}_copy`
+      : `${object.uuid}_copy`;
 
     // Add a small offset to the position to avoid z-fighting
     newObject.position.addScalar(0.5);

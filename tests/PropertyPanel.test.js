@@ -22,14 +22,14 @@ const mockFolder = {
   __folders: [],
 };
 
-jest.mock('dat.gui', () => ({
+jest.mock("dat.gui", () => ({
   GUI: jest.fn(() => ({
     addFolder: jest.fn(() => mockFolder),
   })),
 }));
 
 // Mock controls
-jest.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
+jest.mock("three/examples/jsm/controls/OrbitControls.js", () => ({
   OrbitControls: jest.fn(() => ({
     enableDamping: true,
     dampingFactor: 0.05,
@@ -38,7 +38,7 @@ jest.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
   })),
 }));
 
-jest.mock('three/examples/jsm/controls/TransformControls.js', () => ({
+jest.mock("three/examples/jsm/controls/TransformControls.js", () => ({
   TransformControls: jest.fn(() => ({
     addEventListener: jest.fn(),
     setMode: jest.fn(),
@@ -48,21 +48,21 @@ jest.mock('three/examples/jsm/controls/TransformControls.js', () => ({
   })),
 }));
 
-describe('Property Panel Functionality', () => {
+describe("Property Panel Functionality", () => {
   let app;
 
   beforeEach(() => {
     // Setup environment (handled by jsdom environment)
-    if (typeof document !== 'undefined') {
-        document.body.innerHTML = '';
+    if (typeof document !== "undefined") {
+      document.body.innerHTML = "";
     }
-    
+
     global.requestAnimationFrame = jest.fn();
     global.console.log = jest.fn(); // Suppress console.log from saveState
 
     // Mock methods that might be missing or need spying
-    if (typeof window !== 'undefined') {
-        window.scrollTo = jest.fn();
+    if (typeof window !== "undefined") {
+      window.scrollTo = jest.fn();
     }
 
     // Clear mocks
@@ -83,12 +83,12 @@ describe('Property Panel Functionality', () => {
         if (!object) return;
 
         // Mock property controls creation
-        this.propertiesFolder.add({ name: object.name }, 'name');
-        this.propertiesFolder.addFolder('Position');
-        this.propertiesFolder.addFolder('Rotation');
-        this.propertiesFolder.addFolder('Scale');
-        this.propertiesFolder.addFolder('Material');
-        this.propertiesFolder.addFolder('Geometry');
+        this.propertiesFolder.add({ name: object.name }, "name");
+        this.propertiesFolder.addFolder("Position");
+        this.propertiesFolder.addFolder("Rotation");
+        this.propertiesFolder.addFolder("Scale");
+        this.propertiesFolder.addFolder("Material");
+        this.propertiesFolder.addFolder("Geometry");
         this.propertiesFolder.open();
       }
 
@@ -121,46 +121,46 @@ describe('Property Panel Functionality', () => {
     jest.restoreAllMocks();
   });
 
-  describe('updatePropertiesPanel', () => {
-    it('should clear properties panel when no object is selected', () => {
-      const clearSpy = jest.spyOn(app, 'clearPropertiesPanel');
+  describe("updatePropertiesPanel", () => {
+    it("should clear properties panel when no object is selected", () => {
+      const clearSpy = jest.spyOn(app, "clearPropertiesPanel");
 
       app.updatePropertiesPanel(null);
 
       expect(clearSpy).toHaveBeenCalled();
     });
 
-    it('should create property controls for selected object', () => {
-      const THREE = require('three');
+    it("should create property controls for selected object", () => {
+      const THREE = require("three");
       const mockObject = {
-        name: 'TestBox',
+        name: "TestBox",
         position: { x: 1, y: 2, z: 3 },
         rotation: { x: 0, y: 0, z: 0 },
         scale: { x: 1, y: 1, z: 1 },
         material: { color: { getHex: () => 0x00ff00 } },
-        geometry: { type: 'BoxGeometry' },
+        geometry: { type: "BoxGeometry" },
         userData: { geometryParams: { width: 1, height: 1, depth: 1 } },
       };
 
       app.updatePropertiesPanel(mockObject);
 
       expect(mockFolder.add).toHaveBeenCalled();
-      expect(mockFolder.addFolder).toHaveBeenCalledWith('Position');
-      expect(mockFolder.addFolder).toHaveBeenCalledWith('Rotation');
-      expect(mockFolder.addFolder).toHaveBeenCalledWith('Scale');
-      expect(mockFolder.addFolder).toHaveBeenCalledWith('Material');
-      expect(mockFolder.addFolder).toHaveBeenCalledWith('Geometry');
+      expect(mockFolder.addFolder).toHaveBeenCalledWith("Position");
+      expect(mockFolder.addFolder).toHaveBeenCalledWith("Rotation");
+      expect(mockFolder.addFolder).toHaveBeenCalledWith("Scale");
+      expect(mockFolder.addFolder).toHaveBeenCalledWith("Material");
+      expect(mockFolder.addFolder).toHaveBeenCalledWith("Geometry");
       expect(mockFolder.open).toHaveBeenCalled();
     });
 
-    it('should handle objects without geometry parameters', () => {
+    it("should handle objects without geometry parameters", () => {
       const mockObject = {
-        name: 'TestObject',
+        name: "TestObject",
         position: { x: 0, y: 0, z: 0 },
         rotation: { x: 0, y: 0, z: 0 },
         scale: { x: 1, y: 1, z: 1 },
         material: { color: { getHex: () => 0x00ff00 } },
-        geometry: { type: 'CustomGeometry' },
+        geometry: { type: "CustomGeometry" },
         userData: {},
       };
 
@@ -170,8 +170,8 @@ describe('Property Panel Functionality', () => {
     });
   });
 
-  describe('clearPropertiesPanel', () => {
-    it('should remove all controllers and folders', () => {
+  describe("clearPropertiesPanel", () => {
+    it("should remove all controllers and folders", () => {
       // Add some mock controllers and folders
       app.propertiesFolder.__controllers = [1, 2, 3];
       app.propertiesFolder.__folders = [1, 2];
@@ -184,17 +184,17 @@ describe('Property Panel Functionality', () => {
     });
   });
 
-  describe('getGeometryParameters', () => {
-    it('should return default parameters for BoxGeometry', () => {
-      const geometry = { type: 'BoxGeometry', parameters: null };
+  describe("getGeometryParameters", () => {
+    it("should return default parameters for BoxGeometry", () => {
+      const geometry = { type: "BoxGeometry", parameters: null };
       const params = app.getGeometryParameters(geometry);
 
       expect(params).toEqual({});
     });
 
-    it('should return existing parameters when available', () => {
+    it("should return existing parameters when available", () => {
       const geometry = {
-        type: 'BoxGeometry',
+        type: "BoxGeometry",
         parameters: { width: 2, height: 3, depth: 4 },
       };
       const params = app.getGeometryParameters(geometry);
@@ -203,10 +203,10 @@ describe('Property Panel Functionality', () => {
     });
   });
 
-  describe('Property Panel Integration', () => {
-    it('should update properties when object is selected', () => {
-      const THREE = require('three');
-      const updateSpy = jest.spyOn(app, 'updatePropertiesPanel');
+  describe("Property Panel Integration", () => {
+    it("should update properties when object is selected", () => {
+      const THREE = require("three");
+      const updateSpy = jest.spyOn(app, "updatePropertiesPanel");
       const mockObject = new THREE.Mesh();
 
       app.selectedObject = mockObject;
@@ -215,8 +215,8 @@ describe('Property Panel Functionality', () => {
       expect(updateSpy).toHaveBeenCalledWith(mockObject);
     });
 
-    it('should clear properties when object is deselected', () => {
-      const clearSpy = jest.spyOn(app, 'clearPropertiesPanel');
+    it("should clear properties when object is deselected", () => {
+      const clearSpy = jest.spyOn(app, "clearPropertiesPanel");
 
       app.selectedObject = null;
       app.clearPropertiesPanel();

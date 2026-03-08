@@ -1,4 +1,4 @@
-import log from './logger.js';
+import log from "./logger.js";
 
 class EventBus {
   constructor() {
@@ -14,7 +14,9 @@ class EventBus {
 
   unsubscribe(eventName, callback) {
     if (this.events[eventName]) {
-      this.events[eventName] = this.events[eventName].filter((cb) => cb !== callback);
+      this.events[eventName] = this.events[eventName].filter(
+        (cb) => cb !== callback,
+      );
     }
   }
 

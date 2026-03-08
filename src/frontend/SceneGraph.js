@@ -1,4 +1,4 @@
-import { Events } from './constants.js';
+import { Events } from "./constants.js";
 
 export class SceneGraph {
   constructor(scene, eventBus) {

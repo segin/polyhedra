@@ -1,28 +1,28 @@
 // @ts-check
-import * as THREE from 'three';
-import * as TWEEN from '@tweenjs/tween.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
-import { GUI } from 'dat.gui';
-import { SceneStorage } from './SceneStorage.js';
-import { ServiceContainer } from './utils/ServiceContainer.js';
-import { StateManager } from './StateManager.js';
-import EventBus from './EventBus.js';
-import { ObjectManager } from './ObjectManager.js';
-import { SceneManager } from './SceneManager.js';
-import { InputManager } from './InputManager.js';
-import { Events } from './constants.js';
-import { PhysicsManager } from './PhysicsManager.js';
-import { PrimitiveFactory } from './PrimitiveFactory.js';
-import { ObjectFactory } from './ObjectFactory.js';
-import { ObjectPropertyUpdater } from './ObjectPropertyUpdater.js';
-import { ToastManager } from './ToastManager.js';
-import { LightManager } from './LightManager.js';
-import { Logger } from './utils/Logger.js';
-import { ModelLoader } from './ModelLoader.js';
-import { ErrorHandler } from './ErrorHandler.js';
-import { ViewCube } from './ViewCube.js';
-import { CSG } from 'three-csg-ts';
+import * as THREE from "three";
+import * as TWEEN from "@tweenjs/tween.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
+import { GUI } from "dat.gui";
+import { SceneStorage } from "./SceneStorage.js";
+import { ServiceContainer } from "./utils/ServiceContainer.js";
+import { StateManager } from "./StateManager.js";
+import EventBus from "./EventBus.js";
+import { ObjectManager } from "./ObjectManager.js";
+import { SceneManager } from "./SceneManager.js";
+import { InputManager } from "./InputManager.js";
+import { Events } from "./constants.js";
+import { PhysicsManager } from "./PhysicsManager.js";
+import { PrimitiveFactory } from "./PrimitiveFactory.js";
+import { ObjectFactory } from "./ObjectFactory.js";
+import { ObjectPropertyUpdater } from "./ObjectPropertyUpdater.js";
+import { ToastManager } from "./ToastManager.js";
+import { LightManager } from "./LightManager.js";
+import { Logger } from "./utils/Logger.js";
+import { ModelLoader } from "./ModelLoader.js";
+import { ErrorHandler } from "./ErrorHandler.js";
+import { ViewCube } from "./ViewCube.js";
+import { CSG } from "three-csg-ts";
 
 /**
  * Simple 3D modeling application with basic primitives and transform controls
@@ -36,10 +36,10 @@ export class App {
     this.clock = new THREE.Clock();
 
     // Register Core Services
-    this.container.register('EventBus', EventBus);
-    
+    this.container.register("EventBus", EventBus);
+
     this.stateManager = new StateManager();
-    this.container.register('StateManager', this.stateManager);
+    this.container.register("StateManager", this.stateManager);
 
     // Initialize Three.js Core
     this.scene = new THREE.Scene();
@@ -49,34 +49,48 @@ export class App {
       0.1,
       1000,
     );
-    const canvas = document.querySelector('#c');
+    const canvas = document.querySelector("#c");
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 
     // Register Three.js Core objects
-    this.container.register('Scene', this.scene);
-    this.container.register('Camera', this.camera);
-    this.container.register('Renderer', this.renderer);
+    this.container.register("Scene", this.scene);
+    this.container.register("Camera", this.camera);
+    this.container.register("Renderer", this.renderer);
 
     // Initialize Managers
     this.primitiveFactory = new PrimitiveFactory();
-    this.container.register('PrimitiveFactory', this.primitiveFactory);
+    this.container.register("PrimitiveFactory", this.primitiveFactory);
 
-    this.objectFactory = new ObjectFactory(this.scene, this.primitiveFactory, EventBus);
-    this.container.register('ObjectFactory', this.objectFactory);
+    this.objectFactory = new ObjectFactory(
+      this.scene,
+      this.primitiveFactory,
+      EventBus,
+    );
+    this.container.register("ObjectFactory", this.objectFactory);
 
-    this.objectPropertyUpdater = new ObjectPropertyUpdater(this.primitiveFactory);
-    this.container.register('ObjectPropertyUpdater', this.objectPropertyUpdater);
+    this.objectPropertyUpdater = new ObjectPropertyUpdater(
+      this.primitiveFactory,
+    );
+    this.container.register(
+      "ObjectPropertyUpdater",
+      this.objectPropertyUpdater,
+    );
 
     this.initRenderer();
 
     this.inputManager = new InputManager(EventBus, this.renderer.domElement);
-    this.container.register('InputManager', this.inputManager);
+    this.container.register("InputManager", this.inputManager);
 
     this.physicsManager = new PhysicsManager(this.scene);
-    this.container.register('PhysicsManager', this.physicsManager);
+    this.container.register("PhysicsManager", this.physicsManager);
 
-    this.sceneManager = new SceneManager(this.renderer, this.camera, this.inputManager, this.scene);
-    this.container.register('SceneManager', this.sceneManager);
+    this.sceneManager = new SceneManager(
+      this.renderer,
+      this.camera,
+      this.inputManager,
+      this.scene,
+    );
+    this.container.register("SceneManager", this.sceneManager);
 
     this.objectManager = new ObjectManager(
       this.scene,
@@ -87,7 +101,7 @@ export class App {
       this.objectPropertyUpdater,
       this.stateManager,
     );
-    this.container.register('ObjectManager', this.objectManager);
+    this.container.register("ObjectManager", this.objectManager);
 
     // App State
     this.selectedObject = null;
@@ -100,7 +114,7 @@ export class App {
     this.maxHistorySize = 50;
 
     this.primitiveCounter = 0;
-    
+
     // Continue initialization
     this.setupControls();
     this.setupSceneGraph();
@@ -115,18 +129,22 @@ export class App {
 
     // Initialize Model Loader
     this.modelLoader = new ModelLoader(this.scene, EventBus);
-    this.container.register('ModelLoader', this.modelLoader);
+    this.container.register("ModelLoader", this.modelLoader);
 
     // Bind animation loop
     this.animate = this.animate.bind(this);
     this.animate();
 
     // Initialize ViewCube
-    this.viewCube = new ViewCube(this.camera, this.sceneManager.controls, document.body);
+    this.viewCube = new ViewCube(
+      this.camera,
+      this.sceneManager.controls,
+      document.body,
+    );
 
     // Subscribe to selection changes
     if (this.stateManager) {
-      this.stateManager.subscribe('selection', (selection) => {
+      this.stateManager.subscribe("selection", (selection) => {
         if (selection && selection.length > 0) {
           this.selectedObject = selection[0];
           this.transformControls.attach(this.selectedObject);
@@ -141,13 +159,13 @@ export class App {
 
       EventBus.subscribe(Events.FOCUS_OBJECT, () => {
         if (this.selectedObject) {
-           this.sceneManager.focusOnObject(this.selectedObject);
+          this.sceneManager.focusOnObject(this.selectedObject);
         }
       });
     }
 
     // Save initial state
-    this.saveState('Initial State');
+    this.saveState("Initial State");
   }
 
   /**
@@ -165,10 +183,12 @@ export class App {
     mesh.scale.copy(data.scale);
     // @ts-ignore
     if (mesh.material && data.material) {
-        // @ts-ignore
-        if (mesh.material.color && data.material.color) mesh.material.color.copy(data.material.color);
-        // @ts-ignore
-        if (mesh.material.emissive && data.material.emissive) mesh.material.emissive.copy(data.material.emissive);
+      // @ts-ignore
+      if (mesh.material.color && data.material.color)
+        mesh.material.color.copy(data.material.color);
+      // @ts-ignore
+      if (mesh.material.emissive && data.material.emissive)
+        mesh.material.emissive.copy(data.material.emissive);
     }
   }
 
@@ -186,9 +206,12 @@ export class App {
     if (stateObj.visible !== currentObj.visible) return false;
 
     // Type check (using primitiveType if available)
-    const currentType = currentObj.userData && currentObj.userData.primitiveType
+    const currentType =
+      currentObj.userData && currentObj.userData.primitiveType
         ? currentObj.userData.primitiveType
-        : (currentObj.geometry ? currentObj.geometry.type : currentObj.type);
+        : currentObj.geometry
+          ? currentObj.geometry.type
+          : currentObj.type;
 
     if (stateObj.type !== currentType) return false;
 
@@ -201,19 +224,29 @@ export class App {
     // @ts-ignore
     if (stateObj.material && currentObj.material) {
       // @ts-ignore
-      if (!stateObj.material.color.equals(currentObj.material.color)) return false;
+      if (!stateObj.material.color.equals(currentObj.material.color))
+        return false;
       // @ts-ignore
       if (stateObj.material.emissive && currentObj.material.emissive) {
-         // @ts-ignore
-         if (!stateObj.material.emissive.equals(currentObj.material.emissive)) return false;
+        // @ts-ignore
+        if (!stateObj.material.emissive.equals(currentObj.material.emissive))
+          return false;
       }
     } else if (!!stateObj.material !== !!currentObj.material) {
       return false;
     }
 
     // Geometry params comparison
-    const currentParams = (currentObj.userData && currentObj.userData.primitiveOptions) ? currentObj.userData.primitiveOptions : (currentObj.userData ? currentObj.userData.geometryParams : null);
-    if (JSON.stringify(stateObj.geometryParams) !== JSON.stringify(currentParams)) return false;
+    const currentParams =
+      currentObj.userData && currentObj.userData.primitiveOptions
+        ? currentObj.userData.primitiveOptions
+        : currentObj.userData
+          ? currentObj.userData.geometryParams
+          : null;
+    if (
+      JSON.stringify(stateObj.geometryParams) !== JSON.stringify(currentParams)
+    )
+      return false;
 
     return true;
   }
@@ -231,7 +264,7 @@ export class App {
 
     // Initialize Model Loader
     this.modelLoader = new ModelLoader(this.scene, EventBus);
-    this.container.register('ModelLoader', this.modelLoader);
+    this.container.register("ModelLoader", this.modelLoader);
 
     // Mobile touch optimizations
     this.setupMobileOptimizations();
@@ -239,17 +272,17 @@ export class App {
 
   // Add this method to handle model import
   async importModel(file) {
-      try {
-          const object = await this.modelLoader.loadModel(file);
-          this.objects.push(object);
-          this.selectObject(object);
-          this.updateSceneGraph();
-          this.saveState('Import Model');
-          this.toastManager.show(`Imported ${file.name}`, 'success');
-      } catch (error) {
-          Logger.error('Import failed:', error);
-          this.toastManager.show('Import failed: ' + error.message, 'error');
-      }
+    try {
+      const object = await this.modelLoader.loadModel(file);
+      this.objects.push(object);
+      this.selectObject(object);
+      this.updateSceneGraph();
+      this.saveState("Import Model");
+      this.toastManager.show(`Imported ${file.name}`, "success");
+    } catch (error) {
+      Logger.error("Import failed:", error);
+      this.toastManager.show("Import failed: " + error.message, "error");
+    }
   }
 
   initRenderer() {
@@ -258,13 +291,13 @@ export class App {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     if (!this.renderer.domElement.parentElement) {
-        document.body.appendChild(this.renderer.domElement);
+      document.body.appendChild(this.renderer.domElement);
     }
 
     this.camera.position.set(5, 5, 5);
     this.camera.lookAt(0, 0, 0);
 
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -283,17 +316,17 @@ export class App {
   }
 
   setupSceneGraph() {
-    this.sceneGraphPanel = document.getElementById('scene-graph-panel');
+    this.sceneGraphPanel = document.getElementById("scene-graph-panel");
     if (!this.sceneGraphPanel) {
-      this.sceneGraphPanel = document.createElement('div');
-      this.sceneGraphPanel.id = 'scene-graph-panel';
+      this.sceneGraphPanel = document.createElement("div");
+      this.sceneGraphPanel.id = "scene-graph-panel";
       document.body.appendChild(this.sceneGraphPanel);
     }
 
-    this.objectsList = document.getElementById('objects-list');
+    this.objectsList = document.getElementById("objects-list");
     if (!this.objectsList) {
-      this.objectsList = document.createElement('ul');
-      this.objectsList.id = 'objects-list';
+      this.objectsList = document.createElement("ul");
+      this.objectsList.id = "objects-list";
       this.sceneGraphPanel.appendChild(this.objectsList);
     }
 
@@ -303,61 +336,63 @@ export class App {
   setupToolbar() {
     const tools = [
       {
-        id: 'translate-btn',
-        icon: '✥',
-        title: 'Translate (G)',
-        action: () => this.transformControls.setMode('translate'),
+        id: "translate-btn",
+        icon: "✥",
+        title: "Translate (G)",
+        action: () => this.transformControls.setMode("translate"),
       },
       {
-        id: 'rotate-btn',
-        icon: '↻',
-        title: 'Rotate (R)',
-        action: () => this.transformControls.setMode('rotate'),
+        id: "rotate-btn",
+        icon: "↻",
+        title: "Rotate (R)",
+        action: () => this.transformControls.setMode("rotate"),
       },
       {
-        id: 'scale-btn',
-        icon: '⤢',
-        title: 'Scale (S)',
-        action: () => this.transformControls.setMode('scale'),
+        id: "scale-btn",
+        icon: "⤢",
+        title: "Scale (S)",
+        action: () => this.transformControls.setMode("scale"),
       },
       {
-        id: 'undo-btn',
-        icon: '↶',
-        title: 'Undo (Ctrl+Z)',
+        id: "undo-btn",
+        icon: "↶",
+        title: "Undo (Ctrl+Z)",
         action: () => this.undo(),
       },
       {
-        id: 'redo-btn',
-        icon: '↷',
-        title: 'Redo (Ctrl+Y)',
+        id: "redo-btn",
+        icon: "↷",
+        title: "Redo (Ctrl+Y)",
         action: () => this.redo(),
       },
       {
-        id: 'delete-btn',
-        icon: '🗑',
-        title: 'Delete (Del)',
+        id: "delete-btn",
+        icon: "🗑",
+        title: "Delete (Del)",
         action: () => this.deleteSelectedObject(),
       },
     ];
 
-    let container = document.getElementById('toolbar');
+    let container = document.getElementById("toolbar");
     if (!container) {
-      container = document.createElement('div');
-      container.id = 'toolbar';
+      container = document.createElement("div");
+      container.id = "toolbar";
       document.body.appendChild(container);
     }
 
     tools.forEach((tool) => {
-      const btn = document.createElement('button');
+      const btn = document.createElement("button");
       btn.id = tool.id;
       btn.textContent = tool.icon;
       btn.title = tool.title;
-      btn.setAttribute('aria-label', tool.title);
+      btn.setAttribute("aria-label", tool.title);
       btn.onclick = () => {
         tool.action();
-        if (['translate', 'rotate', 'scale'].includes(tool.id.split('-')[0])) {
-          container.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
-          btn.classList.add('active');
+        if (["translate", "rotate", "scale"].includes(tool.id.split("-")[0])) {
+          container
+            .querySelectorAll("button")
+            .forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
         }
       };
       container.appendChild(btn);
@@ -365,15 +400,21 @@ export class App {
   }
 
   setupControls() {
-    this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.orbitControls = new OrbitControls(
+      this.camera,
+      this.renderer.domElement,
+    );
     this.orbitControls.enableDamping = true;
     this.orbitControls.dampingFactor = 0.05;
 
-    this.transformControls = new TransformControls(this.camera, this.renderer.domElement);
-    this.transformControls.addEventListener('dragging-changed', (event) => {
+    this.transformControls = new TransformControls(
+      this.camera,
+      this.renderer.domElement,
+    );
+    this.transformControls.addEventListener("dragging-changed", (event) => {
       this.orbitControls.enabled = !event.value;
       if (!event.value && this.selectedObject) {
-        this.saveState('Transform object');
+        this.saveState("Transform object");
       }
     });
     this.scene.add(this.transformControls);
@@ -381,7 +422,7 @@ export class App {
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
 
-    this.renderer.domElement.addEventListener('click', (event) => {
+    this.renderer.domElement.addEventListener("click", (event) => {
       if (this.transformControls.dragging) return;
 
       this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -397,18 +438,24 @@ export class App {
       }
     });
 
-    window.addEventListener('keydown', (event) => {
+    window.addEventListener("keydown", (event) => {
       if (event.target instanceof HTMLInputElement) return;
 
       switch (event.key.toLowerCase()) {
-        case 'g': this.transformControls.setMode('translate'); break;
-        case 'r': this.transformControls.setMode('rotate'); break;
-        case 's': this.transformControls.setMode('scale'); break;
-        case 'delete':
-        case 'backspace':
+        case "g":
+          this.transformControls.setMode("translate");
+          break;
+        case "r":
+          this.transformControls.setMode("rotate");
+          break;
+        case "s":
+          this.transformControls.setMode("scale");
+          break;
+        case "delete":
+        case "backspace":
           if (this.selectedObject) this.deleteObject(this.selectedObject);
           break;
-        case 'z':
+        case "z":
           if (event.ctrlKey || event.metaKey) {
             event.preventDefault();
             if (event.shiftKey) this.redo();
@@ -420,38 +467,41 @@ export class App {
 
     // Removed old floating button listeners.
     // Fullscreen and Save/Load logic moved to setupMenu()
-
-
   }
 
   setupGUI() {
     this.gui = new GUI({ autoPlace: false });
-    const propsPanel = document.getElementById('properties-panel');
+    const propsPanel = document.getElementById("properties-panel");
     if (propsPanel && this.gui.domElement) {
-        try {
-            propsPanel.appendChild(this.gui.domElement);
-        } catch(err) {
-            void err; // Ignore in test environs
-        }
+      try {
+        propsPanel.appendChild(this.gui.domElement);
+      } catch (err) {
+        void err; // Ignore in test environs
+      }
     }
 
-    this.cameraFolder = this.gui.addFolder('Camera Settings');
-    this.cameraFolder.add(this.sceneManager, 'dampingEnabled').name('Enable Damping').onChange(() => this.sceneManager.controls.update());
-    this.cameraFolder.add(this.sceneManager, 'dampingFactor', 0.01, 1.0).name('Damping Factor');
+    this.cameraFolder = this.gui.addFolder("Camera Settings");
+    this.cameraFolder
+      .add(this.sceneManager, "dampingEnabled")
+      .name("Enable Damping")
+      .onChange(() => this.sceneManager.controls.update());
+    this.cameraFolder
+      .add(this.sceneManager, "dampingFactor", 0.01, 1.0)
+      .name("Damping Factor");
 
     if (this.physicsManager) {
-        this.physicsFolder = this.gui.addFolder('Physics Controls');
-        const physicsParams = {
-            play: () => this.physicsManager.play(),
-            pause: () => this.physicsManager.pause(),
-            reset: () => this.physicsManager.reset()
-        };
-        this.physicsFolder.add(physicsParams, 'play').name('Play Simulation');
-        this.physicsFolder.add(physicsParams, 'pause').name('Pause Simulation');
-        this.physicsFolder.add(physicsParams, 'reset').name('Reset Simulation');
+      this.physicsFolder = this.gui.addFolder("Physics Controls");
+      const physicsParams = {
+        play: () => this.physicsManager.play(),
+        pause: () => this.physicsManager.pause(),
+        reset: () => this.physicsManager.reset(),
+      };
+      this.physicsFolder.add(physicsParams, "play").name("Play Simulation");
+      this.physicsFolder.add(physicsParams, "pause").name("Pause Simulation");
+      this.physicsFolder.add(physicsParams, "reset").name("Reset Simulation");
     }
 
-    this.propertiesFolder = this.gui.addFolder('Properties');
+    this.propertiesFolder = this.gui.addFolder("Properties");
     this.propertiesFolder.open();
   }
 
@@ -462,69 +512,73 @@ export class App {
     };
 
     // File
-    bindMenu('menu-file-load', () => document.getElementById('file-input').click());
-    bindMenu('menu-file-save', () => this.saveScene());
-    bindMenu('menu-file-import', () => document.getElementById('model-import-input').click());
+    bindMenu("menu-file-load", () =>
+      document.getElementById("file-input").click(),
+    );
+    bindMenu("menu-file-save", () => this.saveScene());
+    bindMenu("menu-file-import", () =>
+      document.getElementById("model-import-input").click(),
+    );
 
     // Edit
-    bindMenu('menu-edit-undo', () => this.undo());
-    bindMenu('menu-edit-redo', () => this.redo());
-    bindMenu('menu-edit-delete', () => this.deleteSelectedObject());
-    bindMenu('menu-edit-duplicate', () => this.duplicateSelectedObject());
+    bindMenu("menu-edit-undo", () => this.undo());
+    bindMenu("menu-edit-redo", () => this.redo());
+    bindMenu("menu-edit-delete", () => this.deleteSelectedObject());
+    bindMenu("menu-edit-duplicate", () => this.duplicateSelectedObject());
 
     // Add
-    bindMenu('menu-add-box', () => this.addBox());
-    bindMenu('menu-add-sphere', () => this.addSphere());
-    bindMenu('menu-add-cylinder', () => this.addCylinder());
-    bindMenu('menu-add-cone', () => this.addCone());
-    bindMenu('menu-add-torus', () => this.addTorus());
-    bindMenu('menu-add-plane', () => this.addPlane());
-    bindMenu('menu-add-teapot', () => this.addTeapot());
+    bindMenu("menu-add-box", () => this.addBox());
+    bindMenu("menu-add-sphere", () => this.addSphere());
+    bindMenu("menu-add-cylinder", () => this.addCylinder());
+    bindMenu("menu-add-cone", () => this.addCone());
+    bindMenu("menu-add-torus", () => this.addTorus());
+    bindMenu("menu-add-plane", () => this.addPlane());
+    bindMenu("menu-add-teapot", () => this.addTeapot());
 
     // View
-    bindMenu('menu-view-fullscreen', () => this.toggleFullscreen());
-    
+    bindMenu("menu-view-fullscreen", () => this.toggleFullscreen());
+
     // File Inputs
-    const loadInput = document.getElementById('file-input');
+    const loadInput = document.getElementById("file-input");
     if (loadInput) {
-      loadInput.addEventListener('change', async (e) => {
+      loadInput.addEventListener("change", async (e) => {
         // @ts-ignore
         const file = e.target.files[0];
         if (file) {
           try {
             await this.loadScene(file);
           } catch (err) {
-            Logger.error('Failed to load scene', err);
+            Logger.error("Failed to load scene", err);
           }
         }
         // @ts-ignore
-        e.target.value = '';
+        e.target.value = "";
       });
     }
 
-    const importInput = document.getElementById('model-import-input');
+    const importInput = document.getElementById("model-import-input");
     if (importInput) {
-        importInput.onchange = (e) => {
-            // @ts-ignore
-            if (e.target.files && e.target.files[0]) {
-                // @ts-ignore
-                this.importModel(e.target.files[0]);
-            }
-            // @ts-ignore
-            e.target.value = '';
-        };
+      importInput.onchange = (e) => {
+        // @ts-ignore
+        if (e.target.files && e.target.files[0]) {
+          // @ts-ignore
+          this.importModel(e.target.files[0]);
+        }
+        // @ts-ignore
+        e.target.value = "";
+      };
     }
   }
 
   setupMobileOptimizations() {
-    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
     if (isTouch) {
       this.orbitControls.enableKeys = false;
       this.orbitControls.touches = {
         ONE: THREE.TOUCH.ROTATE,
         TWO: THREE.TOUCH.DOLLY_PAN,
       };
-      document.body.classList.add('mobile-optimized');
+      document.body.classList.add("mobile-optimized");
     }
   }
 
@@ -541,7 +595,7 @@ export class App {
       this.objectManager.deleteObject(object);
       const index = this.objects.indexOf(object);
       if (index > -1) this.objects.splice(index, 1);
-      this.saveState('Delete object');
+      this.saveState("Delete object");
     }
   }
 
@@ -557,16 +611,16 @@ export class App {
         this.scene.add(mesh);
         this.objects.push(mesh);
         this.selectObject(mesh);
-        this.saveState('Duplicate object');
+        this.saveState("Duplicate object");
       }
     }
   }
 
   performCSG(baseObject, targetUuid, operation) {
     if (!baseObject || !targetUuid) return;
-    const targetObject = this.objects.find(o => o.uuid === targetUuid);
+    const targetObject = this.objects.find((o) => o.uuid === targetUuid);
     if (!targetObject) {
-      Logger.warn('CSG Target not found');
+      Logger.warn("CSG Target not found");
       return;
     }
 
@@ -575,58 +629,93 @@ export class App {
       targetObject.updateMatrixWorld(true);
 
       let resultMesh;
-      if (operation === 'union') resultMesh = CSG.union(baseObject, targetObject);
-      else if (operation === 'subtract') resultMesh = CSG.subtract(baseObject, targetObject);
-      else if (operation === 'intersect') resultMesh = CSG.intersect(baseObject, targetObject);
+      if (operation === "union")
+        resultMesh = CSG.union(baseObject, targetObject);
+      else if (operation === "subtract")
+        resultMesh = CSG.subtract(baseObject, targetObject);
+      else if (operation === "intersect")
+        resultMesh = CSG.intersect(baseObject, targetObject);
 
       if (resultMesh) {
         resultMesh.name = `${baseObject.name}_${operation}_${targetObject.name}`;
         resultMesh.castShadow = true;
         resultMesh.receiveShadow = true;
         if (baseObject.material) {
-          resultMesh.material = Array.isArray(baseObject.material) 
-            ? baseObject.material.map(m => m.clone()) 
+          resultMesh.material = Array.isArray(baseObject.material)
+            ? baseObject.material.map((m) => m.clone())
             : baseObject.material.clone();
         }
-        
+
         // Remove old objects
         this.deleteObject(baseObject);
         this.deleteObject(targetObject);
-        
+
         this.scene.add(resultMesh);
         this.objects.push(resultMesh);
         this.selectObject(resultMesh);
-        
+
         this.updateSceneGraph();
         this.saveState(`CSG ${operation}`);
-        this.toastManager.show(`CSG ${operation} successful!`, 'success');
+        this.toastManager.show(`CSG ${operation} successful!`, "success");
       }
     } catch (err) {
       Logger.error(`CSG ${operation} failed:`, err);
-      this.toastManager.show(`CSG failed: ${err.message}`, 'error');
+      this.toastManager.show(`CSG failed: ${err.message}`, "error");
     }
   }
 
-  async addBox() { return await this.addPrimitive('Box'); }
-  async addSphere() { return await this.addPrimitive('Sphere'); }
-  async addCylinder() { return await this.addPrimitive('Cylinder'); }
-  async addCone() { return await this.addPrimitive('Cone'); }
-  async addTorus() { return await this.addPrimitive('Torus'); }
-  async addTorusKnot() { return await this.addPrimitive('TorusKnot'); }
-  async addTetrahedron() { return await this.addPrimitive('Tetrahedron'); }
-  async addIcosahedron() { return await this.addPrimitive('Icosahedron'); }
-  async addDodecahedron() { return await this.addPrimitive('Dodecahedron'); }
-  async addOctahedron() { return await this.addPrimitive('Octahedron'); }
-  async addPlane() { return await this.addPrimitive('Plane'); }
-  async addTube() { return await this.addPrimitive('Tube'); }
-  async addTeapot() { return await this.addPrimitive('Teapot'); }
-  async addLathe() { return await this.addPrimitive('Lathe'); }
-  async addExtrude() { return await this.addPrimitive('Extrude'); }
-  async addText(text, options) { return await this.addPrimitive('Text', { text, ...options }); }
+  async addBox() {
+    return await this.addPrimitive("Box");
+  }
+  async addSphere() {
+    return await this.addPrimitive("Sphere");
+  }
+  async addCylinder() {
+    return await this.addPrimitive("Cylinder");
+  }
+  async addCone() {
+    return await this.addPrimitive("Cone");
+  }
+  async addTorus() {
+    return await this.addPrimitive("Torus");
+  }
+  async addTorusKnot() {
+    return await this.addPrimitive("TorusKnot");
+  }
+  async addTetrahedron() {
+    return await this.addPrimitive("Tetrahedron");
+  }
+  async addIcosahedron() {
+    return await this.addPrimitive("Icosahedron");
+  }
+  async addDodecahedron() {
+    return await this.addPrimitive("Dodecahedron");
+  }
+  async addOctahedron() {
+    return await this.addPrimitive("Octahedron");
+  }
+  async addPlane() {
+    return await this.addPrimitive("Plane");
+  }
+  async addTube() {
+    return await this.addPrimitive("Tube");
+  }
+  async addTeapot() {
+    return await this.addPrimitive("Teapot");
+  }
+  async addLathe() {
+    return await this.addPrimitive("Lathe");
+  }
+  async addExtrude() {
+    return await this.addPrimitive("Extrude");
+  }
+  async addText(text, options) {
+    return await this.addPrimitive("Text", { text, ...options });
+  }
 
   async addPrimitive(type, options) {
     const meshOrPromise = this.objectManager.addPrimitive(type, options);
-    
+
     const setup = (mesh) => {
       if (mesh) {
         this.primitiveCounter++;
@@ -651,159 +740,232 @@ export class App {
     this.clearPropertiesPanel();
     if (!object) return;
 
-    this.propertiesFolder.add(object, 'name').name('Name');
-    
-    const pos = this.propertiesFolder.addFolder('Position');
-    pos.add(object.position, 'x', -10, 10).name('X');
-    pos.add(object.position, 'y', -10, 10).name('Y');
-    pos.add(object.position, 'z', -10, 10).name('Z');
-    
-    const rot = this.propertiesFolder.addFolder('Rotation');
-    rot.add(object.rotation, 'x', -Math.PI, Math.PI).name('X');
-    rot.add(object.rotation, 'y', -Math.PI, Math.PI).name('Y');
-    rot.add(object.rotation, 'z', -Math.PI, Math.PI).name('Z');
+    this.propertiesFolder.add(object, "name").name("Name");
 
-    const sca = this.propertiesFolder.addFolder('Scale');
-    sca.add(object.scale, 'x', 0.1, 5).name('X');
-    sca.add(object.scale, 'y', 0.1, 5).name('Y');
-    sca.add(object.scale, 'z', 0.1, 5).name('Z');
+    const pos = this.propertiesFolder.addFolder("Position");
+    pos.add(object.position, "x", -10, 10).name("X");
+    pos.add(object.position, "y", -10, 10).name("Y");
+    pos.add(object.position, "z", -10, 10).name("Z");
+
+    const rot = this.propertiesFolder.addFolder("Rotation");
+    rot.add(object.rotation, "x", -Math.PI, Math.PI).name("X");
+    rot.add(object.rotation, "y", -Math.PI, Math.PI).name("Y");
+    rot.add(object.rotation, "z", -Math.PI, Math.PI).name("Z");
+
+    const sca = this.propertiesFolder.addFolder("Scale");
+    sca.add(object.scale, "x", 0.1, 5).name("X");
+    sca.add(object.scale, "y", 0.1, 5).name("Y");
+    sca.add(object.scale, "z", 0.1, 5).name("Z");
 
     // @ts-ignore
     if (object.material) {
-      const mat = this.propertiesFolder.addFolder('Material');
+      const mat = this.propertiesFolder.addFolder("Material");
       const materialData = {
         // @ts-ignore
-        color: '#' + object.material.color.getHexString(),
+        color: "#" + object.material.color.getHexString(),
         // @ts-ignore
-        emissive: object.material.emissive ? '#' + object.material.emissive.getHexString() : '#000000'
+        emissive: object.material.emissive
+          ? "#" + object.material.emissive.getHexString()
+          : "#000000",
       };
-      mat.addColor(materialData, 'color').name('Color').onChange((val) => {
-        // @ts-ignore
-        object.material.color.set(val);
-      }).onFinishChange(() => this.saveState('Change Color'));
+      mat
+        .addColor(materialData, "color")
+        .name("Color")
+        .onChange((val) => {
+          // @ts-ignore
+          object.material.color.set(val);
+        })
+        .onFinishChange(() => this.saveState("Change Color"));
 
       // @ts-ignore
       if (object.material.emissive !== undefined) {
-        mat.addColor(materialData, 'emissive').name('Emissive').onChange((val) => {
-          // @ts-ignore
-          object.material.emissive.set(val);
-        }).onFinishChange(() => this.saveState('Change Emissive'));
+        mat
+          .addColor(materialData, "emissive")
+          .name("Emissive")
+          .onChange((val) => {
+            // @ts-ignore
+            object.material.emissive.set(val);
+          })
+          .onFinishChange(() => this.saveState("Change Emissive"));
       }
 
       // @ts-ignore
       if (object.material.roughness !== undefined) {
         // @ts-ignore
-        mat.add(object.material, 'roughness', 0, 1).name('Roughness').onFinishChange(() => this.saveState('Change Roughness'));
+        mat
+          .add(object.material, "roughness", 0, 1)
+          .name("Roughness")
+          .onFinishChange(() => this.saveState("Change Roughness"));
       }
-      
+
       // @ts-ignore
       if (object.material.metalness !== undefined) {
         // @ts-ignore
-        mat.add(object.material, 'metalness', 0, 1).name('Metalness').onFinishChange(() => this.saveState('Change Metalness'));
+        mat
+          .add(object.material, "metalness", 0, 1)
+          .name("Metalness")
+          .onFinishChange(() => this.saveState("Change Metalness"));
       }
 
       // @ts-ignore
       if (object.material.wireframe !== undefined) {
         // @ts-ignore
-        mat.add(object.material, 'wireframe').name('Wireframe').onFinishChange(() => this.saveState('Toggle Wireframe'));
+        mat
+          .add(object.material, "wireframe")
+          .name("Wireframe")
+          .onFinishChange(() => this.saveState("Toggle Wireframe"));
       }
 
       // Texture Support
       const textureOptions = {
-        uploadMap: () => this.triggerTextureUpload(object, 'map'),
-        uploadNormalMap: () => this.triggerTextureUpload(object, 'normalMap'),
-        uploadRoughnessMap: () => this.triggerTextureUpload(object, 'roughnessMap')
+        uploadMap: () => this.triggerTextureUpload(object, "map"),
+        uploadNormalMap: () => this.triggerTextureUpload(object, "normalMap"),
+        uploadRoughnessMap: () =>
+          this.triggerTextureUpload(object, "roughnessMap"),
       };
-      mat.add(textureOptions, 'uploadMap').name('Set Albedo Map');
-      mat.add(textureOptions, 'uploadNormalMap').name('Set Normal Map');
-      mat.add(textureOptions, 'uploadRoughnessMap').name('Set Rough. Map');
+      mat.add(textureOptions, "uploadMap").name("Set Albedo Map");
+      mat.add(textureOptions, "uploadNormalMap").name("Set Normal Map");
+      mat.add(textureOptions, "uploadRoughnessMap").name("Set Rough. Map");
     }
 
-    if (object.userData && object.userData.primitiveType === 'Extrude') {
-      const g = this.propertiesFolder.addFolder('Extrude Settings');
+    if (object.userData && object.userData.primitiveType === "Extrude") {
+      const g = this.propertiesFolder.addFolder("Extrude Settings");
       const opts = object.userData.primitiveOptions || {};
       const params = {
         depth: opts.depth !== undefined ? opts.depth : 0.2,
         steps: opts.steps !== undefined ? opts.steps : 2,
-        bevelEnabled: opts.bevelEnabled !== undefined ? opts.bevelEnabled : true,
-        bevelThickness: opts.bevelThickness !== undefined ? opts.bevelThickness : 0.1,
+        bevelEnabled:
+          opts.bevelEnabled !== undefined ? opts.bevelEnabled : true,
+        bevelThickness:
+          opts.bevelThickness !== undefined ? opts.bevelThickness : 0.1,
         bevelSize: opts.bevelSize !== undefined ? opts.bevelSize : 0.1,
-        bevelSegments: opts.bevelSegments !== undefined ? opts.bevelSegments : 1,
+        bevelSegments:
+          opts.bevelSegments !== undefined ? opts.bevelSegments : 1,
       };
       const updateExtrude = () => {
         object.userData.primitiveOptions = { ...opts, ...params };
-        this.objectPropertyUpdater.updatePrimitive(object, object.userData.primitiveOptions);
+        this.objectPropertyUpdater.updatePrimitive(
+          object,
+          object.userData.primitiveOptions,
+        );
       };
-      const finishChange = () => this.saveState('Change Extrude');
-      g.add(params, 'depth', 0.1, 10).name('Depth').onChange(updateExtrude).onFinishChange(finishChange);
-      g.add(params, 'steps', 1, 20, 1).name('Steps').onChange(updateExtrude).onFinishChange(finishChange);
-      g.add(params, 'bevelEnabled').name('Bevel').onChange(updateExtrude).onFinishChange(finishChange);
-      g.add(params, 'bevelThickness', 0, 2).name('Bevel Thick').onChange(updateExtrude).onFinishChange(finishChange);
-      g.add(params, 'bevelSize', 0, 2).name('Bevel Size').onChange(updateExtrude).onFinishChange(finishChange);
-      g.add(params, 'bevelSegments', 1, 10, 1).name('Bevel Segs').onChange(updateExtrude).onFinishChange(finishChange);
+      const finishChange = () => this.saveState("Change Extrude");
+      g.add(params, "depth", 0.1, 10)
+        .name("Depth")
+        .onChange(updateExtrude)
+        .onFinishChange(finishChange);
+      g.add(params, "steps", 1, 20, 1)
+        .name("Steps")
+        .onChange(updateExtrude)
+        .onFinishChange(finishChange);
+      g.add(params, "bevelEnabled")
+        .name("Bevel")
+        .onChange(updateExtrude)
+        .onFinishChange(finishChange);
+      g.add(params, "bevelThickness", 0, 2)
+        .name("Bevel Thick")
+        .onChange(updateExtrude)
+        .onFinishChange(finishChange);
+      g.add(params, "bevelSize", 0, 2)
+        .name("Bevel Size")
+        .onChange(updateExtrude)
+        .onFinishChange(finishChange);
+      g.add(params, "bevelSegments", 1, 10, 1)
+        .name("Bevel Segs")
+        .onChange(updateExtrude)
+        .onFinishChange(finishChange);
     }
 
     // CSG Operations
     // filter to find other meshes that have geometry
-    const otherObjects = this.objects.filter(o => o !== object && o.parent === this.scene && o.isMesh !== false && Boolean(o.geometry));
+    const otherObjects = this.objects.filter(
+      (o) =>
+        o !== object &&
+        o.parent === this.scene &&
+        o.isMesh !== false &&
+        Boolean(o.geometry),
+    );
     if (otherObjects.length > 0) {
-      const csgFolder = this.propertiesFolder.addFolder('CSG Operations');
+      const csgFolder = this.propertiesFolder.addFolder("CSG Operations");
       const objectOptions = {};
-      otherObjects.forEach(o => { objectOptions[o.name || o.uuid] = o.uuid; });
-      
+      otherObjects.forEach((o) => {
+        objectOptions[o.name || o.uuid] = o.uuid;
+      });
+
       const csgParams = {
-         targetUuid: otherObjects[0].uuid,
-         union: () => this.performCSG(object, csgParams.targetUuid, 'union'),
-         subtract: () => this.performCSG(object, csgParams.targetUuid, 'subtract'),
-         intersect: () => this.performCSG(object, csgParams.targetUuid, 'intersect')
+        targetUuid: otherObjects[0].uuid,
+        union: () => this.performCSG(object, csgParams.targetUuid, "union"),
+        subtract: () =>
+          this.performCSG(object, csgParams.targetUuid, "subtract"),
+        intersect: () =>
+          this.performCSG(object, csgParams.targetUuid, "intersect"),
       };
-      
-      csgFolder.add(csgParams, 'targetUuid', objectOptions).name('Target Object');
-      csgFolder.add(csgParams, 'union').name('CSG Union');
-      csgFolder.add(csgParams, 'subtract').name('CSG Subtract');
-      csgFolder.add(csgParams, 'intersect').name('CSG Intersect');
+
+      csgFolder
+        .add(csgParams, "targetUuid", objectOptions)
+        .name("Target Object");
+      csgFolder.add(csgParams, "union").name("CSG Union");
+      csgFolder.add(csgParams, "subtract").name("CSG Subtract");
+      csgFolder.add(csgParams, "intersect").name("CSG Intersect");
     }
 
     // Physics Settings (Per Object)
     if (this.physicsManager) {
-        const physFolder = this.propertiesFolder.addFolder('Physics');
-        const hasBody = this.physicsManager.meshToBodyMap.has(object);
-        const currentBody = hasBody ? this.physicsManager.meshToBodyMap.get(object) : null;
-        
-        let initialShapeType = 'box';
-        if (currentBody && currentBody.shapes.length > 0) {
-            const cannonShape = currentBody.shapes[0];
-            if (cannonShape.type === 1) initialShapeType = 'sphere'; // CANNON.Shape.types.SPHERE
-            else if (cannonShape.type === 4) initialShapeType = 'box'; // CANNON.Shape.types.BOX
-            else if (cannonShape.type === 8) initialShapeType = 'cylinder'; // CANNON.Shape.types.CYLINDER
+      const physFolder = this.propertiesFolder.addFolder("Physics");
+      const hasBody = this.physicsManager.meshToBodyMap.has(object);
+      const currentBody = hasBody
+        ? this.physicsManager.meshToBodyMap.get(object)
+        : null;
+
+      let initialShapeType = "box";
+      if (currentBody && currentBody.shapes.length > 0) {
+        const cannonShape = currentBody.shapes[0];
+        if (cannonShape.type === 1)
+          initialShapeType = "sphere"; // CANNON.Shape.types.SPHERE
+        else if (cannonShape.type === 4)
+          initialShapeType = "box"; // CANNON.Shape.types.BOX
+        else if (cannonShape.type === 8) initialShapeType = "cylinder"; // CANNON.Shape.types.CYLINDER
+      }
+
+      const physParams = {
+        enabled: hasBody,
+        mass: currentBody ? currentBody.mass : 1,
+        shape: initialShapeType,
+      };
+
+      const updatePhysics = () => {
+        if (physParams.enabled) {
+          this.physicsManager.removeObject(object);
+          this.physicsManager.addBody(
+            object,
+            physParams.mass,
+            physParams.shape,
+          );
+        } else {
+          this.physicsManager.removeObject(object);
         }
+        this.saveState("Update Physics");
+      };
 
-        const physParams = {
-            enabled: hasBody,
-            mass: currentBody ? currentBody.mass : 1,
-            shape: initialShapeType
-        };
-
-        const updatePhysics = () => {
-            if (physParams.enabled) {
-                this.physicsManager.removeObject(object);
-                this.physicsManager.addBody(object, physParams.mass, physParams.shape);
-            } else {
-                this.physicsManager.removeObject(object);
-            }
-            this.saveState('Update Physics');
-        };
-
-        physFolder.add(physParams, 'enabled').name('Enable Physics').onChange(updatePhysics);
-        physFolder.add(physParams, 'mass', 0, 100).name('Mass (0=Static)').onFinishChange(updatePhysics);
-        physFolder.add(physParams, 'shape', ['box', 'sphere', 'cylinder']).name('Collision Shape').onChange(updatePhysics);
+      physFolder
+        .add(physParams, "enabled")
+        .name("Enable Physics")
+        .onChange(updatePhysics);
+      physFolder
+        .add(physParams, "mass", 0, 100)
+        .name("Mass (0=Static)")
+        .onFinishChange(updatePhysics);
+      physFolder
+        .add(physParams, "shape", ["box", "sphere", "cylinder"])
+        .name("Collision Shape")
+        .onChange(updatePhysics);
     }
   }
 
   triggerTextureUpload(object, mapType) {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
     input.onchange = (e) => {
       // @ts-ignore
       const file = e.target.files[0];
@@ -815,12 +977,12 @@ export class App {
           textureLoader.load(event.target.result, (texture) => {
             // @ts-ignore
             if (object.material) {
-                // @ts-ignore
-                object.material[mapType] = texture;
-                // @ts-ignore
-                object.material.needsUpdate = true;
-                this.saveState(`Upload ${mapType}`);
-                this.toastManager.show('Texture applied!', 'success');
+              // @ts-ignore
+              object.material[mapType] = texture;
+              // @ts-ignore
+              object.material.needsUpdate = true;
+              this.saveState(`Upload ${mapType}`);
+              this.toastManager.show("Texture applied!", "success");
             }
           });
         };
@@ -832,9 +994,11 @@ export class App {
 
   clearPropertiesPanel() {
     const controllers = [...this.propertiesFolder.__controllers];
-    controllers.forEach(c => this.propertiesFolder.remove(c));
+    controllers.forEach((c) => this.propertiesFolder.remove(c));
     if (this.propertiesFolder.__folders) {
-      Object.values(this.propertiesFolder.__folders).forEach(f => this.propertiesFolder.removeFolder(f));
+      Object.values(this.propertiesFolder.__folders).forEach((f) =>
+        this.propertiesFolder.removeFolder(f),
+      );
     }
   }
 
@@ -843,14 +1007,14 @@ export class App {
 
     // Handle Empty List Case
     if (this.objects.length === 0) {
-      this.objectsList.innerHTML = '';
-      const li = document.createElement('li');
-      li.setAttribute('role', 'listitem');
-      li.textContent = 'No objects in scene';
-      li.style.color = '#888';
-      li.style.fontStyle = 'italic';
-      li.style.textAlign = 'center';
-      li.style.padding = '10px';
+      this.objectsList.innerHTML = "";
+      const li = document.createElement("li");
+      li.setAttribute("role", "listitem");
+      li.textContent = "No objects in scene";
+      li.style.color = "#888";
+      li.style.fontStyle = "italic";
+      li.style.textAlign = "center";
+      li.style.padding = "10px";
       this.objectsList.appendChild(li);
       this.sceneGraphItemMap.clear();
       return;
@@ -859,9 +1023,9 @@ export class App {
     // Clear "No objects" if present
     if (
       this.objectsList.children.length > 0 &&
-      this.objectsList.children[0].textContent === 'No objects in scene'
+      this.objectsList.children[0].textContent === "No objects in scene"
     ) {
-      this.objectsList.innerHTML = '';
+      this.objectsList.innerHTML = "";
     }
 
     let currentDom = this.objectsList.firstElementChild;
@@ -914,8 +1078,9 @@ export class App {
   }
 
   createSceneGraphItem(obj) {
-    const li = document.createElement('li');
-    li.setAttribute('role', 'listitem');
+    const li = document.createElement("li");
+    li.setAttribute("role", "button");
+    li.tabIndex = 0;
     li.style.cssText = `
       padding: 5px;
       margin: 2px 0;
@@ -927,18 +1092,24 @@ export class App {
     // @ts-ignore
     li._boundObject = obj;
 
-    const name = document.createElement('span');
-    name.className = 'object-name';
+    const name = document.createElement("span");
+    name.className = "object-name";
     li.appendChild(name);
     // @ts-ignore
     li._nameSpan = name;
 
-    const controls = document.createElement('div');
+    const controls = document.createElement("div");
 
-    const visibilityBtn = document.createElement('button');
-    visibilityBtn.className = 'visibility-btn';
-    visibilityBtn.setAttribute('aria-label', obj.visible ? 'Hide object' : 'Show object');
-    visibilityBtn.setAttribute('title', obj.visible ? 'Hide object' : 'Show object');
+    const visibilityBtn = document.createElement("button");
+    visibilityBtn.className = "visibility-btn";
+    visibilityBtn.setAttribute(
+      "aria-label",
+      obj.visible ? "Hide object" : "Show object",
+    );
+    visibilityBtn.setAttribute(
+      "title",
+      obj.visible ? "Hide object" : "Show object",
+    );
     visibilityBtn.onclick = (e) => {
       e.stopPropagation();
       obj.visible = !obj.visible;
@@ -948,11 +1119,12 @@ export class App {
     // @ts-ignore
     li._visibilityBtn = visibilityBtn;
 
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'delete-btn';
-    deleteBtn.setAttribute('aria-label', 'Delete object');
-    deleteBtn.setAttribute('title', 'Delete object');
-    deleteBtn.textContent = '🗑️';
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-btn";
+    const objName = obj.name || `Object ${this.objects.length}`;
+    deleteBtn.setAttribute("aria-label", `Delete ${objName}`);
+    deleteBtn.setAttribute("title", `Delete ${objName}`);
+    deleteBtn.textContent = "🗑️";
     deleteBtn.onclick = (e) => {
       e.stopPropagation();
       this.deleteObject(obj);
@@ -962,6 +1134,12 @@ export class App {
     li.appendChild(controls);
 
     li.onclick = () => this.selectObject(obj);
+    li.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        this.selectObject(obj);
+      }
+    });
 
     return li;
   }
@@ -969,16 +1147,17 @@ export class App {
   updateSceneGraphItem(li, obj, idx) {
     // Update Selection Style
     const isSelected = this.selectedObject === obj;
-    const expectedBg = isSelected ? '#444' : '#222';
-    if (li.style.background !== expectedBg) { // Only update if changed (prevents style recalc if same)
-        // Note: style.background returns empty string if not set, or computed value.
-        // But setting it works.
-        // Ideally checking specific property `backgroundColor` is better but `background` shorthand is used.
-        // Let's just set it if we suspect change, or cache it?
-        // Checking style string might be flaky.
-        // But let's trust simple check.
-        // Actually, let's just set it. Setting same value is cheap in JS, browser handles DOM.
-        li.style.background = expectedBg;
+    const expectedBg = isSelected ? "#444" : "#222";
+    if (li.style.background !== expectedBg) {
+      // Only update if changed (prevents style recalc if same)
+      // Note: style.background returns empty string if not set, or computed value.
+      // But setting it works.
+      // Ideally checking specific property `backgroundColor` is better but `background` shorthand is used.
+      // Let's just set it if we suspect change, or cache it?
+      // Checking style string might be flaky.
+      // But let's trust simple check.
+      // Actually, let's just set it. Setting same value is cheap in JS, browser handles DOM.
+      li.style.background = expectedBg;
     }
 
     // Update Name
@@ -989,27 +1168,48 @@ export class App {
       nameSpan.textContent = expectedName;
     }
 
+    // Update List Item ARIA label
+    const expectedLabel = `Select ${expectedName}`;
+    if (li.getAttribute("aria-label") !== expectedLabel) {
+      li.setAttribute("aria-label", expectedLabel);
+    }
+
     // Update Visibility Button
     // @ts-ignore
     const visibilityBtn = li._visibilityBtn;
-    const expectedVisLabel = obj.visible ? 'Hide object' : 'Show object';
-    const expectedVisIcon = obj.visible ? '👁️' : '🚫';
+    const expectedVisLabel = obj.visible
+      ? `Hide ${expectedName}`
+      : `Show ${expectedName}`;
+    const expectedVisIcon = obj.visible ? "👁️" : "🚫";
 
-    if (visibilityBtn.getAttribute('aria-label') !== expectedVisLabel) {
-        visibilityBtn.setAttribute('aria-label', expectedVisLabel);
+    if (visibilityBtn.getAttribute("aria-label") !== expectedVisLabel) {
+      visibilityBtn.setAttribute("aria-label", expectedVisLabel);
     }
-    if (visibilityBtn.getAttribute('title') !== expectedVisLabel) {
-        visibilityBtn.setAttribute('title', expectedVisLabel);
+    if (visibilityBtn.getAttribute("title") !== expectedVisLabel) {
+      visibilityBtn.setAttribute("title", expectedVisLabel);
     }
     if (visibilityBtn.textContent !== expectedVisIcon) {
-        visibilityBtn.textContent = expectedVisIcon;
+      visibilityBtn.textContent = expectedVisIcon;
+    }
+
+    // Update Delete Button
+    // @ts-ignore
+    const deleteBtn = li.querySelector(".delete-btn");
+    if (deleteBtn) {
+      const expectedDelLabel = `Delete ${expectedName}`;
+      if (deleteBtn.getAttribute("aria-label") !== expectedDelLabel) {
+        deleteBtn.setAttribute("aria-label", expectedDelLabel);
+        deleteBtn.setAttribute("title", expectedDelLabel);
+      }
     }
   }
 
   toggleFullscreen() {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
-        Logger.error(`Error attempting to enable full-screen mode: ${err.message}`);
+      document.documentElement.requestFullscreen().catch((err) => {
+        Logger.error(
+          `Error attempting to enable full-screen mode: ${err.message}`,
+        );
       });
     } else {
       document.exitFullscreen();
@@ -1019,37 +1219,37 @@ export class App {
   async saveScene() {
     try {
       await this.sceneStorage.saveScene();
-      this.toastManager.show('Scene saved', 'success');
+      this.toastManager.show("Scene saved", "success");
     } catch (e) {
-      Logger.error('Save failed', e);
-      this.toastManager.show('Save failed', 'error');
+      Logger.error("Save failed", e);
+      this.toastManager.show("Save failed", "error");
     }
   }
 
   async loadScene(file) {
     try {
       const loadedScene = await this.sceneStorage.loadScene(file);
-      this.objects.forEach(obj => this.scene.remove(obj));
+      this.objects.forEach((obj) => this.scene.remove(obj));
       this.objects = [];
-      
-      loadedScene.traverse(child => {
+
+      loadedScene.traverse((child) => {
         // @ts-ignore
         if (child.isMesh) {
           this.objects.push(child);
           this.scene.add(child);
         }
       });
-      
+
       this.updateSceneGraph();
-      this.saveState('Load Scene');
-      this.toastManager.show('Scene loaded', 'success');
+      this.saveState("Load Scene");
+      this.toastManager.show("Scene loaded", "success");
     } catch (e) {
-      Logger.error('Load failed', e);
-      this.toastManager.show('Load failed', 'error');
+      Logger.error("Load failed", e);
+      this.toastManager.show("Load failed", "error");
     }
   }
 
-  saveState(description = 'Action') {
+  saveState(description = "Action") {
     // Structural sharing implementation
     const lastState = this.history[this.historyIndex];
 
@@ -1058,43 +1258,59 @@ export class App {
     // We can map UUID to last state object.
     const lastStateMap = new Map();
     if (lastState && lastState.objects) {
-        lastState.objects.forEach(obj => lastStateMap.set(obj.uuid, obj));
+      lastState.objects.forEach((obj) => lastStateMap.set(obj.uuid, obj));
     }
 
-    const stateObjects = this.objects.map(obj => {
-        const lastObjState = lastStateMap.get(obj.uuid);
+    const stateObjects = this.objects.map((obj) => {
+      const lastObjState = lastStateMap.get(obj.uuid);
 
-        // If object hasn't changed, reuse the state object (Structural Sharing)
-        if (lastObjState && this._areObjectsEqual(lastObjState, obj)) {
-            return lastObjState;
-        }
+      // If object hasn't changed, reuse the state object (Structural Sharing)
+      if (lastObjState && this._areObjectsEqual(lastObjState, obj)) {
+        return lastObjState;
+      }
 
-        // Create new state object
-        return {
-            uuid: obj.uuid,
-            name: obj.name,
-            visible: obj.visible !== undefined ? obj.visible : true,
-            // Use primitiveType if available (from userData), otherwise fallback to geometry type
-            type: (obj.userData && obj.userData.primitiveType) ? obj.userData.primitiveType : (obj.geometry ? obj.geometry.type : obj.type),
-            position: obj.position.clone(),
-            rotation: obj.rotation.clone(),
-            scale: obj.scale.clone(),
-            material: obj.material ? {
-                // @ts-ignore
-                color: obj.material.color ? obj.material.color.clone() : new THREE.Color(0xffffff),
-                // @ts-ignore
-                emissive: obj.material.emissive ? obj.material.emissive.clone() : new THREE.Color(0x000000)
-            } : null,
-            // Use primitiveOptions if available, otherwise geometryParams
-            geometryParams: (obj.userData && obj.userData.primitiveOptions) ? obj.userData.primitiveOptions : (obj.userData ? obj.userData.geometryParams : null)
-        };
+      // Create new state object
+      return {
+        uuid: obj.uuid,
+        name: obj.name,
+        visible: obj.visible !== undefined ? obj.visible : true,
+        // Use primitiveType if available (from userData), otherwise fallback to geometry type
+        type:
+          obj.userData && obj.userData.primitiveType
+            ? obj.userData.primitiveType
+            : obj.geometry
+              ? obj.geometry.type
+              : obj.type,
+        position: obj.position.clone(),
+        rotation: obj.rotation.clone(),
+        scale: obj.scale.clone(),
+        material: obj.material
+          ? {
+              // @ts-ignore
+              color: obj.material.color
+                ? obj.material.color.clone()
+                : new THREE.Color(0xffffff),
+              // @ts-ignore
+              emissive: obj.material.emissive
+                ? obj.material.emissive.clone()
+                : new THREE.Color(0x000000),
+            }
+          : null,
+        // Use primitiveOptions if available, otherwise geometryParams
+        geometryParams:
+          obj.userData && obj.userData.primitiveOptions
+            ? obj.userData.primitiveOptions
+            : obj.userData
+              ? obj.userData.geometryParams
+              : null,
+      };
     });
 
     const state = {
       description,
       timestamp: Date.now(),
       objects: stateObjects,
-      selectedUuid: this.selectedObject ? this.selectedObject.uuid : null
+      selectedUuid: this.selectedObject ? this.selectedObject.uuid : null,
     };
 
     if (this.historyIndex < this.history.length - 1) {
@@ -1125,7 +1341,7 @@ export class App {
 
   async restoreState(state) {
     const currentObjectsMap = new Map();
-    this.objects.forEach(obj => currentObjectsMap.set(obj.uuid, obj));
+    this.objects.forEach((obj) => currentObjectsMap.set(obj.uuid, obj));
 
     // Set of UUIDs that are in the new state
     const newStateUuids = new Set();
@@ -1134,64 +1350,81 @@ export class App {
 
     // Update existing objects or create new ones
     for (const data of state.objects) {
-        newStateUuids.add(data.uuid);
-        const existingObj = currentObjectsMap.get(data.uuid);
+      newStateUuids.add(data.uuid);
+      const existingObj = currentObjectsMap.get(data.uuid);
 
-        if (existingObj) {
-            // Check if geometry needs update (primitiveType or params changed)
-            const currentType = existingObj.userData && existingObj.userData.primitiveType
-                ? existingObj.userData.primitiveType
-                : (existingObj.geometry ? existingObj.geometry.type : existingObj.type);
+      if (existingObj) {
+        // Check if geometry needs update (primitiveType or params changed)
+        const currentType =
+          existingObj.userData && existingObj.userData.primitiveType
+            ? existingObj.userData.primitiveType
+            : existingObj.geometry
+              ? existingObj.geometry.type
+              : existingObj.type;
 
-            const currentParams = (existingObj.userData && existingObj.userData.primitiveOptions)
-                ? existingObj.userData.primitiveOptions
-                : (existingObj.userData ? existingObj.userData.geometryParams : null);
+        const currentParams =
+          existingObj.userData && existingObj.userData.primitiveOptions
+            ? existingObj.userData.primitiveOptions
+            : existingObj.userData
+              ? existingObj.userData.geometryParams
+              : null;
 
-            const typeChanged = data.type !== currentType;
-            const paramsChanged = JSON.stringify(data.geometryParams) !== JSON.stringify(currentParams);
+        const typeChanged = data.type !== currentType;
+        const paramsChanged =
+          JSON.stringify(data.geometryParams) !== JSON.stringify(currentParams);
 
-            if (typeChanged || paramsChanged) {
-                 // Recreate object
-                 // Remove old
-                 this.scene.remove(existingObj);
-                 this.objectManager.deleteObject(existingObj);
+        if (typeChanged || paramsChanged) {
+          // Recreate object
+          // Remove old
+          this.scene.remove(existingObj);
+          this.objectManager.deleteObject(existingObj);
 
-                 // Create new
-                 promises.push((async () => {
-                     const mesh = await this.objectManager.addPrimitive(data.type, data.geometryParams);
-                     if (mesh) {
-                        this._applyStateToMesh(mesh, data);
-                        // scene.add is handled by objectManager usually, but let's ensure it's in our list
-                        if (!newObjects.includes(mesh)) newObjects.push(mesh);
-                     }
-                     return mesh;
-                 })());
-            } else {
-                // Update existing object properties
-                this._applyStateToMesh(existingObj, data);
-                newObjects.push(existingObj);
-            }
+          // Create new
+          promises.push(
+            (async () => {
+              const mesh = await this.objectManager.addPrimitive(
+                data.type,
+                data.geometryParams,
+              );
+              if (mesh) {
+                this._applyStateToMesh(mesh, data);
+                // scene.add is handled by objectManager usually, but let's ensure it's in our list
+                if (!newObjects.includes(mesh)) newObjects.push(mesh);
+              }
+              return mesh;
+            })(),
+          );
         } else {
-            // Create new object
-            promises.push((async () => {
-                const mesh = await this.objectManager.addPrimitive(data.type, data.geometryParams);
-                if (mesh) {
-                    this._applyStateToMesh(mesh, data);
-                    // scene.add is handled by objectManager usually, but let's ensure it's in our list
-                    if (!newObjects.includes(mesh)) newObjects.push(mesh);
-                }
-                return mesh;
-            })());
+          // Update existing object properties
+          this._applyStateToMesh(existingObj, data);
+          newObjects.push(existingObj);
         }
+      } else {
+        // Create new object
+        promises.push(
+          (async () => {
+            const mesh = await this.objectManager.addPrimitive(
+              data.type,
+              data.geometryParams,
+            );
+            if (mesh) {
+              this._applyStateToMesh(mesh, data);
+              // scene.add is handled by objectManager usually, but let's ensure it's in our list
+              if (!newObjects.includes(mesh)) newObjects.push(mesh);
+            }
+            return mesh;
+          })(),
+        );
+      }
     }
 
     // Remove objects not in new state
-    this.objects.forEach(obj => {
-        if (!newStateUuids.has(obj.uuid)) {
-            // We use deleteObject but we need to be careful not to trigger history save or recursive issues
-            // objectManager.deleteObject handles scene removal and disposal
-            this.objectManager.deleteObject(obj);
-        }
+    this.objects.forEach((obj) => {
+      if (!newStateUuids.has(obj.uuid)) {
+        // We use deleteObject but we need to be careful not to trigger history save or recursive issues
+        // objectManager.deleteObject handles scene removal and disposal
+        this.objectManager.deleteObject(obj);
+      }
     });
 
     await Promise.all(promises);
@@ -1202,16 +1435,18 @@ export class App {
     // But async creation might mess order if we just push.
     // We should re-sort based on state order.
     const objMap = new Map();
-    this.objects.forEach(o => objMap.set(o.uuid, o));
-    this.objects = state.objects.map(d => objMap.get(d.uuid)).filter(o => o);
+    this.objects.forEach((o) => objMap.set(o.uuid, o));
+    this.objects = state.objects
+      .map((d) => objMap.get(d.uuid))
+      .filter((o) => o);
 
     if (state.selectedUuid) {
-      const selected = this.objects.find(o => o.uuid === state.selectedUuid);
+      const selected = this.objects.find((o) => o.uuid === state.selectedUuid);
       if (selected) this.selectObject(selected);
     } else {
       this.deselectObject();
     }
-    
+
     this.updateSceneGraph();
   }
 

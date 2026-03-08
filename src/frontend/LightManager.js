@@ -1,6 +1,6 @@
-import * as THREE from 'three';
-import log from './logger.js';
-import { Events } from './constants.js';
+import * as THREE from "three";
+import log from "./logger.js";
+import { Events } from "./constants.js";
 
 export class LightManager {
   constructor(scene, eventBus) {
@@ -26,17 +26,17 @@ export class LightManager {
   addLight(type, color, intensity, position, name) {
     let light;
     switch (type) {
-      case 'PointLight':
+      case "PointLight":
         light = new THREE.PointLight(color, intensity);
         break;
-      case 'DirectionalLight':
+      case "DirectionalLight":
         light = new THREE.DirectionalLight(color, intensity);
         break;
-      case 'AmbientLight':
+      case "AmbientLight":
         light = new THREE.AmbientLight(color, intensity);
         break;
       default:
-        log.warn('Unknown light type:', type);
+        log.warn("Unknown light type:", type);
         return null;
     }
     if (position && light.position) {
@@ -61,10 +61,14 @@ export class LightManager {
   updateLight(light, properties) {
     for (const prop in properties) {
       if (light[prop] !== undefined) {
-        if (prop === 'color') {
+        if (prop === "color") {
           light.color.set(properties[prop]);
-        } else if (prop === 'position' && light.position) {
-          light.position.set(properties.position.x, properties.position.y, properties.position.z);
+        } else if (prop === "position" && light.position) {
+          light.position.set(
+            properties.position.x,
+            properties.position.y,
+            properties.position.z,
+          );
         } else {
           light[prop] = properties[prop];
         }
@@ -74,13 +78,21 @@ export class LightManager {
   }
 
   changeLightType(oldLight, newType) {
-    const oldPosition = oldLight.position ? oldLight.position.clone() : new THREE.Vector3();
+    const oldPosition = oldLight.position
+      ? oldLight.position.clone()
+      : new THREE.Vector3();
     const oldColor = oldLight.color.getHex();
     const oldIntensity = oldLight.intensity;
     const oldName = oldLight.name;
 
     this.removeLight(oldLight);
-    const newLight = this.addLight(newType, oldColor, oldIntensity, oldPosition, oldName);
+    const newLight = this.addLight(
+      newType,
+      oldColor,
+      oldIntensity,
+      oldPosition,
+      oldName,
+    );
     return newLight;
   }
 }

@@ -1,1 +1,6 @@
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'; test('FontLoader import', () => { console.log('Imported:', FontLoader); const loader = new FontLoader(); console.log('Instance:', loader); });
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
+test("FontLoader import", () => {
+  console.log("Imported:", FontLoader);
+  const loader = new FontLoader();
+  console.log("Instance:", loader);
+});

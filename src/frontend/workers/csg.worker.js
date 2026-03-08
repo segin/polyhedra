@@ -1,5 +1,5 @@
-import { CSG } from 'three-csg-ts';
-import * as THREE from 'three';
+import { CSG } from "three-csg-ts";
+import * as THREE from "three";
 
 self.onmessage = function (event) {
   const { id, meshA, meshB, operation } = event.data;
@@ -10,16 +10,16 @@ self.onmessage = function (event) {
 
     // Apply matrices
     if (meshA.matrix) {
-        objectA.matrix.fromArray(meshA.matrix);
-        // Decompose to update position/rotation/scale components which might be used internally?
-        // But CSG uses updateMatrix() which uses matrixWorld if autoUpdate is true?
-        // CSG.fromMesh checks object.matrix.
-        // We set matrix manually and set matrixAutoUpdate to false to prevent overwriting.
-        objectA.matrixAutoUpdate = false;
+      objectA.matrix.fromArray(meshA.matrix);
+      // Decompose to update position/rotation/scale components which might be used internally?
+      // But CSG uses updateMatrix() which uses matrixWorld if autoUpdate is true?
+      // CSG.fromMesh checks object.matrix.
+      // We set matrix manually and set matrixAutoUpdate to false to prevent overwriting.
+      objectA.matrixAutoUpdate = false;
     }
     if (meshB.matrix) {
-        objectB.matrix.fromArray(meshB.matrix);
-        objectB.matrixAutoUpdate = false;
+      objectB.matrix.fromArray(meshB.matrix);
+      objectB.matrixAutoUpdate = false;
     }
 
     // CSG.fromMesh uses object.matrix (local matrix) effectively if it transforms vertices.
@@ -32,13 +32,13 @@ self.onmessage = function (event) {
 
     let resultBsp;
     switch (operation) {
-      case 'union':
+      case "union":
         resultBsp = bspA.union(bspB);
         break;
-      case 'subtract':
+      case "subtract":
         resultBsp = bspA.subtract(bspB);
         break;
-      case 'intersect':
+      case "intersect":
         resultBsp = bspA.intersect(bspB);
         break;
       default:
@@ -55,42 +55,56 @@ self.onmessage = function (event) {
     const transferList = [];
 
     if (geometry.attributes.position) {
-        attributes.position = geometry.attributes.position.array;
-        transferList.push(attributes.position.buffer);
+      attributes.position = geometry.attributes.position.array;
+      transferList.push(attributes.position.buffer);
     }
     if (geometry.attributes.normal) {
-        attributes.normal = geometry.attributes.normal.array;
-        transferList.push(attributes.normal.buffer);
+      attributes.normal = geometry.attributes.normal.array;
+      transferList.push(attributes.normal.buffer);
     }
     if (geometry.attributes.uv) {
-        attributes.uv = geometry.attributes.uv.array;
-        transferList.push(attributes.uv.buffer);
+      attributes.uv = geometry.attributes.uv.array;
+      transferList.push(attributes.uv.buffer);
     }
 
     let index = null;
     if (geometry.index) {
-        index = geometry.index.array;
-        transferList.push(index.buffer);
+      index = geometry.index.array;
+      transferList.push(index.buffer);
     }
 
-    self.postMessage({
-        type: 'result',
+    self.postMessage(
+      {
+        type: "result",
         id,
-        data: { attributes, index }
-    }, transferList);
-
+        data: { attributes, index },
+      },
+      transferList,
+    );
   } catch (error) {
-    self.postMessage({ type: 'error', id, message: error.message });
+    self.postMessage({ type: "error", id, message: error.message });
   }
 };
 
 function createMesh(data) {
-    const geometry = new THREE.BufferGeometry();
+  const geometry = new THREE.BufferGeometry();
 
-    if (data.attributes.position) geometry.setAttribute('position', new THREE.Float32BufferAttribute(data.attributes.position, 3));
-    if (data.attributes.normal) geometry.setAttribute('normal', new THREE.Float32BufferAttribute(data.attributes.normal, 3));
-    if (data.attributes.uv) geometry.setAttribute('uv', new THREE.Float32BufferAttribute(data.attributes.uv, 2));
-    if (data.index) geometry.setIndex(new THREE.BufferAttribute(data.index, 1));
+  if (data.attributes.position)
+    geometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(data.attributes.position, 3),
+    );
+  if (data.attributes.normal)
+    geometry.setAttribute(
+      "normal",
+      new THREE.Float32BufferAttribute(data.attributes.normal, 3),
+    );
+  if (data.attributes.uv)
+    geometry.setAttribute(
+      "uv",
+      new THREE.Float32BufferAttribute(data.attributes.uv, 2),
+    );
+  if (data.index) geometry.setIndex(new THREE.BufferAttribute(data.index, 1));
 
-    return new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
+  return new THREE.Mesh(geometry, new THREE.MeshBasicMaterial());
 }

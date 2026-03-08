@@ -5,6 +5,7 @@ This document defines the functional and non-functional requirements for the **P
 ---
 
 ## 1. System Overview
+
 Polyhedra is a browser-based 3D engine designed for rapid prototyping, featuring a custom physics engine, shader editor, and collaborative tools.
 
 ---
@@ -12,6 +13,7 @@ Polyhedra is a browser-based 3D engine designed for rapid prototyping, featuring
 ## 2. Phase 1: Architecture & Foundation
 
 ### 2.1. Module System & Dependency Management
+
 **User Story:** As a developer, I want a standardized module system so that I can easily manage dependencies and ensure codebase consistency.
 
 - **REQ-001 (Ubiquitous):** The system shall use ES Modules for both frontend and backend code.
@@ -25,6 +27,7 @@ Polyhedra is a browser-based 3D engine designed for rapid prototyping, featuring
 - **REQ-006 (Ubiquitous):** Manager classes (ObjectManager, SceneManager, etc.) shall receive their dependencies via constructor injection.
 
 ### 2.2. State Management
+
 **User Story:** As a developer, I want centralized state management so that the application state is predictable and easy to synchronize across UI components.
 
 - **REQ-007 (Ubiquitous):** The system shall maintain a single source of truth for application state in a `StateManager`.
@@ -36,6 +39,7 @@ Polyhedra is a browser-based 3D engine designed for rapid prototyping, featuring
 ## 3. Phase 2: Comprehensive Testing
 
 ### 3.1. Unit Testing
+
 **User Story:** As a developer, I want a robust test suite so that I can verify individual units of logic and prevent regressions.
 
 - **REQ-010 (Ubiquitous):** The system shall use Jest and JSDOM for unit and integration testing.
@@ -47,12 +51,14 @@ Polyhedra is a browser-based 3D engine designed for rapid prototyping, featuring
 ## 4. Phase 3: Core 3D Features
 
 ### 4.1. Object Manipulation
+
 **User Story:** As a user, I want to add, duplicate, and delete 3D objects so that I can build complex scenes.
 
 - **REQ-013 (Event-driven):** When a user requests to duplicate an object, the system shall create a deep clone with a unique name and a position offset.
 - **REQ-014 (Event-driven):** When an object is deleted, the system shall dispose of its geometry and material resources to prevent memory leaks.
 
 ### 4.2. Physics Simulation
+
 **User Story:** As a user, I want to apply physics to objects so that I can simulate realistic interactions.
 
 - **REQ-015 (Ubiquitous):** The system shall integrate `cannon-es` as the primary physics engine.
@@ -60,6 +66,7 @@ Polyhedra is a browser-based 3D engine designed for rapid prototyping, featuring
 - **REQ-017 (Event-driven):** When a mesh is scaled or rotated, the system shall update the corresponding physics shape accordingly.
 
 ### 4.3. Shader Editing
+
 **User Story:** As a power user, I want to write custom GLSL shaders so that I can create unique visual effects.
 
 - **REQ-018 (Ubiquitous):** The system shall provide a code editor for Vertex and Fragment shaders.
@@ -71,6 +78,7 @@ Polyhedra is a browser-based 3D engine designed for rapid prototyping, featuring
 ## 5. Phase 4: UI/UX & Interaction
 
 ### 5.1. Scene Graph & Properties
+
 **User Story:** As a user, I want a scene hierarchy view so that I can easily navigate and organize my project.
 
 - **REQ-021 (Ubiquitous):** The system shall display a hierarchical list of all objects in the scene.
@@ -82,12 +90,14 @@ Polyhedra is a browser-based 3D engine designed for rapid prototyping, featuring
 ## 6. Phase 5: Backend & Security
 
 ### 6.1. Data Persistence
+
 **User Story:** As a user, I want to save and load my projects so that I can work across multiple sessions.
 
 - **REQ-024 (Ubiquitous):** The system shall serialize scene data into a JSON-based format.
 - **REQ-025 (Event-driven):** When loading a scene, the system shall clear all existing objects before reconstructing the new state.
 
 ### 6.2. Security
+
 **User Story:** As a site administrator, I want the system to be secure so that user data and the server are protected from attacks.
 
 - **REQ-026 (Ubiquitous):** The server shall use `helmet` middleware to set secure HTTP headers.
@@ -99,6 +109,7 @@ Polyhedra is a browser-based 3D engine designed for rapid prototyping, featuring
 ## 7. Phase 6: Future Roadmap
 
 ### 7.1. Collaboration
+
 **User Story:** As a user, I want to collaborate with others in real-time so that we can build scenes together.
 
 - **REQ-029 (Ubiquitous):** The system shall support real-time synchronization of object transformations across multiple clients.

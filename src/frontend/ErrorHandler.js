@@ -1,5 +1,5 @@
 // @ts-check
-import { Logger } from './utils/Logger.js';
+import { Logger } from "./utils/Logger.js";
 
 export class ErrorHandler {
   /**
@@ -7,18 +7,25 @@ export class ErrorHandler {
    * @param {import('./ToastManager.js').ToastManager} toastManager
    */
   static init(toastManager) {
-    window.addEventListener('error', (event) => {
-      Logger.error('Uncaught Exception', { message: event.message, filename: event.filename, lineno: event.lineno });
+    window.addEventListener("error", (event) => {
+      Logger.error("Uncaught Exception", {
+        message: event.message,
+        filename: event.filename,
+        lineno: event.lineno,
+      });
       if (toastManager) {
-        toastManager.show(`Error: ${event.message}`, 'error');
+        toastManager.show(`Error: ${event.message}`, "error");
       }
     });
 
-    window.addEventListener('unhandledrejection', (event) => {
-      const reason = event.reason instanceof Error ? event.reason.message : String(event.reason);
-      Logger.error('Unhandled Promise Rejection', { reason });
+    window.addEventListener("unhandledrejection", (event) => {
+      const reason =
+        event.reason instanceof Error
+          ? event.reason.message
+          : String(event.reason);
+      Logger.error("Unhandled Promise Rejection", { reason });
       if (toastManager) {
-        toastManager.show(`Promise Rejected: ${reason}`, 'error');
+        toastManager.show(`Promise Rejected: ${reason}`, "error");
       }
     });
   }

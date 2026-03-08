@@ -1,27 +1,26 @@
-
 // THREE and UI mocks are handled by jest.setup.cjs
 
-describe('Undo/Redo History Functionality', () => {
+describe("Undo/Redo History Functionality", () => {
   let app;
 
   beforeEach(() => {
     // Setup environment (handled by jsdom environment)
-    if (typeof document !== 'undefined') {
-        document.body.innerHTML = '';
+    if (typeof document !== "undefined") {
+      document.body.innerHTML = "";
     }
-    
+
     global.requestAnimationFrame = jest.fn();
     global.console.log = jest.fn(); // Suppress console.log
     global.Date.now = jest.fn(() => 1234567890);
     global.URL = { createObjectURL: jest.fn(), revokeObjectURL: jest.fn() };
     global.Worker = jest.fn(() => ({
-        postMessage: jest.fn(),
-        addEventListener: jest.fn()
+      postMessage: jest.fn(),
+      addEventListener: jest.fn(),
     }));
 
     // Mock methods that might be missing or need spying
-    if (typeof window !== 'undefined') {
-        window.scrollTo = jest.fn();
+    if (typeof window !== "undefined") {
+      window.scrollTo = jest.fn();
     }
 
     jest.clearAllMocks();
@@ -37,10 +36,10 @@ describe('Undo/Redo History Functionality', () => {
         this.maxHistorySize = 50;
 
         // Initialize with empty state
-        this.saveState('Initial state');
+        this.saveState("Initial state");
       }
 
-      saveState(description = 'Action') {
+      saveState(description = "Action") {
         const state = {
           description: description,
           timestamp: Date.now(),
@@ -54,11 +53,15 @@ describe('Undo/Redo History Functionality', () => {
               color: obj.material.color.clone(),
               emissive: obj.material.emissive.clone(),
             },
-            geometryParams: obj.userData.geometryParams ? { ...obj.userData.geometryParams } : null,
+            geometryParams: obj.userData.geometryParams
+              ? { ...obj.userData.geometryParams }
+              : null,
             visible: obj.visible,
             uuid: obj.uuid,
           })),
-          selectedObjectUuid: this.selectedObject ? this.selectedObject.uuid : null,
+          selectedObjectUuid: this.selectedObject
+            ? this.selectedObject.uuid
+            : null,
         };
 
         // Remove any future states if we're not at the end
@@ -106,15 +109,15 @@ describe('Undo/Redo History Functionality', () => {
 
         // Restore objects
         state.objects.forEach((objData) => {
-          const THREE = require('three');
+          const THREE = require("three");
 
           // Create geometry based on type
           let geometry;
           switch (objData.type) {
-            case 'BoxGeometry':
+            case "BoxGeometry":
               geometry = new THREE.BoxGeometry();
               break;
-            case 'SphereGeometry':
+            case "SphereGeometry":
               geometry = new THREE.SphereGeometry();
               break;
             default:
@@ -143,19 +146,21 @@ describe('Undo/Redo History Functionality', () => {
         // Restore selection
         this.selectedObject = null;
         if (state.selectedObjectUuid) {
-          const selectedObj = this.objects.find((obj) => obj.uuid === state.selectedObjectUuid);
+          const selectedObj = this.objects.find(
+            (obj) => obj.uuid === state.selectedObjectUuid,
+          );
           if (selectedObj) {
             this.selectedObject = selectedObj;
           }
         }
       }
 
-      addTestObject(name = 'TestObject') {
-        const THREE = require('three');
+      addTestObject(name = "TestObject") {
+        const THREE = require("three");
         const mesh = new THREE.Mesh();
         mesh.name = name;
         mesh.uuid = `uuid-${name}-${Date.now()}`;
-        mesh.geometry.type = 'BoxGeometry'; // Default for test
+        mesh.geometry.type = "BoxGeometry"; // Default for test
 
         this.objects.push(mesh);
         this.scene.add(mesh);
@@ -174,7 +179,7 @@ describe('Undo/Redo History Functionality', () => {
         if (this.selectedObject === object) {
           this.selectedObject = null;
         }
-        this.saveState('Delete object');
+        this.saveState("Delete object");
       }
     }
 
@@ -185,78 +190,78 @@ describe('Undo/Redo History Functionality', () => {
     jest.restoreAllMocks();
   });
 
-  describe('History State Management', () => {
-    it('should initialize with initial state', () => {
+  describe("History State Management", () => {
+    it("should initialize with initial state", () => {
       expect(app.history.length).toBe(1);
       expect(app.historyIndex).toBe(0);
-      expect(app.history[0].description).toBe('Initial state');
+      expect(app.history[0].description).toBe("Initial state");
     });
 
-    it('should save state with correct data structure', () => {
-      app.addTestObject('StateTest');
+    it("should save state with correct data structure", () => {
+      app.addTestObject("StateTest");
 
       expect(app.history.length).toBe(2); // Initial + add object
       const lastState = app.history[app.history.length - 1];
 
-      expect(lastState).toHaveProperty('description');
-      expect(lastState).toHaveProperty('timestamp');
-      expect(lastState).toHaveProperty('objects');
-      expect(lastState).toHaveProperty('selectedObjectUuid');
+      expect(lastState).toHaveProperty("description");
+      expect(lastState).toHaveProperty("timestamp");
+      expect(lastState).toHaveProperty("objects");
+      expect(lastState).toHaveProperty("selectedObjectUuid");
       expect(lastState.objects.length).toBe(1);
-      expect(lastState.objects[0].name).toBe('StateTest');
+      expect(lastState.objects[0].name).toBe("StateTest");
     });
 
-    it('should limit history size to maxHistorySize', () => {
+    it("should limit history size to maxHistorySize", () => {
       app.maxHistorySize = 3;
 
       // Add more states than the limit
-      app.saveState('State 1');
-      app.saveState('State 2');
-      app.saveState('State 3');
-      app.saveState('State 4');
+      app.saveState("State 1");
+      app.saveState("State 2");
+      app.saveState("State 3");
+      app.saveState("State 4");
 
       expect(app.history.length).toBe(3);
       expect(app.historyIndex).toBe(2);
     });
 
-    it('should remove future states when new action is performed', () => {
-      app.addTestObject('Object1');
-      app.addTestObject('Object2');
+    it("should remove future states when new action is performed", () => {
+      app.addTestObject("Object1");
+      app.addTestObject("Object2");
 
       // Undo once
       app.undo();
       const historyLengthAfterUndo = app.history.length;
       expect(app.historyIndex).toBe(historyLengthAfterUndo - 2);
 
-      app.addTestObject('Object3');
+      app.addTestObject("Object3");
 
       expect(app.history.length).toBe(3);
       expect(app.historyIndex).toBe(2);
-      expect(app.history[2].description).toBe('Add Object3');
+      expect(app.history[2].description).toBe("Add Object3");
     });
 
-    it('should restore correct state after multiple undo/redo operations', () => {
-        // Initial state: 0 objects
-        app.addTestObject('Redo1'); // Index 1, 1 object
-        app.addTestObject('Redo2'); // Index 2, 2 objects
+    it("should restore correct state after multiple undo/redo operations", () => {
+      // Initial state: 0 objects
+      app.addTestObject("Redo1"); // Index 1, 1 object
+      app.addTestObject("Redo2"); // Index 2, 2 objects
 
-        expect(app.objects.length).toBe(2);
+      expect(app.objects.length).toBe(2);
 
-        // Undo twice
-        app.undo(); // Index 1, 1 object
-        app.undo(); // Index 0, 0 objects
-        expect(app.objects.length).toBe(0);
+      // Undo twice
+      app.undo(); // Index 1, 1 object
+      app.undo(); // Index 0, 0 objects
+      expect(app.objects.length).toBe(0);
 
-        // Redo once
-        app.redo(); // Index 1, 1 object
-        expect(app.objects.length).toBe(1);
+      // Redo once
+      app.redo(); // Index 1, 1 object
+      expect(app.objects.length).toBe(1);
 
-        // Redo again
-        app.redo(); // Index 2, 2 objects
-        expect(app.objects.length).toBe(2);
+      // Redo again
+      app.redo(); // Index 2, 2 objects
+      expect(app.objects.length).toBe(2);
     });
 
-    it('should not undo when at initial state', () => {
+    it("should not undo when at initial state", () => {
       // Already at initial state
       const undoResult = app.undo();
 
@@ -264,13 +269,13 @@ describe('Undo/Redo History Functionality', () => {
       expect(app.historyIndex).toBe(0);
     });
 
-    it('should restore object selection state', () => {
-      const obj = app.addTestObject('SelectionTest');
+    it("should restore object selection state", () => {
+      const obj = app.addTestObject("SelectionTest");
       expect(app.selectedObject).toBe(obj);
 
       // Clear selection and save state
       app.selectedObject = null;
-      app.saveState('Clear selection');
+      app.saveState("Clear selection");
 
       // Undo should restore selection
       app.undo();

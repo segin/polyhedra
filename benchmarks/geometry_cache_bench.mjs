@@ -1,12 +1,12 @@
-import { JSDOM } from 'jsdom';
-import * as THREE from 'three';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import { JSDOM } from "jsdom";
+import * as THREE from "three";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
 
 // 1. Setup Environment
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
-  url: 'http://localhost/',
+const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
+  url: "http://localhost/",
   pretendToBeVisual: true,
-  resources: 'usable'
+  resources: "usable",
 });
 
 global.window = dom.window;
@@ -15,27 +15,27 @@ global.self = global.window;
 global.HTMLElement = dom.window.HTMLElement;
 
 // Mock TextEncoder/Decoder for Three.js
-import { TextEncoder, TextDecoder } from 'util';
+import { TextEncoder, TextDecoder } from "util";
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
 // Patch FontLoader to avoid network request
-FontLoader.prototype.load = function(url, onLoad, onProgress, onError) {
-    // console.log(`Mock loading font: ${url}`);
-    if (onLoad) {
-        // Return a dummy font object
-        onLoad({
-            data: { glyphs: {} },
-            generateShapes: () => []
-        });
-    }
+FontLoader.prototype.load = function (url, onLoad, onProgress, onError) {
+  // console.log(`Mock loading font: ${url}`);
+  if (onLoad) {
+    // Return a dummy font object
+    onLoad({
+      data: { glyphs: {} },
+      generateShapes: () => [],
+    });
+  }
 };
 
 // 2. Import PrimitiveFactory
-import { PrimitiveFactory } from '../src/frontend/PrimitiveFactory.js';
+import { PrimitiveFactory } from "../src/frontend/PrimitiveFactory.js";
 
 async function runBenchmark() {
-  console.log('Starting Geometry Cache Benchmark...');
+  console.log("Starting Geometry Cache Benchmark...");
 
   const factory = new PrimitiveFactory();
   const iterations = 1000;
@@ -50,9 +50,9 @@ async function runBenchmark() {
       width: 1,
       height: 1,
       depth: 1,
-      color: Math.floor(Math.random() * 0xffffff)
+      color: Math.floor(Math.random() * 0xffffff),
     };
-    factory.createPrimitive('Box', options);
+    factory.createPrimitive("Box", options);
   }
 
   const end = performance.now();
@@ -63,13 +63,17 @@ async function runBenchmark() {
   console.log(`Geometry Cache Size: ${cacheSize}`);
 
   if (cacheSize > uniqueGeometries) {
-    console.log(`❌ FAIL: Cache size (${cacheSize}) is larger than unique geometries (${uniqueGeometries}). Optimization needed.`);
+    console.log(
+      `❌ FAIL: Cache size (${cacheSize}) is larger than unique geometries (${uniqueGeometries}). Optimization needed.`,
+    );
   } else {
-    console.log(`✅ SUCCESS: Cache size (${cacheSize}) matches unique geometries.`);
+    console.log(
+      `✅ SUCCESS: Cache size (${cacheSize}) matches unique geometries.`,
+    );
   }
 }
 
-runBenchmark().catch(err => {
+runBenchmark().catch((err) => {
   console.error(err);
   process.exit(1);
 });

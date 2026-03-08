@@ -617,16 +617,24 @@ const THREE = {
       this.phi = 0;
       this.theta = 0;
     }
-    set() { return this; }
-    copy() { return this; }
-    makeSafe() { return this; }
-    setFromVector3() { return this; }
+    set() {
+      return this;
+    }
+    copy() {
+      return this;
+    }
+    makeSafe() {
+      return this;
+    }
+    setFromVector3() {
+      return this;
+    }
   },
   MathUtils: {
     DEG2RAD: Math.PI / 180,
     RAD2DEG: 180 / Math.PI,
     clamp: jest.fn((val, min, max) => Math.max(min, Math.min(max, val))),
-    generateUUID: jest.fn(() => 'mock-uuid-mathutils'),
+    generateUUID: jest.fn(() => "mock-uuid-mathutils"),
   },
   EventDispatcher: class EventDispatcher {
     constructor() {
@@ -641,9 +649,15 @@ const THREE = {
       this.origin = new Vector3();
       this.direction = new Vector3(0, 0, -1);
     }
-    set() { return this; }
-    copy() { return this; }
-    clone() { return new Ray(); }
+    set() {
+      return this;
+    }
+    copy() {
+      return this;
+    }
+    clone() {
+      return new Ray();
+    }
     intersectBox() {}
     intersectSphere() {}
     intersectPlane() {}
@@ -660,10 +674,18 @@ const THREE = {
       this.normal = new Vector3(1, 0, 0);
       this.constant = 0;
     }
-    set() { return this; }
-    setFromNormalAndCoplanarPoint() { return this; }
-    clone() { return new Plane(); }
-    copy() { return this; }
+    set() {
+      return this;
+    }
+    setFromNormalAndCoplanarPoint() {
+      return this;
+    }
+    clone() {
+      return new Plane();
+    }
+    copy() {
+      return this;
+    }
   },
   Box3: class Box3 {
     constructor() {
@@ -757,12 +779,14 @@ const THREE = {
   }),
   Object3D: Object3D,
   Scene: jest.fn().mockImplementation(() => {
-    const s = new Object3D('Scene');
+    const s = new Object3D("Scene");
     return s;
   }),
   Group: jest.fn().mockImplementation((name) => {
     class Group extends Object3D {
-      constructor(n) { super(n || 'Group'); }
+      constructor(n) {
+        super(n || "Group");
+      }
     }
     return new Group(name);
   }),
@@ -924,82 +948,124 @@ jest.mock("three", () => THREE);
 global.THREE = THREE;
 
 // Mock Three.js examples
-const mockFont = { type: 'Font' };
+const mockFont = { type: "Font" };
 const mockFontLoader = jest.fn().mockImplementation(() => ({
-    load: jest.fn((url, cb) => { if (cb) cb(mockFont); })
+  load: jest.fn((url, cb) => {
+    if (cb) cb(mockFont);
+  }),
 }));
 const mockTextGeometry = jest.fn().mockImplementation(() => {
-    const geo = createMockGeometry('TextGeometry');
-    geo.center = jest.fn();
-    return geo;
+  const geo = createMockGeometry("TextGeometry");
+  geo.center = jest.fn();
+  return geo;
 });
-const mockTeapotGeometry = jest.fn().mockImplementation(() => createMockGeometry('TeapotGeometry'));
+const mockTeapotGeometry = jest
+  .fn()
+  .mockImplementation(() => createMockGeometry("TeapotGeometry"));
 
-jest.mock('three/examples/jsm/loaders/FontLoader.js', () => ({
+jest.mock(
+  "three/examples/jsm/loaders/FontLoader.js",
+  () => ({
     __esModule: true,
-    FontLoader: mockFontLoader
-}), { virtual: true });
+    FontLoader: mockFontLoader,
+  }),
+  { virtual: true },
+);
 
-jest.mock('three/examples/jsm/loaders/OBJLoader.js', () => ({
+jest.mock(
+  "three/examples/jsm/loaders/OBJLoader.js",
+  () => ({
     __esModule: true,
     OBJLoader: jest.fn().mockImplementation(() => ({
-        load: jest.fn((url, cb) => { if (cb) cb(new Object3D('OBJModel')); }),
-        setPath: jest.fn().mockReturnThis(),
-    }))
-}), { virtual: true });
+      load: jest.fn((url, cb) => {
+        if (cb) cb(new Object3D("OBJModel"));
+      }),
+      setPath: jest.fn().mockReturnThis(),
+    })),
+  }),
+  { virtual: true },
+);
 
-jest.mock('three/examples/jsm/loaders/GLTFLoader.js', () => ({
+jest.mock(
+  "three/examples/jsm/loaders/GLTFLoader.js",
+  () => ({
     __esModule: true,
     GLTFLoader: jest.fn().mockImplementation(() => ({
-        load: jest.fn((url, cb) => { if (cb) cb({ scene: new Object3D('GLTFScene'), animations: [] }); }),
-        setPath: jest.fn().mockReturnThis(),
-        setDRACOLoader: jest.fn().mockReturnThis(),
-    }))
-}), { virtual: true });
+      load: jest.fn((url, cb) => {
+        if (cb) cb({ scene: new Object3D("GLTFScene"), animations: [] });
+      }),
+      setPath: jest.fn().mockReturnThis(),
+      setDRACOLoader: jest.fn().mockReturnThis(),
+    })),
+  }),
+  { virtual: true },
+);
 
-jest.mock('three/examples/jsm/geometries/TextGeometry.js', () => ({
+jest.mock(
+  "three/examples/jsm/geometries/TextGeometry.js",
+  () => ({
     __esModule: true,
-    TextGeometry: mockTextGeometry
-}), { virtual: true });
+    TextGeometry: mockTextGeometry,
+  }),
+  { virtual: true },
+);
 
-jest.mock('three/examples/jsm/geometries/TeapotGeometry.js', () => ({
+jest.mock(
+  "three/examples/jsm/geometries/TeapotGeometry.js",
+  () => ({
     __esModule: true,
-    TeapotGeometry: mockTeapotGeometry
-}), { virtual: true });
+    TeapotGeometry: mockTeapotGeometry,
+  }),
+  { virtual: true },
+);
 
 // Mock Exporters
-jest.mock('three/examples/jsm/exporters/OBJExporter.js', () => ({
+jest.mock(
+  "three/examples/jsm/exporters/OBJExporter.js",
+  () => ({
     __esModule: true,
     OBJExporter: jest.fn().mockImplementation(() => ({
-        parse: jest.fn(() => 'mock-obj-data')
-    }))
-}), { virtual: true });
+      parse: jest.fn(() => "mock-obj-data"),
+    })),
+  }),
+  { virtual: true },
+);
 
-jest.mock('three/examples/jsm/exporters/STLExporter.js', () => ({
+jest.mock(
+  "three/examples/jsm/exporters/STLExporter.js",
+  () => ({
     __esModule: true,
     STLExporter: jest.fn().mockImplementation(() => ({
-        parse: jest.fn(() => new ArrayBuffer(0))
-    }))
-}), { virtual: true });
+      parse: jest.fn(() => new ArrayBuffer(0)),
+    })),
+  }),
+  { virtual: true },
+);
 
 // Mock OrbitControls
-jest.doMock('three/examples/jsm/controls/OrbitControls.js', () => ({
-  __esModule: true,
-  OrbitControls: jest.fn().mockImplementation(() => ({
-    update: jest.fn(),
-    target: new THREE.Vector3(),
-    enabled: true,
-    enableDamping: true,
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-  })),
-}), { virtual: true });
+jest.doMock(
+  "three/examples/jsm/controls/OrbitControls.js",
+  () => ({
+    __esModule: true,
+    OrbitControls: jest.fn().mockImplementation(() => ({
+      update: jest.fn(),
+      target: new THREE.Vector3(),
+      enabled: true,
+      enableDamping: true,
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    })),
+  }),
+  { virtual: true },
+);
 
 // Mock TransformControls
-jest.doMock('three/examples/jsm/controls/TransformControls.js', () => ({
-  __esModule: true,
-  TransformControls: jest.fn().mockImplementation(() => {
-      const tc = new Object3D('TransformControls');
+jest.doMock(
+  "three/examples/jsm/controls/TransformControls.js",
+  () => ({
+    __esModule: true,
+    TransformControls: jest.fn().mockImplementation(() => {
+      const tc = new Object3D("TransformControls");
       tc.setMode = jest.fn();
       tc.attach = jest.fn();
       tc.detach = jest.fn();
@@ -1008,8 +1074,10 @@ jest.doMock('three/examples/jsm/controls/TransformControls.js', () => ({
       tc.dispose = jest.fn();
       tc.dragging = false;
       return tc;
+    }),
   }),
-}), { virtual: true });
+  { virtual: true },
+);
 // Mock dat.gui
 const createChainableMock = () => {
   const obj = {};
@@ -1048,7 +1116,7 @@ global.JSZip = jest.fn(() => ({
 }));
 
 // Populate window.JSZip
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   global.window.JSZip = global.JSZip;
 }
 

@@ -11,10 +11,10 @@ export class PhysicsManager {
     this.bodyToIndexMap = new Map();
     // Map to store mesh -> body for O(1) lookup
     this.meshToBodyMap = new Map();
-    
+
     // Check if simulation is paused
     this.paused = true;
-    
+
     // Store initial transforms to allow resetting the simulation
     this.initialStates = new Map();
   }
@@ -82,8 +82,17 @@ export class PhysicsManager {
     this.meshToBodyMap.set(mesh, body);
 
     this.initialStates.set(body, {
-      position: new CANNON.Vec3(mesh.position.x, mesh.position.y, mesh.position.z),
-      quaternion: new CANNON.Quaternion(mesh.quaternion.x, mesh.quaternion.y, mesh.quaternion.z, mesh.quaternion.w)
+      position: new CANNON.Vec3(
+        mesh.position.x,
+        mesh.position.y,
+        mesh.position.z,
+      ),
+      quaternion: new CANNON.Quaternion(
+        mesh.quaternion.x,
+        mesh.quaternion.y,
+        mesh.quaternion.z,
+        mesh.quaternion.w,
+      ),
     });
 
     return body;
@@ -153,27 +162,27 @@ export class PhysicsManager {
 
   reset() {
     this.paused = true;
-    
+
     // Restore all bodies to their initial positions and velocities
     const bodies = this.bodies;
     const len = bodies.length;
     for (let i = 0; i < len; i++) {
-        const item = bodies[i];
-        const initial = this.initialStates.get(item.body);
-        if (initial) {
-            item.body.position.copy(initial.position);
-            item.body.quaternion.copy(initial.quaternion);
-            
-            // Reset velocities
-            item.body.velocity.set(0, 0, 0);
-            item.body.angularVelocity.set(0, 0, 0);
-            item.body.force.set(0, 0, 0);
-            item.body.torque.set(0, 0, 0);
+      const item = bodies[i];
+      const initial = this.initialStates.get(item.body);
+      if (initial) {
+        item.body.position.copy(initial.position);
+        item.body.quaternion.copy(initial.quaternion);
 
-            // Sync mesh instantly
-            item.mesh.position.copy(initial.position);
-            item.mesh.quaternion.copy(initial.quaternion);
-        }
+        // Reset velocities
+        item.body.velocity.set(0, 0, 0);
+        item.body.angularVelocity.set(0, 0, 0);
+        item.body.force.set(0, 0, 0);
+        item.body.torque.set(0, 0, 0);
+
+        // Sync mesh instantly
+        item.mesh.position.copy(initial.position);
+        item.mesh.quaternion.copy(initial.quaternion);
+      }
     }
   }
 }

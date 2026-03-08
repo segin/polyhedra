@@ -1,7 +1,8 @@
 // @ts-check
-import log from 'loglevel';
+import log from "loglevel";
 
-const isProduction = typeof window !== 'undefined' && window.location.hostname !== 'localhost';
+const isProduction =
+  typeof window !== "undefined" && window.location.hostname !== "localhost";
 
 export const Logger = {
   /**
@@ -9,9 +10,9 @@ export const Logger = {
    */
   init() {
     if (isProduction) {
-      log.setLevel('info');
+      log.setLevel("info");
     } else {
-      log.setLevel('debug');
+      log.setLevel("debug");
     }
   },
 
@@ -20,16 +21,19 @@ export const Logger = {
    */
   _format(levelName, message, meta) {
     const timestamp = new Date().toISOString();
-    let metaStr = '';
-    
+    let metaStr = "";
+
     if (meta !== undefined) {
       try {
-        metaStr = typeof meta === 'object' ? JSON.stringify(meta, this._getCircularReplacer()) : String(meta);
+        metaStr =
+          typeof meta === "object"
+            ? JSON.stringify(meta, this._getCircularReplacer())
+            : String(meta);
       } catch {
-        metaStr = '[Unserializable Meta]';
+        metaStr = "[Unserializable Meta]";
       }
     }
-    
+
     return `[${timestamp}] [${levelName}] ${message} ${metaStr}`.trim();
   },
 
@@ -39,9 +43,9 @@ export const Logger = {
   _getCircularReplacer() {
     const seen = new WeakSet();
     return (key, value) => {
-      if (typeof value === 'object' && value !== null) {
+      if (typeof value === "object" && value !== null) {
         if (seen.has(value)) {
-          return '[Circular]';
+          return "[Circular]";
         }
         seen.add(value);
       }
@@ -51,27 +55,27 @@ export const Logger = {
 
   debug(message, meta) {
     if (log.getLevel() <= log.levels.DEBUG) {
-      console.debug(this._format('DEBUG', message, meta));
+      console.debug(this._format("DEBUG", message, meta));
     }
   },
 
   info(message, meta) {
     if (log.getLevel() <= log.levels.INFO) {
-      console.info(this._format('INFO', message, meta));
+      console.info(this._format("INFO", message, meta));
     }
   },
 
   warn(message, meta) {
     if (log.getLevel() <= log.levels.WARN) {
-      console.warn(this._format('WARN', message, meta));
+      console.warn(this._format("WARN", message, meta));
     }
   },
 
   error(message, meta) {
     if (log.getLevel() <= log.levels.ERROR) {
-      console.error(this._format('ERROR', message, meta));
+      console.error(this._format("ERROR", message, meta));
     }
-  }
+  },
 };
 
 Logger.init();

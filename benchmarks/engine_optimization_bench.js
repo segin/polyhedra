@@ -1,5 +1,4 @@
-
-import { performance } from 'perf_hooks';
+import { performance } from "perf_hooks";
 
 class TestClass {
   constructor() {
@@ -43,7 +42,7 @@ console.log(`Optimized (pre-bound):      ${timeB.toFixed(2)}ms`);
 console.log(`Speedup:                    ${(timeA / timeB).toFixed(2)}x`);
 
 if (timeB < timeA) {
-  console.log('✅ Optimization confirmed: Pre-binding is faster.');
+  console.log("✅ Optimization confirmed: Pre-binding is faster.");
 } else {
-  console.log('⚠️ Optimization not significant in this micro-benchmark.');
+  console.log("⚠️ Optimization not significant in this micro-benchmark.");
 }

@@ -53,6 +53,7 @@ The architecture is currently a client-heavy web application with a lightweight 
 ### 3.2. Backend Services
 
 #### 3.2.1. Static File Server
+
 - **Name:** Polyhedra Express Server
 - **Description:** Handles static file serving for the frontend application, injects generated CSP nonces for security, and implements basic rate limiting to prevent abuse.
 - **Technologies:** Node.js, Express, Helmet, express-rate-limit.
@@ -61,9 +62,10 @@ The architecture is currently a client-heavy web application with a lightweight 
 ## 4. Data Stores
 
 ### 4.1. Browser Target Storage
+
 - **Name:** Key-Value Store & Filesystem Downloads
 - **Type:** Browser `localStorage` / Custom `.polyhedra` ZIP files.
-- **Purpose:** 
+- **Purpose:**
   - `localStorage` is used to persist the user's workspace temporarily between page reloads.
   - `.polyhedra` files use `JSZip` to store `scene.json` and associated resources for sharing and durable storage.
 
@@ -100,7 +102,7 @@ Currently, there are no mandatory external 3rd-party API integrations. The appli
 
 - **Project Name:** Polyhedra
 - **Repository URL:** https://github.com/segin/polyhedra
-- **Primary Contact/Team:** Kirn Gill II 
+- **Primary Contact/Team:** Kirn Gill II
 - **Date of Last Update:** 2026-03-03
 
 ## 11. Glossary / Acronyms

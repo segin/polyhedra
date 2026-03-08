@@ -1,15 +1,19 @@
-import express from 'express';
-import log from './logger.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import helmet from 'helmet';
-import cors from 'cors';
-import crypto from 'crypto';
-import fs from 'fs';
-import rateLimit from 'express-rate-limit';
+import express from "express";
+import log from "./logger.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import helmet from "helmet";
+import cors from "cors";
+import crypto from "crypto";
+import fs from "fs";
+import rateLimit from "express-rate-limit";
 
-const currentFilename = typeof __filename !== 'undefined' ? __filename : fileURLToPath(import.meta.url);
-const currentDirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(currentFilename);
+const currentFilename =
+  typeof __filename !== "undefined"
+    ? __filename
+    : fileURLToPath(import.meta.url);
+const currentDirname =
+  typeof __dirname !== "undefined" ? __dirname : path.dirname(currentFilename);
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -18,7 +22,7 @@ const port = process.env.PORT || 3000;
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-  standardHeaders: 'draft-7', // combined `RateLimit` header
+  standardHeaders: "draft-7", // combined `RateLimit` header
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
@@ -26,7 +30,7 @@ app.use(limiter);
 
 // Generate nonce for each request
 app.use((req, res, next) => {
-  res.locals.cspNonce = crypto.randomBytes(16).toString('base64');
+  res.locals.cspNonce = crypto.randomBytes(16).toString("base64");
   next();
 });
 
@@ -37,9 +41,9 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`],
         styleSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`], // Removed 'unsafe-inline', added nonce
-        imgSrc: ["'self'", 'data:'],
+        imgSrc: ["'self'", "data:"],
         connectSrc: ["'self'"],
-        fontSrc: ["'self'", 'data:'],
+        fontSrc: ["'self'", "data:"],
         objectSrc: ["'none'"],
         mediaSrc: ["'self'"],
         frameSrc: ["'none'"],
@@ -51,23 +55,32 @@ app.use(
 app.use(cors());
 
 // Serve bundled/vendor assets (AUDIT-SEC-003)
-app.use('/modules', express.static(path.join(currentDirname, '..', 'frontend', 'vendor')));
-app.use('/utils', express.static(path.join(currentDirname, '..', 'frontend', 'vendor')));
+app.use(
+  "/modules",
+  express.static(path.join(currentDirname, "..", "frontend", "vendor")),
+);
+app.use(
+  "/utils",
+  express.static(path.join(currentDirname, "..", "frontend", "vendor")),
+);
 
-const indexHtmlPath = path.join(currentDirname, '..', 'frontend', 'index.html');
+const indexHtmlPath = path.join(currentDirname, "..", "frontend", "index.html");
 let indexHtmlContent = null;
 
 try {
-  indexHtmlContent = fs.readFileSync(indexHtmlPath, 'utf8');
+  indexHtmlContent = fs.readFileSync(indexHtmlPath, "utf8");
 } catch (err) {
-  log.error('Failed to preload index.html:', err);
+  log.error("Failed to preload index.html:", err);
 }
 
 const injectNonce = (html, nonce) => {
   return html
     .replace(/<script /g, `<script nonce="${nonce}" `)
     .replace(/<style>/g, `<style nonce="${nonce}">`)
-    .replace(/<link rel="stylesheet"/g, `<link rel="stylesheet" nonce="${nonce}"`);
+    .replace(
+      /<link rel="stylesheet"/g,
+      `<link rel="stylesheet" nonce="${nonce}"`,
+    );
 };
 
 // Serve index.html with injected nonce
@@ -77,10 +90,10 @@ const serveIndex = (req, res) => {
     return;
   }
 
-  fs.readFile(indexHtmlPath, 'utf8', (err, data) => {
+  fs.readFile(indexHtmlPath, "utf8", (err, data) => {
     if (err) {
-      log.error('Failed to read index.html:', err);
-      res.status(500).send('Internal Server Error');
+      log.error("Failed to read index.html:", err);
+      res.status(500).send("Internal Server Error");
       return;
     }
     indexHtmlContent = data;
@@ -88,32 +101,32 @@ const serveIndex = (req, res) => {
   });
 };
 
-app.get('/', serveIndex);
-app.get('/index.html', serveIndex);
+app.get("/", serveIndex);
+app.get("/index.html", serveIndex);
 
-app.use(express.static(path.join(currentDirname, '..', 'frontend')));
+app.use(express.static(path.join(currentDirname, "..", "frontend")));
 
-app.get('/healthz', (req, res) => {
-  res.status(200).send('OK');
+app.get("/healthz", (req, res) => {
+  res.status(200).send("OK");
 });
 
 // Centralized error handler
 app.use((err, req, res, next) => {
   log.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).send("Something broke!");
 });
 
 let server;
 
 if (process.argv[1] === currentFilename) {
-  server = app.listen(port, '0.0.0.0', () => {
+  server = app.listen(port, "0.0.0.0", () => {
     log.info(`Server listening at http://localhost:${port}`);
   });
 
-  process.on('SIGINT', () => {
-    log.info('SIGINT signal received: closing HTTP server');
+  process.on("SIGINT", () => {
+    log.info("SIGINT signal received: closing HTTP server");
     server.close(() => {
-      log.info('HTTP server closed');
+      log.info("HTTP server closed");
     });
   });
 }

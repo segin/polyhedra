@@ -1,10 +1,10 @@
-import { Logger } from './utils/Logger.js';
+import { Logger } from "./utils/Logger.js";
 
 export class StateManager {
   constructor() {
     this._state = {
       selection: [],
-      toolMode: 'select',
+      toolMode: "select",
       clipboard: null,
       isDragging: false,
       sceneDirty: false,
@@ -76,7 +76,10 @@ export class StateManager {
           try {
             callback(newState[key], newState);
           } catch (error) {
-            Logger.error(`Error in StateManager listener for key '${key}':`, error);
+            Logger.error(
+              `Error in StateManager listener for key '${key}':`,
+              error,
+            );
           }
         });
       }

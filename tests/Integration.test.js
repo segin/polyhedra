@@ -22,14 +22,14 @@ const mockFolder = {
   __folders: [],
 };
 
-jest.mock('dat.gui', () => ({
+jest.mock("dat.gui", () => ({
   GUI: jest.fn(() => ({
     addFolder: jest.fn(() => mockFolder),
   })),
 }));
 
 // Mock controls
-jest.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
+jest.mock("three/examples/jsm/controls/OrbitControls.js", () => ({
   OrbitControls: jest.fn(() => ({
     enableDamping: true,
     dampingFactor: 0.05,
@@ -38,7 +38,7 @@ jest.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
   })),
 }));
 
-jest.mock('three/examples/jsm/controls/TransformControls.js', () => ({
+jest.mock("three/examples/jsm/controls/TransformControls.js", () => ({
   TransformControls: jest.fn(() => ({
     addEventListener: jest.fn(),
     setMode: jest.fn(),
@@ -48,27 +48,27 @@ jest.mock('three/examples/jsm/controls/TransformControls.js', () => ({
   })),
 }));
 
-describe('Integration Tests - Complete Workflow', () => {
+describe("Integration Tests - Complete Workflow", () => {
   let app;
 
   beforeEach(() => {
     // Setup environment (handled by jsdom environment)
-    if (typeof document !== 'undefined') {
-        document.body.innerHTML = '';
+    if (typeof document !== "undefined") {
+      document.body.innerHTML = "";
     }
-    
+
     global.requestAnimationFrame = jest.fn();
     global.console.log = jest.fn(); // Suppress console.log
     global.Date.now = jest.fn(() => 1234567890);
     global.URL = { createObjectURL: jest.fn(), revokeObjectURL: jest.fn() };
     global.Worker = jest.fn(() => ({
-        postMessage: jest.fn(),
-        addEventListener: jest.fn()
+      postMessage: jest.fn(),
+      addEventListener: jest.fn(),
     }));
 
     // Mock methods that might be missing or need spying
-    if (typeof window !== 'undefined') {
-        window.scrollTo = jest.fn();
+    if (typeof window !== "undefined") {
+      window.scrollTo = jest.fn();
     }
 
     jest.clearAllMocks();
@@ -85,22 +85,22 @@ describe('Integration Tests - Complete Workflow', () => {
         this.propertiesFolder = mockFolder;
 
         this.setupSceneGraph();
-        this.saveState('Initial state');
+        this.saveState("Initial state");
       }
 
       // Scene Graph functionality
       setupSceneGraph() {
-        this.sceneGraphPanel = document.createElement('div');
-        this.objectsList = document.createElement('ul');
-        this.sceneGraphPanel.appendChild(document.createElement('h3'));
+        this.sceneGraphPanel = document.createElement("div");
+        this.objectsList = document.createElement("ul");
+        this.sceneGraphPanel.appendChild(document.createElement("h3"));
         this.sceneGraphPanel.appendChild(this.objectsList);
         document.body.appendChild(this.sceneGraphPanel);
       }
 
       updateSceneGraph() {
-        this.objectsList.innerHTML = '';
+        this.objectsList.innerHTML = "";
         this.objects.forEach((object, index) => {
-          const listItem = document.createElement('li');
+          const listItem = document.createElement("li");
           listItem.onclick = () => this.selectObject(object);
           this.objectsList.appendChild(listItem);
         });
@@ -129,7 +129,7 @@ describe('Integration Tests - Complete Workflow', () => {
           this.deselectObject();
         }
         this.updateSceneGraph();
-        this.saveState('Delete object');
+        this.saveState("Delete object");
       }
 
       // Property panel functionality
@@ -137,12 +137,12 @@ describe('Integration Tests - Complete Workflow', () => {
         this.clearPropertiesPanel();
         if (!object) return;
 
-        this.propertiesFolder.add({ name: object.name }, 'name');
-        this.propertiesFolder.addFolder('Position');
-        this.propertiesFolder.addFolder('Rotation');
-        this.propertiesFolder.addFolder('Scale');
-        this.propertiesFolder.addFolder('Material');
-        this.propertiesFolder.addFolder('Geometry');
+        this.propertiesFolder.add({ name: object.name }, "name");
+        this.propertiesFolder.addFolder("Position");
+        this.propertiesFolder.addFolder("Rotation");
+        this.propertiesFolder.addFolder("Scale");
+        this.propertiesFolder.addFolder("Material");
+        this.propertiesFolder.addFolder("Geometry");
         this.propertiesFolder.open();
       }
 
@@ -153,7 +153,7 @@ describe('Integration Tests - Complete Workflow', () => {
       }
 
       // History functionality
-      saveState(description = 'Action') {
+      saveState(description = "Action") {
         const state = {
           description: description,
           timestamp: Date.now(),
@@ -167,13 +167,17 @@ describe('Integration Tests - Complete Workflow', () => {
               color: obj.material.color.clone(),
               emissive: obj.material.emissive.clone(),
             },
-            geometryParams: obj.userData.geometryParams ? { ...obj.userData.geometryParams } : null,
+            geometryParams: obj.userData.geometryParams
+              ? { ...obj.userData.geometryParams }
+              : null,
             visible: obj.visible,
             castShadow: obj.castShadow,
             receiveShadow: obj.receiveShadow,
             uuid: obj.uuid,
           })),
-          selectedObjectUuid: this.selectedObject ? this.selectedObject.uuid : null,
+          selectedObjectUuid: this.selectedObject
+            ? this.selectedObject.uuid
+            : null,
         };
 
         if (this.historyIndex < this.history.length - 1) {
@@ -218,7 +222,7 @@ describe('Integration Tests - Complete Workflow', () => {
 
         // Restore objects
         state.objects.forEach((objData) => {
-          const THREE = require('three');
+          const THREE = require("three");
           const geometry = new THREE.BoxGeometry();
           const material = new THREE.MeshPhongMaterial();
           const mesh = new THREE.Mesh(geometry, material);
@@ -240,7 +244,9 @@ describe('Integration Tests - Complete Workflow', () => {
         // Restore selection
         this.selectedObject = null;
         if (state.selectedObjectUuid) {
-          const selectedObj = this.objects.find((obj) => obj.uuid === state.selectedObjectUuid);
+          const selectedObj = this.objects.find(
+            (obj) => obj.uuid === state.selectedObjectUuid,
+          );
           if (selectedObj) {
             this.selectObject(selectedObj);
           }
@@ -250,7 +256,7 @@ describe('Integration Tests - Complete Workflow', () => {
 
       // Primitive creation methods
       addBox() {
-        const THREE = require('three');
+        const THREE = require("three");
         const geometry = new THREE.BoxGeometry(1, 1, 1);
         const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
         const mesh = new THREE.Mesh(geometry, material);
@@ -263,12 +269,12 @@ describe('Integration Tests - Complete Workflow', () => {
         this.objects.push(mesh);
         this.selectObject(mesh);
         this.updateSceneGraph();
-        this.saveState('Add Box');
+        this.saveState("Add Box");
         return mesh;
       }
 
       addSphere() {
-        const THREE = require('three');
+        const THREE = require("three");
         const geometry = new THREE.SphereGeometry(0.5, 32, 32);
         const material = new THREE.MeshPhongMaterial({ color: 0xff0000 });
         const mesh = new THREE.Mesh(geometry, material);
@@ -281,13 +287,13 @@ describe('Integration Tests - Complete Workflow', () => {
         this.objects.push(mesh);
         this.selectObject(mesh);
         this.updateSceneGraph();
-        this.saveState('Add Sphere');
+        this.saveState("Add Sphere");
         return mesh;
       }
 
       duplicateSelectedObject() {
         if (this.selectedObject) {
-          const THREE = require('three');
+          const THREE = require("three");
           const geometry = this.selectedObject.geometry.clone();
           const material = this.selectedObject.material.clone();
           const mesh = new THREE.Mesh(geometry, material);
@@ -306,7 +312,7 @@ describe('Integration Tests - Complete Workflow', () => {
           this.objects.push(mesh);
           this.selectObject(mesh);
           this.updateSceneGraph();
-          this.saveState('Duplicate object');
+          this.saveState("Duplicate object");
           return mesh;
         }
         return null;
@@ -320,8 +326,8 @@ describe('Integration Tests - Complete Workflow', () => {
     jest.restoreAllMocks();
   });
 
-  describe('Complete Object Lifecycle', () => {
-    it('should handle full create, select, modify, delete workflow', () => {
+  describe("Complete Object Lifecycle", () => {
+    it("should handle full create, select, modify, delete workflow", () => {
       // Step 1: Create object
       const box = app.addBox();
       expect(app.objects.length).toBe(1);
@@ -330,7 +336,7 @@ describe('Integration Tests - Complete Workflow', () => {
 
       // Step 2: Modify properties (simulate)
       box.position.x = 5;
-      app.saveState('Move object');
+      app.saveState("Move object");
       expect(app.history.length).toBe(3);
 
       // Step 3: Create another object
@@ -345,7 +351,7 @@ describe('Integration Tests - Complete Workflow', () => {
       expect(app.selectedObject).toEqual(sphere); // Should remain selected
     });
 
-    it('should maintain data consistency across all systems', () => {
+    it("should maintain data consistency across all systems", () => {
       const box = app.addBox();
 
       // Verify object exists in all systems
@@ -361,8 +367,8 @@ describe('Integration Tests - Complete Workflow', () => {
     });
   });
 
-  describe('Undo/Redo with UI Integration', () => {
-    it('should undo object creation and update all UI components', () => {
+  describe("Undo/Redo with UI Integration", () => {
+    it("should undo object creation and update all UI components", () => {
       const initialCount = app.objects.length;
       const box = app.addBox();
 
@@ -377,7 +383,7 @@ describe('Integration Tests - Complete Workflow', () => {
       expect(app.propertiesFolder.close).toHaveBeenCalled(); // Properties panel cleared
     });
 
-    it('should redo object creation and restore all states', () => {
+    it("should redo object creation and restore all states", () => {
       const box = app.addBox();
       const boxName = box.name;
 
@@ -390,7 +396,7 @@ describe('Integration Tests - Complete Workflow', () => {
       expect(app.selectedObject).toBe(app.objects[0]);
     });
 
-    it('should handle complex undo/redo scenarios with multiple objects', () => {
+    it("should handle complex undo/redo scenarios with multiple objects", () => {
       const box = app.addBox();
       const sphere = app.addSphere();
 
@@ -419,8 +425,8 @@ describe('Integration Tests - Complete Workflow', () => {
     });
   });
 
-  describe('Scene Graph and Property Panel Integration', () => {
-    it('should update property panel when object is selected from scene graph', () => {
+  describe("Scene Graph and Property Panel Integration", () => {
+    it("should update property panel when object is selected from scene graph", () => {
       const box = app.addBox();
       app.deselectObject(); // Clear selection
 
@@ -431,11 +437,11 @@ describe('Integration Tests - Complete Workflow', () => {
 
       expect(app.selectedObject.name).toEqual(box.name);
       expect(mockFolder.add).toHaveBeenCalled();
-      expect(mockFolder.addFolder).toHaveBeenCalledWith('Position');
+      expect(mockFolder.addFolder).toHaveBeenCalledWith("Position");
       expect(mockFolder.open).toHaveBeenCalled();
     });
 
-    it('should clear property panel when object is deleted from scene graph', () => {
+    it("should clear property panel when object is deleted from scene graph", () => {
       const box = app.addBox();
       expect(app.selectedObject.name).toEqual(box.name);
 
@@ -448,8 +454,8 @@ describe('Integration Tests - Complete Workflow', () => {
       expect(mockFolder.__folders.length).toBe(0);
     });
 
-    it('should update scene graph when objects are added or removed', () => {
-      const updateSpy = jest.spyOn(app, 'updateSceneGraph');
+    it("should update scene graph when objects are added or removed", () => {
+      const updateSpy = jest.spyOn(app, "updateSceneGraph");
 
       app.addBox();
       expect(updateSpy).toHaveBeenCalled();
@@ -462,30 +468,32 @@ describe('Integration Tests - Complete Workflow', () => {
     });
   });
 
-  describe('Object Duplication Workflow', () => {
-    it('should duplicate object with all properties and integrate with all systems', () => {
+  describe("Object Duplication Workflow", () => {
+    it("should duplicate object with all properties and integrate with all systems", () => {
       const originalBox = app.addBox();
       originalBox.position.x = 3;
-      originalBox.name = 'CustomBox';
+      originalBox.name = "CustomBox";
 
       const duplicatedBox = app.duplicateSelectedObject();
 
       // Verify duplication
       expect(duplicatedBox).toBeDefined();
-      expect(duplicatedBox.name).toBe('CustomBox_copy');
+      expect(duplicatedBox.name).toBe("CustomBox_copy");
       expect(duplicatedBox.position.x).toBe(4); // Original + 1 offset
       expect(app.objects.length).toBe(2);
       expect(app.selectedObject).toBe(duplicatedBox);
 
       // Verify history saved
-      expect(app.history[app.historyIndex].description).toBe('Duplicate object');
+      expect(app.history[app.historyIndex].description).toBe(
+        "Duplicate object",
+      );
 
       // Verify scene graph updated
       expect(app.objects).toContain(originalBox);
       expect(app.objects).toContain(duplicatedBox);
     });
 
-    it('should handle duplication when no object is selected', () => {
+    it("should handle duplication when no object is selected", () => {
       app.deselectObject();
 
       const duplicated = app.duplicateSelectedObject();
@@ -495,8 +503,8 @@ describe('Integration Tests - Complete Workflow', () => {
     });
   });
 
-  describe('Multi-Object Selection and Management', () => {
-    it('should handle selection changes between multiple objects', () => {
+  describe("Multi-Object Selection and Management", () => {
+    it("should handle selection changes between multiple objects", () => {
       const box = app.addBox();
       const sphere = app.addSphere();
 
@@ -505,15 +513,18 @@ describe('Integration Tests - Complete Workflow', () => {
       // Select box
       app.selectObject(box);
       expect(app.selectedObject.name).toEqual(box.name);
-      expect(mockFolder.add).toHaveBeenCalledWith({ name: box.name }, 'name');
+      expect(mockFolder.add).toHaveBeenCalledWith({ name: box.name }, "name");
 
       // Select sphere
       app.selectObject(sphere);
       expect(app.selectedObject.name).toEqual(sphere.name);
-      expect(mockFolder.add).toHaveBeenCalledWith({ name: sphere.name }, 'name');
+      expect(mockFolder.add).toHaveBeenCalledWith(
+        { name: sphere.name },
+        "name",
+      );
     });
 
-    it('should maintain correct selection state through undo/redo operations', () => {
+    it("should maintain correct selection state through undo/redo operations", () => {
       const box = app.addBox();
       const sphere = app.addSphere();
 
@@ -533,9 +544,9 @@ describe('Integration Tests - Complete Workflow', () => {
     });
   });
 
-  describe('Error Handling and Edge Cases', () => {
-    it('should handle deleting non-existent objects gracefully', () => {
-      const THREE = require('three');
+  describe("Error Handling and Edge Cases", () => {
+    it("should handle deleting non-existent objects gracefully", () => {
+      const THREE = require("three");
       const fakeObject = new THREE.Mesh();
 
       expect(() => {
@@ -545,7 +556,7 @@ describe('Integration Tests - Complete Workflow', () => {
       expect(app.objects.length).toBe(0);
     });
 
-    it('should handle undo/redo at history boundaries', () => {
+    it("should handle undo/redo at history boundaries", () => {
       // At beginning of history
       expect(app.undo()).toBe(false);
 
@@ -555,14 +566,14 @@ describe('Integration Tests - Complete Workflow', () => {
       expect(app.redo()).toBe(false);
     });
 
-    it('should handle property panel updates for objects without properties', () => {
+    it("should handle property panel updates for objects without properties", () => {
       const mockObject = {
         name: null,
         position: { x: 0, y: 0, z: 0 },
         rotation: { x: 0, y: 0, z: 0 },
         scale: { x: 1, y: 1, z: 1 },
         material: { color: { getHex: () => 0x000000 } },
-        geometry: { type: 'UnknownGeometry' },
+        geometry: { type: "UnknownGeometry" },
         userData: {},
       };
 
@@ -572,11 +583,11 @@ describe('Integration Tests - Complete Workflow', () => {
     });
   });
 
-  describe('Performance and Memory Management', () => {
-    it('should properly dispose of geometry and materials during undo operations', () => {
+  describe("Performance and Memory Management", () => {
+    it("should properly dispose of geometry and materials during undo operations", () => {
       const box = app.addBox();
-      const geometryDisposeSpy = jest.spyOn(box.geometry, 'dispose');
-      const materialDisposeSpy = jest.spyOn(box.material, 'dispose');
+      const geometryDisposeSpy = jest.spyOn(box.geometry, "dispose");
+      const materialDisposeSpy = jest.spyOn(box.material, "dispose");
 
       app.undo(); // This should trigger disposal
 
@@ -584,7 +595,7 @@ describe('Integration Tests - Complete Workflow', () => {
       expect(materialDisposeSpy).toHaveBeenCalled();
     });
 
-    it('should limit history size to prevent memory leaks', () => {
+    it("should limit history size to prevent memory leaks", () => {
       app.maxHistorySize = 3;
 
       // Add more states than the limit

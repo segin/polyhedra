@@ -1,9 +1,9 @@
-import React, { useRef, useEffect, useState } from 'react';
-import * as THREE from 'three';
+import React, { useRef, useEffect, useState } from "react";
+import * as THREE from "three";
 
 const ShaderLibrary = () => {
   const canvasRef = useRef(null);
-  const [activeShader, setActiveShader] = useState('standard');
+  const [activeShader, setActiveShader] = useState("standard");
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const rendererRef = useRef(null);
@@ -12,8 +12,8 @@ const ShaderLibrary = () => {
 
   const shaders = {
     standard: {
-      name: 'Standard PBR',
-      description: 'Physically based rendering with metallic workflow',
+      name: "Standard PBR",
+      description: "Physically based rendering with metallic workflow",
       material: () =>
         new THREE.MeshStandardMaterial({
           color: 0x4488ff,
@@ -22,8 +22,8 @@ const ShaderLibrary = () => {
         }),
     },
     wireframe: {
-      name: 'Wireframe',
-      description: 'Shows polygon edges',
+      name: "Wireframe",
+      description: "Shows polygon edges",
       material: () =>
         new THREE.MeshBasicMaterial({
           color: 0x00ff00,
@@ -31,35 +31,35 @@ const ShaderLibrary = () => {
         }),
     },
     normal: {
-      name: 'Normal Map',
-      description: 'Visualizes surface normals as RGB colors',
+      name: "Normal Map",
+      description: "Visualizes surface normals as RGB colors",
       material: () => new THREE.MeshNormalMaterial(),
     },
     depth: {
-      name: 'Depth',
-      description: 'Shows distance from camera',
+      name: "Depth",
+      description: "Shows distance from camera",
       material: () => new THREE.MeshDepthMaterial(),
     },
     matcap: {
-      name: 'MatCap',
-      description: 'Material capture - fast preview rendering',
+      name: "MatCap",
+      description: "Material capture - fast preview rendering",
       material: () =>
         new THREE.MeshMatcapMaterial({
           color: 0xffffff,
         }),
     },
     uvChecker: {
-      name: 'UV Checker',
-      description: 'Displays UV mapping with checkerboard pattern',
+      name: "UV Checker",
+      description: "Displays UV mapping with checkerboard pattern",
       material: () => {
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         canvas.width = 512;
         canvas.height = 512;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         const size = 64;
         for (let y = 0; y < 8; y++) {
           for (let x = 0; x < 8; x++) {
-            ctx.fillStyle = (x + y) % 2 === 0 ? '#ffffff' : '#000000';
+            ctx.fillStyle = (x + y) % 2 === 0 ? "#ffffff" : "#000000";
             ctx.fillRect(x * size, y * size, size, size);
           }
         }
@@ -68,8 +68,8 @@ const ShaderLibrary = () => {
       },
     },
     clay: {
-      name: 'Clay',
-      description: 'Matte clay-like appearance for form study',
+      name: "Clay",
+      description: "Matte clay-like appearance for form study",
       material: () =>
         new THREE.MeshStandardMaterial({
           color: 0xcccccc,
@@ -78,8 +78,8 @@ const ShaderLibrary = () => {
         }),
     },
     xray: {
-      name: 'X-Ray',
-      description: 'Transparent view showing internal structure',
+      name: "X-Ray",
+      description: "Transparent view showing internal structure",
       material: () =>
         new THREE.MeshPhongMaterial({
           color: 0x00ffff,
@@ -89,8 +89,8 @@ const ShaderLibrary = () => {
         }),
     },
     flat: {
-      name: 'Flat Shaded',
-      description: 'Shows faceted polygon surfaces',
+      name: "Flat Shaded",
+      description: "Shows faceted polygon surfaces",
       material: () =>
         new THREE.MeshPhongMaterial({
           color: 0xff6633,
@@ -98,8 +98,8 @@ const ShaderLibrary = () => {
         }),
     },
     ambient: {
-      name: 'Ambient Occlusion',
-      description: 'Simulates soft shadowing in crevices',
+      name: "Ambient Occlusion",
+      description: "Simulates soft shadowing in crevices",
       material: () =>
         new THREE.MeshStandardMaterial({
           color: 0xffffff,
@@ -108,8 +108,8 @@ const ShaderLibrary = () => {
         }),
     },
     emissive: {
-      name: 'Emissive',
-      description: 'Self-illuminated material',
+      name: "Emissive",
+      description: "Self-illuminated material",
       material: () =>
         new THREE.MeshStandardMaterial({
           color: 0x000000,
@@ -118,8 +118,8 @@ const ShaderLibrary = () => {
         }),
     },
     vertexColor: {
-      name: 'Vertex Color',
-      description: 'Shows per-vertex color data',
+      name: "Vertex Color",
+      description: "Shows per-vertex color data",
       material: () =>
         new THREE.MeshBasicMaterial({
           vertexColors: true,
@@ -151,7 +151,10 @@ const ShaderLibrary = () => {
       canvas: canvasRef.current,
       antialias: true,
     });
-    renderer.setSize(canvasRef.current.clientWidth, canvasRef.current.clientHeight);
+    renderer.setSize(
+      canvasRef.current.clientWidth,
+      canvasRef.current.clientHeight,
+    );
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     rendererRef.current = renderer;
 
@@ -175,7 +178,7 @@ const ShaderLibrary = () => {
       color.setHSL(i / geometry.attributes.position.count, 1.0, 0.5);
       colors.push(color.r, color.g, color.b);
     }
-    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
 
     // Initial mesh
     const material = shaders[activeShader].material();
@@ -205,10 +208,10 @@ const ShaderLibrary = () => {
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       if (frameIdRef.current) {
         cancelAnimationFrame(frameIdRef.current);
       }
@@ -238,12 +241,14 @@ const ShaderLibrary = () => {
               onClick={() => setActiveShader(key)}
               className={`w-full text-left p-3 rounded transition-colors ${
                 activeShader === key
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-700 hover:bg-gray-600 text-gray-200"
               }`}
             >
               <div className="font-semibold">{shader.name}</div>
-              <div className="text-xs mt-1 opacity-75">{shader.description}</div>
+              <div className="text-xs mt-1 opacity-75">
+                {shader.description}
+              </div>
             </button>
           ))}
         </div>
@@ -252,8 +257,12 @@ const ShaderLibrary = () => {
       {/* Viewport */}
       <div className="flex-1 flex flex-col">
         <div className="bg-gray-800 px-6 py-4 border-b border-gray-700">
-          <h1 className="text-2xl font-bold text-blue-400">{shaders[activeShader].name}</h1>
-          <p className="text-gray-400 mt-1">{shaders[activeShader].description}</p>
+          <h1 className="text-2xl font-bold text-blue-400">
+            {shaders[activeShader].name}
+          </h1>
+          <p className="text-gray-400 mt-1">
+            {shaders[activeShader].description}
+          </p>
         </div>
         <div className="flex-1 relative">
           <canvas ref={canvasRef} className="w-full h-full" />

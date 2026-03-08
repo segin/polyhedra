@@ -1,8 +1,7 @@
-
-const THREE = jest.requireActual('three');
+const THREE = jest.requireActual("three");
 const { Scene, Mesh, BoxGeometry, MeshBasicMaterial } = THREE;
 
-describe('Scene Clearing Performance Benchmark', () => {
+describe("Scene Clearing Performance Benchmark", () => {
   // Use a large number of objects to make the difference obvious
   const OBJECT_COUNT = 20000;
 
@@ -17,7 +16,7 @@ describe('Scene Clearing Performance Benchmark', () => {
     return scene;
   }
 
-  test('Benchmark: Clear scene using remove(children[0]) (Current Implementation)', () => {
+  test("Benchmark: Clear scene using remove(children[0]) (Current Implementation)", () => {
     const scene = createScene();
     const start = performance.now();
 
@@ -30,10 +29,12 @@ describe('Scene Clearing Performance Benchmark', () => {
     }
 
     const end = performance.now();
-    console.log(`[Benchmark] Clear ${OBJECT_COUNT} objects using remove(children[0]): ${(end - start).toFixed(2)}ms`);
+    console.log(
+      `[Benchmark] Clear ${OBJECT_COUNT} objects using remove(children[0]): ${(end - start).toFixed(2)}ms`,
+    );
   });
 
-  test('Benchmark: Clear scene using pop() (Optimized Implementation)', () => {
+  test("Benchmark: Clear scene using pop() (Optimized Implementation)", () => {
     const scene = createScene();
     const start = performance.now();
 
@@ -42,8 +43,8 @@ describe('Scene Clearing Performance Benchmark', () => {
 
       // Mimic Object3D.remove logic manually to avoid indexOf/splice overhead
       object.parent = null;
-      object.dispatchEvent({ type: 'removed' });
-      scene.dispatchEvent({ type: 'childremoved', child: object });
+      object.dispatchEvent({ type: "removed" });
+      scene.dispatchEvent({ type: "childremoved", child: object });
 
       // Simulate disposal logic
       if (object.geometry) object.geometry.dispose();
@@ -51,6 +52,8 @@ describe('Scene Clearing Performance Benchmark', () => {
     }
 
     const end = performance.now();
-    console.log(`[Benchmark] Clear ${OBJECT_COUNT} objects using pop(): ${(end - start).toFixed(2)}ms`);
+    console.log(
+      `[Benchmark] Clear ${OBJECT_COUNT} objects using pop(): ${(end - start).toFixed(2)}ms`,
+    );
   });
 });

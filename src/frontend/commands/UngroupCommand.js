@@ -1,4 +1,4 @@
-import { Command } from './Command.js';
+import { Command } from "./Command.js";
 
 export class UngroupCommand extends Command {
   constructor(scene, groupManager, group) {

@@ -1,6 +1,6 @@
-import * as THREE from 'three';
-import log from './logger.js';
-import { Events } from './constants.js';
+import * as THREE from "three";
+import log from "./logger.js";
+import { Events } from "./constants.js";
 
 export class GroupManager {
   constructor(scene, eventBus) {
@@ -10,12 +10,12 @@ export class GroupManager {
 
   groupObjects(objects) {
     if (objects.length < 2) {
-      log.warn('Select at least two objects to group.');
+      log.warn("Select at least two objects to group.");
       return null;
     }
 
     const group = new THREE.Group();
-    group.name = 'Group';
+    group.name = "Group";
 
     const center = new THREE.Vector3();
     for (const object of objects) {
@@ -38,7 +38,7 @@ export class GroupManager {
 
   ungroupObjects(group) {
     if (!group || !(group instanceof THREE.Group)) {
-      log.warn('Invalid group provided for ungrouping.');
+      log.warn("Invalid group provided for ungrouping.");
       return [];
     }
 

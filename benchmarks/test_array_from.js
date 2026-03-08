@@ -1,5 +1,4 @@
-
-import { performance } from 'perf_hooks';
+import { performance } from "perf_hooks";
 
 const size = 1000 * 1000 * 3; // 3M floats
 const array = new Float32Array(size);

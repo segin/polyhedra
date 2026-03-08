@@ -28,37 +28,47 @@ async function runBenchmark() {
 
     const eventBus = { publish: () => {} };
     const scene = { remove: () => {} };
-    const objectManager = new ObjectManager(scene, eventBus, null, null, null, null, null);
+    const objectManager = new ObjectManager(
+      scene,
+      eventBus,
+      null,
+      null,
+      null,
+      null,
+      null,
+    );
 
     console.log("Running benchmark: deleteObject() with many materials");
 
     const count = 100000;
     const parentGroup = {
-        children: [],
-        geometry: null,
-        material: null,
-        parent: null
+      children: [],
+      geometry: null,
+      material: null,
+      parent: null,
     };
 
     for (let i = 0; i < count; i++) {
-        const material = {
-            map: { dispose: () => {} },
-            dispose: () => {}
-        };
-        const child = {
-            children: [],
-            geometry: { dispose: () => {} },
-            material: material,
-            parent: parentGroup
-        };
-        parentGroup.children.push(child);
+      const material = {
+        map: { dispose: () => {} },
+        dispose: () => {},
+      };
+      const child = {
+        children: [],
+        geometry: { dispose: () => {} },
+        material: material,
+        parent: parentGroup,
+      };
+      parentGroup.children.push(child);
     }
 
     const start = performance.now();
     objectManager.deleteObject(parentGroup);
     const end = performance.now();
 
-    console.log(`Deleting object with ${count} children took ${(end - start).toFixed(4)} ms`);
+    console.log(
+      `Deleting object with ${count} children took ${(end - start).toFixed(4)} ms`,
+    );
   } catch (err) {
     console.error(err);
   } finally {

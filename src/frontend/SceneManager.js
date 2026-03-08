@@ -1,7 +1,7 @@
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import * as THREE from 'three';
-import * as TWEEN from '@tweenjs/tween.js';
-import { Logger } from './utils/Logger.js';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import * as THREE from "three";
+import * as TWEEN from "@tweenjs/tween.js";
+import { Logger } from "./utils/Logger.js";
 
 export class SceneManager {
   constructor(renderer, camera, inputManager, scene) {
@@ -15,7 +15,7 @@ export class SceneManager {
 
     if (!this.scene) {
       // Fallback if not provided, though usually should be injected
-      Logger.warn('Scene not injected into SceneManager, creating new one.');
+      Logger.warn("Scene not injected into SceneManager, creating new one.");
       this.scene = new THREE.Scene();
     }
 
@@ -40,7 +40,7 @@ export class SceneManager {
     // Removing global listener if InputManager handles it,
     // or keeping it if it's specific to scene resizing.
     // Spec doesn't mention removing it.
-    window.addEventListener('resize', this.onWindowResize.bind(this), false);
+    window.addEventListener("resize", this.onWindowResize.bind(this), false);
     this.onWindowResize();
   }
 
@@ -66,32 +66,38 @@ export class SceneManager {
 
   focusOnObject(object) {
     if (!object) return;
-    
+
     // Calculate bounding box
     const box = new THREE.Box3().setFromObject(object);
     if (box.isEmpty()) return;
-    
+
     const size = new THREE.Vector3();
     box.getSize(size);
     const center = new THREE.Vector3();
     box.getCenter(center);
-    
+
     const maxDim = Math.max(size.x, size.y, size.z);
-    
+
     // Calculate distance
     const fov = this.camera.fov * (Math.PI / 180);
     // Fit to 80% of screen using trigonometry, fallback to a small distance if point-size
-    let cameraZ = maxDim === 0 ? 5 : Math.abs(maxDim / 2 / Math.tan(fov / 2)) * 1.5;
-    
+    let cameraZ =
+      maxDim === 0 ? 5 : Math.abs(maxDim / 2 / Math.tan(fov / 2)) * 1.5;
+
     // Clamp
     cameraZ = Math.max(cameraZ, this.controls.minDistance);
     cameraZ = Math.min(cameraZ, this.controls.maxDistance);
-    
-    const direction = this.camera.position.clone().sub(this.controls.target).normalize();
+
+    const direction = this.camera.position
+      .clone()
+      .sub(this.controls.target)
+      .normalize();
     if (direction.lengthSq() < 0.001) {
       direction.set(0, 0, 1);
     }
-    const targetPosition = center.clone().add(direction.multiplyScalar(cameraZ));
+    const targetPosition = center
+      .clone()
+      .add(direction.multiplyScalar(cameraZ));
 
     // Tween target
     new TWEEN.Tween(this.controls.target)
@@ -101,7 +107,10 @@ export class SceneManager {
 
     // Tween camera
     new TWEEN.Tween(this.camera.position)
-      .to({ x: targetPosition.x, y: targetPosition.y, z: targetPosition.z }, 500)
+      .to(
+        { x: targetPosition.x, y: targetPosition.y, z: targetPosition.z },
+        500,
+      )
       .easing(TWEEN.Easing.Cubic.Out)
       .onUpdate(() => this.controls.update())
       .start();

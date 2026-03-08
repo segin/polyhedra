@@ -15,7 +15,7 @@
       body {
         margin: 0;
         overflow: hidden;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         background-color: var(--bg-dark);
         color: var(--text-main);
         display: flex;
@@ -128,7 +128,9 @@
     <div id="sidebar">
       <div class="panel-header">
         <span>Scene Hierarchy</span>
-        <button class="btn btn-secondary" onclick="TitanUI.refreshTree()">↻</button>
+        <button class="btn btn-secondary" onclick="TitanUI.refreshTree()">
+          ↻
+        </button>
       </div>
       <div class="panel-content" id="scene-tree"></div>
 
@@ -150,8 +152,12 @@
         </button>
         <hr style="border: 0; border-top: 1px solid #444" />
         <button class="btn" onclick="TitanApp.save()">Save to Storage</button>
-        <button class="btn btn-secondary" onclick="TitanApp.load()">Load from Storage</button>
-        <button class="btn btn-secondary" onclick="TitanApp.clearStorage()">Clear Storage</button>
+        <button class="btn btn-secondary" onclick="TitanApp.load()">
+          Load from Storage
+        </button>
+        <button class="btn btn-secondary" onclick="TitanApp.clearStorage()">
+          Clear Storage
+        </button>
       </div>
 
       <div class="log-panel" id="console-log"></div>
@@ -182,14 +188,18 @@
 
       Titan.Math.degToRad = (degrees) => degrees * (Math.PI / 180);
       Titan.Math.radToDeg = (radians) => radians * (180 / Math.PI);
-      Titan.Math.clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+      Titan.Math.clamp = (value, min, max) =>
+        Math.max(min, Math.min(max, value));
       Titan.Math.lerp = (x, y, t) => (1 - t) * x + t * y;
       Titan.Math.uuid = () => {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-          var r = (Math.random() * 16) | 0,
-            v = c == 'x' ? r : (r & 0x3) | 0x8;
-          return v.toString(16);
-        });
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+          /[xy]/g,
+          function (c) {
+            var r = (Math.random() * 16) | 0,
+              v = c == "x" ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+          },
+        );
       };
 
       // --- Vector3 ---
@@ -333,7 +343,12 @@
           return this;
         }
         normalize() {
-          let l = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
+          let l = Math.sqrt(
+            this.x * this.x +
+              this.y * this.y +
+              this.z * this.z +
+              this.w * this.w,
+          );
           if (l === 0) {
             this.x = 0;
             this.y = 0;
@@ -372,7 +387,7 @@
 
       // --- Euler ---
       Titan.Math.Euler = class {
-        constructor(x = 0, y = 0, z = 0, order = 'XYZ') {
+        constructor(x = 0, y = 0, z = 0, order = "XYZ") {
           this.x = x;
           this.y = y;
           this.z = z;
@@ -398,9 +413,15 @@
             this.x = 0;
             return this;
           }
-          this.y = Math.atan2(2 * q.y * q.w - 2 * q.x * q.z, sqx - sqy - sqz + sqw);
+          this.y = Math.atan2(
+            2 * q.y * q.w - 2 * q.x * q.z,
+            sqx - sqy - sqz + sqw,
+          );
           this.z = Math.asin((2 * test) / unit);
-          this.x = Math.atan2(2 * q.x * q.w - 2 * q.y * q.z, -sqx + sqy - sqz + sqw);
+          this.x = Math.atan2(
+            2 * q.x * q.w - 2 * q.y * q.z,
+            -sqx + sqy - sqz + sqw,
+          );
           return this;
         }
         copy(e) {
@@ -417,9 +438,28 @@
       // --- Matrix4 ---
       Titan.Math.Matrix4 = class {
         constructor() {
-          this.elements = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+          this.elements = new Float32Array([
+            1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+          ]);
         }
-        set(n11, n12, n13, n14, n21, n22, n23, n24, n31, n32, n33, n34, n41, n42, n43, n44) {
+        set(
+          n11,
+          n12,
+          n13,
+          n14,
+          n21,
+          n22,
+          n23,
+          n24,
+          n31,
+          n32,
+          n33,
+          n34,
+          n41,
+          n42,
+          n43,
+          n44,
+        ) {
           const te = this.elements;
           te[0] = n11;
           te[4] = n12;
@@ -721,8 +761,8 @@
         constructor() {
           super();
           this.uuid = Titan.Math.uuid();
-          this.name = 'Object3D';
-          this.type = 'Object3D';
+          this.name = "Object3D";
+          this.type = "Object3D";
           this.parent = null;
           this.children = [];
 
@@ -742,7 +782,7 @@
           if (object.parent) object.parent.remove(object);
           object.parent = this;
           this.children.push(object);
-          this.emit('child-added', { child: object });
+          this.emit("child-added", { child: object });
         }
 
         remove(object) {
@@ -750,7 +790,7 @@
           if (index !== -1) {
             object.parent = null;
             this.children.splice(index, 1);
-            this.emit('child-removed', { child: object });
+            this.emit("child-removed", { child: object });
           }
         }
 
@@ -762,7 +802,10 @@
         updateMatrixWorld(force = false) {
           if (this.autoUpdateMatrix) this.updateMatrix();
           if (this.parent) {
-            this.matrixWorld.multiplyMatrices(this.parent.matrixWorld, this.matrix);
+            this.matrixWorld.multiplyMatrices(
+              this.parent.matrixWorld,
+              this.matrix,
+            );
           } else {
             this.matrixWorld.copy(this.matrix);
           }
@@ -793,7 +836,7 @@
         // Serialization helper
         toJSON() {
           const data = {
-            metadata: { version: 1.0, type: 'Object' },
+            metadata: { version: 1.0, type: "Object" },
             object: {
               uuid: this.uuid,
               type: this.type,
@@ -854,13 +897,13 @@
 
       Titan.Components.Mesh = class extends Titan.Component {
         constructor(geometry, material) {
-          super('Mesh');
+          super("Mesh");
           this.geometry = geometry;
           this.material = material;
         }
         toJSON() {
           return {
-            type: 'Mesh',
+            type: "Mesh",
             geometry: this.geometry.uuid, // In real engine, reference resource
             material: this.material.uuid,
           };
@@ -869,7 +912,7 @@
 
       Titan.Components.Camera = class extends Titan.Component {
         constructor(fov = 50, aspect = 1, near = 0.1, far = 2000) {
-          super('Camera');
+          super("Camera");
           this.fov = fov;
           this.aspect = aspect;
           this.near = near;
@@ -878,10 +921,20 @@
           this.updateProjectionMatrix();
         }
         updateProjectionMatrix() {
-          this.projectionMatrix.perspective(this.fov, this.aspect, this.near, this.far);
+          this.projectionMatrix.perspective(
+            this.fov,
+            this.aspect,
+            this.near,
+            this.far,
+          );
         }
         toJSON() {
-          return { type: 'Camera', fov: this.fov, near: this.near, far: this.far };
+          return {
+            type: "Camera",
+            fov: this.fov,
+            near: this.near,
+            far: this.far,
+          };
         }
       };
 
@@ -1061,8 +1114,8 @@
             colors.push(Math.random(), Math.random(), Math.random());
           }
 
-          this.setAttribute('position', new Float32Array(vFull), 3);
-          this.setAttribute('color', new Float32Array(colors), 3);
+          this.setAttribute("position", new Float32Array(vFull), 3);
+          this.setAttribute("color", new Float32Array(colors), 3);
           this.count = 36;
         }
       };
@@ -1070,7 +1123,7 @@
       Titan.Resources.Material = class {
         constructor(parameters = {}) {
           this.uuid = Titan.Math.uuid();
-          this.color = parameters.color || '#ffffff';
+          this.color = parameters.color || "#ffffff";
           this.wireframe = !!parameters.wireframe;
         }
       };
@@ -1124,12 +1177,12 @@
         }
         execute() {
           this.scene.add(this.object);
-          Titan.Core.Events.emit('scene-changed');
+          Titan.Core.Events.emit("scene-changed");
           return true;
         }
         undo() {
           this.scene.remove(this.object);
-          Titan.Core.Events.emit('scene-changed');
+          Titan.Core.Events.emit("scene-changed");
           return true;
         }
       };
@@ -1144,16 +1197,18 @@
         }
         execute() {
           // Deep property setting logic would go here, simplified for top-level props
-          if (this.property === 'position.x') this.object.position.x = this.newValue;
+          if (this.property === "position.x")
+            this.object.position.x = this.newValue;
           // ... handlers for other props
           this.object.updateMatrix();
-          Titan.Core.Events.emit('object-changed', this.object);
+          Titan.Core.Events.emit("object-changed", this.object);
           return true;
         }
         undo() {
-          if (this.property === 'position.x') this.object.position.x = this.oldValue;
+          if (this.property === "position.x")
+            this.object.position.x = this.oldValue;
           this.object.updateMatrix();
-          Titan.Core.Events.emit('object-changed', this.object);
+          Titan.Core.Events.emit("object-changed", this.object);
           return true;
         }
       };
@@ -1163,7 +1218,7 @@
       // ==========================================
 
       Titan.Storage = class {
-        constructor(key = 'TitanProject') {
+        constructor(key = "TitanProject") {
           this.key = key;
         }
         save(scene) {
@@ -1171,29 +1226,29 @@
             const json = scene.toJSON();
             const stringified = JSON.stringify(json);
             localStorage.setItem(this.key, stringified);
-            Titan.Log.success('Project saved successfully.');
+            Titan.Log.success("Project saved successfully.");
             return true;
           } catch (e) {
-            Titan.Log.error('Save failed: ' + e.message);
+            Titan.Log.error("Save failed: " + e.message);
             return false;
           }
         }
         load() {
           const item = localStorage.getItem(this.key);
           if (!item) {
-            Titan.Log.warn('No saved project found.');
+            Titan.Log.warn("No saved project found.");
             return null;
           }
           try {
             return JSON.parse(item);
           } catch (e) {
-            Titan.Log.error('Load failed: Corrupt data.');
+            Titan.Log.error("Load failed: Corrupt data.");
             return null;
           }
         }
         clear() {
           localStorage.removeItem(this.key);
-          Titan.Log.info('Storage cleared.');
+          Titan.Log.info("Storage cleared.");
         }
       };
 
@@ -1204,9 +1259,9 @@
       Titan.Renderer.WebGLRenderer = class {
         constructor(canvas) {
           this.canvas = canvas;
-          this.gl = canvas.getContext('webgl2');
+          this.gl = canvas.getContext("webgl2");
           if (!this.gl) {
-            console.error('WebGL 2 not supported');
+            console.error("WebGL 2 not supported");
             return;
           }
 
@@ -1270,11 +1325,16 @@
           gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
           gl.useProgram(this.program);
 
-          const uProjection = gl.getUniformLocation(this.program, 'u_projection');
-          const uMatrix = gl.getUniformLocation(this.program, 'u_matrix');
+          const uProjection = gl.getUniformLocation(
+            this.program,
+            "u_projection",
+          );
+          const uMatrix = gl.getUniformLocation(this.program, "u_matrix");
 
           // Calculate ViewProjection Matrix (Simplified: Projection * ViewInverse)
-          const viewMatrix = new Titan.Math.Matrix4().getInverse(camera.gameObject.matrixWorld);
+          const viewMatrix = new Titan.Math.Matrix4().getInverse(
+            camera.gameObject.matrixWorld,
+          );
           const viewProj = new Titan.Math.Matrix4().multiplyMatrices(
             camera.projectionMatrix,
             viewMatrix,
@@ -1283,7 +1343,7 @@
           gl.uniformMatrix4fv(uProjection, false, viewProj.elements);
 
           scene.traverse((obj) => {
-            const mesh = obj.getComponent('Mesh');
+            const mesh = obj.getComponent("Mesh");
             if (mesh && mesh.geometry) {
               this.drawMesh(gl, mesh, obj.matrixWorld, uMatrix);
             }
@@ -1300,7 +1360,7 @@
             const posBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, posData.array, gl.STATIC_DRAW);
-            const posLoc = gl.getAttribLocation(this.program, 'a_position');
+            const posLoc = gl.getAttribLocation(this.program, "a_position");
             gl.enableVertexAttribArray(posLoc);
             gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
 
@@ -1309,12 +1369,15 @@
               const colBuffer = gl.createBuffer();
               gl.bindBuffer(gl.ARRAY_BUFFER, colBuffer);
               gl.bufferData(gl.ARRAY_BUFFER, colData.array, gl.STATIC_DRAW);
-              const colLoc = gl.getAttribLocation(this.program, 'a_color');
+              const colLoc = gl.getAttribLocation(this.program, "a_color");
               gl.enableVertexAttribArray(colLoc);
               gl.vertexAttribPointer(colLoc, 3, gl.FLOAT, false, 0, 0);
             }
 
-            this.buffers.set(mesh.geometry.uuid, { vao: vao, count: mesh.geometry.count });
+            this.buffers.set(mesh.geometry.uuid, {
+              vao: vao,
+              count: mesh.geometry.count,
+            });
           }
 
           gl.bindVertexArray(vao.vao);
@@ -1333,18 +1396,18 @@
 
       // Logging
       Titan.Log = {
-        el: document.getElementById('console-log'),
+        el: document.getElementById("console-log"),
         add: function (msg, type) {
-          const div = document.createElement('div');
+          const div = document.createElement("div");
           div.className = `log-entry log-${type}`;
           div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
           this.el.appendChild(div);
           this.el.scrollTop = this.el.scrollHeight;
         },
-        info: (m) => Titan.Log.add(m, 'info'),
-        warn: (m) => Titan.Log.add(m, 'warn'),
-        error: (m) => Titan.Log.add(m, 'error'),
-        success: (m) => Titan.Log.add(m, 'info'),
+        info: (m) => Titan.Log.add(m, "info"),
+        warn: (m) => Titan.Log.add(m, "warn"),
+        error: (m) => Titan.Log.add(m, "error"),
+        success: (m) => Titan.Log.add(m, "info"),
       };
 
       // Engine Instance
@@ -1357,7 +1420,7 @@
         Selection: null,
 
         init: function (canvasId) {
-          this.Scene.name = 'RootScene';
+          this.Scene.name = "RootScene";
 
           // Setup Renderer
           const canvas = document.getElementById(canvasId);
@@ -1365,10 +1428,13 @@
 
           // Setup Camera
           const camObj = new Titan.Core.Object3D();
-          camObj.name = 'MainCamera';
+          camObj.name = "MainCamera";
           camObj.position.set(0, 5, 10);
           camObj.rotation.x = Titan.Math.degToRad(-25);
-          this.Camera = new Titan.Components.Camera(60, canvas.width / canvas.height);
+          this.Camera = new Titan.Components.Camera(
+            60,
+            canvas.width / canvas.height,
+          );
           camObj.addComponent(this.Camera);
           camObj.updateMatrixWorld();
 
@@ -1376,7 +1442,7 @@
           const animate = () => {
             requestAnimationFrame(animate);
             // Rotate cube example if selected
-            if (this.Selection && this.Selection.name.includes('Cube')) {
+            if (this.Selection && this.Selection.name.includes("Cube")) {
               this.Selection.rotation.y += 0.01;
               this.Selection.updateMatrixWorld();
             }
@@ -1385,32 +1451,32 @@
           animate();
 
           // Resize listener
-          window.addEventListener('resize', () => {
-            const w = document.getElementById('viewport').clientWidth;
-            const h = document.getElementById('viewport').clientHeight;
+          window.addEventListener("resize", () => {
+            const w = document.getElementById("viewport").clientWidth;
+            const h = document.getElementById("viewport").clientHeight;
             this.Renderer.setSize(w, h);
             this.Camera.aspect = w / h;
             this.Camera.updateProjectionMatrix();
           });
 
           // Trigger initial resize
-          window.dispatchEvent(new Event('resize'));
+          window.dispatchEvent(new Event("resize"));
 
-          Titan.Log.info('Titan3D Engine Initialized.');
+          Titan.Log.info("Titan3D Engine Initialized.");
         },
       };
 
       // UI Logic
       const TitanUI = {
-        tree: document.getElementById('scene-tree'),
-        props: document.getElementById('properties-panel'),
+        tree: document.getElementById("scene-tree"),
+        props: document.getElementById("properties-panel"),
 
         refreshTree: function () {
-          this.tree.innerHTML = '';
+          this.tree.innerHTML = "";
           const build = (node, el) => {
-            const div = document.createElement('div');
-            div.className = 'tree-node';
-            if (TitanEngine.Selection === node) div.classList.add('selected');
+            const div = document.createElement("div");
+            div.className = "tree-node";
+            if (TitanEngine.Selection === node) div.classList.add("selected");
             div.textContent = `${node.name} [${node.type}]`;
             div.onclick = (e) => {
               e.stopPropagation();
@@ -1419,8 +1485,8 @@
             el.appendChild(div);
 
             node.children.forEach((c) => {
-              const container = document.createElement('div');
-              container.style.paddingLeft = '10px';
+              const container = document.createElement("div");
+              container.style.paddingLeft = "10px";
               build(c, container);
               el.appendChild(container);
             });
@@ -1435,17 +1501,17 @@
         },
 
         renderProps: function (node) {
-          this.props.innerHTML = '';
+          this.props.innerHTML = "";
           if (!node) return;
 
           const createInput = (label, val, onChange) => {
-            const row = document.createElement('div');
-            row.className = 'prop-row';
-            const lbl = document.createElement('div');
-            lbl.className = 'prop-label';
+            const row = document.createElement("div");
+            row.className = "prop-row";
+            const lbl = document.createElement("div");
+            lbl.className = "prop-label";
             lbl.textContent = label;
-            const inp = document.createElement('input');
-            inp.className = 'prop-input';
+            const inp = document.createElement("input");
+            inp.className = "prop-input";
             inp.value = val;
             inp.onchange = (e) => onChange(parseFloat(e.target.value));
             row.appendChild(lbl);
@@ -1453,29 +1519,29 @@
             this.props.appendChild(row);
           };
 
-          const title = document.createElement('div');
+          const title = document.createElement("div");
           title.innerHTML = `<strong>${node.name}</strong><br><small>${node.uuid}</small><hr style="border-color:#444">`;
           this.props.appendChild(title);
 
-          createInput('Pos X', node.position.x, (v) => {
+          createInput("Pos X", node.position.x, (v) => {
             // Using Command for Undo
             // Simplification: Direct prop set for demo, usually creates Command
             node.position.x = v;
             node.updateMatrixWorld();
           });
-          createInput('Pos Y', node.position.y, (v) => {
+          createInput("Pos Y", node.position.y, (v) => {
             node.position.y = v;
             node.updateMatrixWorld();
           });
-          createInput('Pos Z', node.position.z, (v) => {
+          createInput("Pos Z", node.position.z, (v) => {
             node.position.z = v;
             node.updateMatrixWorld();
           });
 
-          const removeBtn = document.createElement('button');
-          removeBtn.className = 'btn btn-secondary';
-          removeBtn.textContent = 'Delete Object';
-          removeBtn.style.marginTop = '10px';
+          const removeBtn = document.createElement("button");
+          removeBtn.className = "btn btn-secondary";
+          removeBtn.textContent = "Delete Object";
+          removeBtn.style.marginTop = "10px";
           removeBtn.onclick = () => {
             // In real app, use Command
             if (node.parent) {
@@ -1493,9 +1559,9 @@
       const TitanApp = {
         addCube: function () {
           const geo = new Titan.Resources.BoxGeometry(1, 1, 1);
-          const mat = new Titan.Resources.Material({ color: '#00ff00' });
+          const mat = new Titan.Resources.Material({ color: "#00ff00" });
           const cube = new Titan.Core.Object3D();
-          cube.name = 'Cube_' + Math.floor(Math.random() * 100);
+          cube.name = "Cube_" + Math.floor(Math.random() * 100);
           cube.addComponent(new Titan.Components.Mesh(geo, mat));
 
           // Position randomly
@@ -1506,12 +1572,17 @@
           );
           cube.updateMatrixWorld();
 
-          const cmd = new Titan.Commands.AddObjectCommand(TitanEngine.Scene, cube);
+          const cmd = new Titan.Commands.AddObjectCommand(
+            TitanEngine.Scene,
+            cube,
+          );
           TitanEngine.History.execute(cmd);
         },
 
         addSphere: function () {
-          Titan.Log.warn('Sphere geometry not implemented in this demo version.');
+          Titan.Log.warn(
+            "Sphere geometry not implemented in this demo version.",
+          );
         },
 
         save: function () {
@@ -1521,10 +1592,10 @@
         load: function () {
           const data = TitanEngine.Storage.load();
           if (data) {
-            Titan.Log.info('Loading scene... (Logic mocked for demo)');
+            Titan.Log.info("Loading scene... (Logic mocked for demo)");
             // Full reconstruction logic would parse the JSON tree and re-instantiate classes
             // For now, we just log the data structure
-            console.log('Loaded Data Structure:', data);
+            console.log("Loaded Data Structure:", data);
           }
         },
         clearStorage: function () {
@@ -1533,12 +1604,14 @@
       };
 
       // Wiring Events
-      Titan.Core.Events.on('scene-changed', () => TitanUI.refreshTree());
-      Titan.Core.Events.on('object-changed', () => TitanUI.renderProps(TitanEngine.Selection));
+      Titan.Core.Events.on("scene-changed", () => TitanUI.refreshTree());
+      Titan.Core.Events.on("object-changed", () =>
+        TitanUI.renderProps(TitanEngine.Selection),
+      );
 
       // Start
       window.onload = function () {
-        TitanEngine.init('gl-canvas');
+        TitanEngine.init("gl-canvas");
         TitanUI.refreshTree();
       };
     </script>

@@ -1,6 +1,6 @@
 // @ts-check
-import * as THREE from 'three';
-import { Logger } from './utils/Logger.js';
+import * as THREE from "three";
+import { Logger } from "./utils/Logger.js";
 
 /**
  * Handles updating of object properties like materials, textures, and geometry.
@@ -22,12 +22,14 @@ export class ObjectPropertyUpdater {
     // @ts-ignore
     if (object && object.material) {
       // @ts-ignore
-      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      const materials = Array.isArray(object.material)
+        ? object.material
+        : [object.material];
       materials.forEach((material) => {
         for (const key in properties) {
           if (Object.prototype.hasOwnProperty.call(properties, key)) {
-            if (key === 'color' || key === 'emissive') {
-              if (typeof properties[key] === 'string') {
+            if (key === "color" || key === "emissive") {
+              if (typeof properties[key] === "string") {
                 material[key].set(properties[key]);
               } else {
                 material[key].setHex(properties[key]);
@@ -48,7 +50,7 @@ export class ObjectPropertyUpdater {
    * @param {File} file
    * @param {string} [type='map']
    */
-  addTexture(object, file, type = 'map') {
+  addTexture(object, file, type = "map") {
     // @ts-ignore
     if (!object.material) return;
 
@@ -58,8 +60,10 @@ export class ObjectPropertyUpdater {
       url,
       (texture) => {
         // @ts-ignore
-        const materials = Array.isArray(object.material) ? object.material : [object.material];
-        materials.forEach(material => {
+        const materials = Array.isArray(object.material)
+          ? object.material
+          : [object.material];
+        materials.forEach((material) => {
           material[type] = texture;
           material.needsUpdate = true;
         });
@@ -67,7 +71,7 @@ export class ObjectPropertyUpdater {
       },
       undefined,
       (error) => {
-        Logger.warn('Error loading texture:', error);
+        Logger.warn("Error loading texture:", error);
         URL.revokeObjectURL(url);
       },
     );
@@ -81,8 +85,11 @@ export class ObjectPropertyUpdater {
   updatePrimitive(object, parameters) {
     // @ts-ignore
     if (object && object.geometry) {
-      const type = object.geometry.type.replace('Geometry', '');
-      const tempMeshOrPromise = this.primitiveFactory.createPrimitive(type, parameters);
+      const type = object.geometry.type.replace("Geometry", "");
+      const tempMeshOrPromise = this.primitiveFactory.createPrimitive(
+        type,
+        parameters,
+      );
 
       const updateGeo = (tempMesh) => {
         if (tempMesh && tempMesh.geometry) {

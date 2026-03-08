@@ -1,7 +1,7 @@
-import * as THREE from 'three';
-import { PhysicsManager } from '../src/frontend/PhysicsManager.js';
+import * as THREE from "three";
+import { PhysicsManager } from "../src/frontend/PhysicsManager.js";
 
-jest.mock('cannon-es', () => {
+jest.mock("cannon-es", () => {
   const bodies = [];
   const gravity = { set: jest.fn(), x: 0, y: -9.82, z: 0 };
   return {
@@ -14,29 +14,39 @@ jest.mock('cannon-es', () => {
       }),
       step: jest.fn((dt, timeSinceLastCalled) => {
         const stepDt = timeSinceLastCalled || dt;
-        bodies.forEach(body => {
+        bodies.forEach((body) => {
           if (body.mass > 0) {
             body.position.y += gravity.y * stepDt;
           }
         });
       }),
-      bodies: bodies
+      bodies: bodies,
     })),
-    Vec3: jest.fn().mockImplementation((x, y, z) => ({ x, y, z, set: jest.fn() })),
+    Vec3: jest
+      .fn()
+      .mockImplementation((x, y, z) => ({ x, y, z, set: jest.fn() })),
     Box: jest.fn(),
     Sphere: jest.fn(),
     Cylinder: jest.fn(),
     Body: jest.fn().mockImplementation((options) => ({
       position: options.position || { x: 0, y: 0, z: 0, set: jest.fn() },
-      quaternion: options.quaternion || { x: 0, y: 0, z: 0, w: 1, set: jest.fn() },
+      quaternion: options.quaternion || {
+        x: 0,
+        y: 0,
+        z: 0,
+        w: 1,
+        set: jest.fn(),
+      },
       mass: options.mass || 0,
       addShape: jest.fn(),
     })),
-    Quaternion: jest.fn().mockImplementation((x, y, z, w) => ({ x, y, z, w, set: jest.fn() })),
+    Quaternion: jest
+      .fn()
+      .mockImplementation((x, y, z, w) => ({ x, y, z, w, set: jest.fn() })),
   };
 });
 
-describe('PhysicsManager', () => {
+describe("PhysicsManager", () => {
   let scene;
   let physicsManager;
 
@@ -45,23 +55,29 @@ describe('PhysicsManager', () => {
     physicsManager = new PhysicsManager(scene);
   });
 
-  it('should initialize with a world and gravity', () => {
+  it("should initialize with a world and gravity", () => {
     expect(physicsManager.world).toBeDefined();
     expect(physicsManager.world.gravity.y).toBe(-9.82);
   });
 
-  it('should add a box body to the world', () => {
-    const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial());
+  it("should add a box body to the world", () => {
+    const cube = new THREE.Mesh(
+      new THREE.BoxGeometry(1, 1, 1),
+      new THREE.MeshPhongMaterial(),
+    );
     cube.geometry.parameters = { width: 1, height: 1, depth: 1 };
-    physicsManager.addBody(cube, 1, 'box');
+    physicsManager.addBody(cube, 1, "box");
     expect(physicsManager.world.addBody).toHaveBeenCalled();
     expect(physicsManager.bodies.length).toBe(1);
   });
 
-  it('should update the corresponding mesh position and quaternion after a physics world step', () => {
-    const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial());
+  it("should update the corresponding mesh position and quaternion after a physics world step", () => {
+    const cube = new THREE.Mesh(
+      new THREE.BoxGeometry(1, 1, 1),
+      new THREE.MeshPhongMaterial(),
+    );
     cube.geometry.parameters = { width: 1, height: 1, depth: 1 };
-    physicsManager.addBody(cube, 1, 'box');
+    physicsManager.addBody(cube, 1, "box");
     const body = physicsManager.bodies[0].body;
 
     body.position.x = 10;
@@ -84,33 +100,45 @@ describe('PhysicsManager', () => {
     expect(cube.quaternion.w).toBeCloseTo(body.quaternion.w);
   });
 
-  it('should remove a body from the world and manager', () => {
-    const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial());
+  it("should remove a body from the world and manager", () => {
+    const cube = new THREE.Mesh(
+      new THREE.BoxGeometry(1, 1, 1),
+      new THREE.MeshPhongMaterial(),
+    );
     cube.geometry.parameters = { width: 1, height: 1, depth: 1 };
-    const body = physicsManager.addBody(cube, 1, 'box');
+    const body = physicsManager.addBody(cube, 1, "box");
     physicsManager.removeBody(body);
     expect(physicsManager.world.removeBody).toHaveBeenCalled();
     expect(physicsManager.bodies.length).toBe(0);
   });
 
-  it('should handle adding a sphere body', () => {
-    const sphere = new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshPhongMaterial());
+  it("should handle adding a sphere body", () => {
+    const sphere = new THREE.Mesh(
+      new THREE.SphereGeometry(1),
+      new THREE.MeshPhongMaterial(),
+    );
     sphere.geometry.parameters = { radius: 1 };
-    physicsManager.addBody(sphere, 1, 'sphere');
+    physicsManager.addBody(sphere, 1, "sphere");
     expect(physicsManager.bodies.length).toBe(1);
   });
 
-  it('should handle adding a plane body (not supported directly in addBody switch yet, returns null and warns)', () => {
-    const plane = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshPhongMaterial());
-    const body = physicsManager.addBody(plane, 0, 'plane');
+  it("should handle adding a plane body (not supported directly in addBody switch yet, returns null and warns)", () => {
+    const plane = new THREE.Mesh(
+      new THREE.PlaneGeometry(10, 10),
+      new THREE.MeshPhongMaterial(),
+    );
+    const body = physicsManager.addBody(plane, 0, "plane");
     expect(body).toBeNull();
   });
 
-  it('should apply world gravity to dynamic bodies correctly over time', () => {
-    const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhongMaterial());
+  it("should apply world gravity to dynamic bodies correctly over time", () => {
+    const cube = new THREE.Mesh(
+      new THREE.BoxGeometry(1, 1, 1),
+      new THREE.MeshPhongMaterial(),
+    );
     cube.geometry.parameters = { width: 1, height: 1, depth: 1 };
     const mass = 1.0;
-    physicsManager.addBody(cube, mass, 'box');
+    physicsManager.addBody(cube, mass, "box");
 
     const initialY = 10;
     cube.position.y = initialY;

@@ -9,10 +9,16 @@
   --accent: #007acc;
 }
 
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
 body {
   margin: 0;
   overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--text-main);
   background: var(--bg-dark);
   display: flex;
@@ -63,12 +69,13 @@ body {
   background: var(--bg-panel);
   min-width: 200px;
   border: 1px solid var(--border-color);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   z-index: 2000;
   padding: 5px 0;
 }
 
-.menu-item:hover .menu-dropdown {
+.menu-item:hover .menu-dropdown,
+.menu-item:focus-within .menu-dropdown {
   display: block;
 }
 
@@ -254,7 +261,7 @@ body {
   transform: translateY(20px);
   transition: all 0.3s ease;
   pointer-events: auto;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   border-left: 4px solid #fff;
 }
 
@@ -263,9 +270,15 @@ body {
   transform: translateY(0);
 }
 
-.toast-success { border-left-color: #28a745; }
-.toast-error { border-left-color: #dc3545; }
-.toast-info { border-left-color: #17a2b8; }
+.toast-success {
+  border-left-color: #28a745;
+}
+.toast-error {
+  border-left-color: #dc3545;
+}
+.toast-info {
+  border-left-color: #17a2b8;
+}
 
 /* Custom texture inputs in dat.gui */
 .texture-upload-btn {

@@ -1,12 +1,12 @@
-import * as THREE from 'three';
-import { Events } from './constants.js';
-import log from './logger.js';
+import * as THREE from "three";
+import { Events } from "./constants.js";
+import log from "./logger.js";
 
 export class CSGManager {
   constructor(scene, eventBus) {
     this.scene = scene;
     this.eventBus = eventBus;
-    this.worker = new Worker('/csg-worker.bundle.js');
+    this.worker = new Worker("/csg-worker.bundle.js");
     this.worker.onmessage = this.handleWorkerMessage.bind(this);
     this.callbacks = new Map();
     this.nextId = 0;
@@ -14,19 +14,19 @@ export class CSGManager {
 
   handleWorkerMessage(event) {
     const { type, id, data, message } = event.data;
-    if (type === 'result') {
+    if (type === "result") {
       const callback = this.callbacks.get(id);
       if (callback) {
         callback.resolve(data);
         this.callbacks.delete(id);
       }
-    } else if (type === 'error') {
+    } else if (type === "error") {
       const callback = this.callbacks.get(id);
       if (callback) {
         callback.reject(new Error(message));
         this.callbacks.delete(id);
       }
-      log.error('CSG Worker error:', message);
+      log.error("CSG Worker error:", message);
     }
   }
 
@@ -40,10 +40,9 @@ export class CSGManager {
     const meshBData = this.serializeMesh(objectB);
 
     // Prepare transfer list (deduplicate buffers)
-    const transferList = Array.from(new Set([
-      ...this.getBuffers(meshAData),
-      ...this.getBuffers(meshBData)
-    ]));
+    const transferList = Array.from(
+      new Set([...this.getBuffers(meshAData), ...this.getBuffers(meshBData)]),
+    );
 
     const id = this.nextId++;
 
@@ -55,17 +54,26 @@ export class CSGManager {
             const geometry = new THREE.BufferGeometry();
 
             if (data.attributes.position) {
-                geometry.setAttribute('position', new THREE.Float32BufferAttribute(data.attributes.position, 3));
+              geometry.setAttribute(
+                "position",
+                new THREE.Float32BufferAttribute(data.attributes.position, 3),
+              );
             }
             if (data.attributes.normal) {
-                geometry.setAttribute('normal', new THREE.Float32BufferAttribute(data.attributes.normal, 3));
+              geometry.setAttribute(
+                "normal",
+                new THREE.Float32BufferAttribute(data.attributes.normal, 3),
+              );
             }
             if (data.attributes.uv) {
-                geometry.setAttribute('uv', new THREE.Float32BufferAttribute(data.attributes.uv, 2));
+              geometry.setAttribute(
+                "uv",
+                new THREE.Float32BufferAttribute(data.attributes.uv, 2),
+              );
             }
 
             if (data.index) {
-                geometry.setIndex(new THREE.BufferAttribute(data.index, 1));
+              geometry.setIndex(new THREE.BufferAttribute(data.index, 1));
             }
 
             // Use original material
@@ -86,15 +94,18 @@ export class CSGManager {
             reject(e);
           }
         },
-        reject
+        reject,
       });
 
-      this.worker.postMessage({
-        id,
-        meshA: meshAData,
-        meshB: meshBData,
-        operation
-      }, transferList);
+      this.worker.postMessage(
+        {
+          id,
+          meshA: meshAData,
+          meshB: meshBData,
+          operation,
+        },
+        transferList,
+      );
     });
   }
 
@@ -108,26 +119,26 @@ export class CSGManager {
     // The mesh should be hidden or removed immediately.
 
     if (geometry.attributes.position) {
-        const array = geometry.attributes.position.array;
-        attributes.position = array;
-        transferBuffers.push(attributes.position.buffer);
+      const array = geometry.attributes.position.array;
+      attributes.position = array;
+      transferBuffers.push(attributes.position.buffer);
     }
     if (geometry.attributes.normal) {
-        const array = geometry.attributes.normal.array;
-        attributes.normal = array;
-        transferBuffers.push(attributes.normal.buffer);
+      const array = geometry.attributes.normal.array;
+      attributes.normal = array;
+      transferBuffers.push(attributes.normal.buffer);
     }
     if (geometry.attributes.uv) {
-        const array = geometry.attributes.uv.array;
-        attributes.uv = array;
-        transferBuffers.push(attributes.uv.buffer);
+      const array = geometry.attributes.uv.array;
+      attributes.uv = array;
+      transferBuffers.push(attributes.uv.buffer);
     }
 
     let index = null;
     if (geometry.index) {
-        const array = geometry.index.array;
-        index = array;
-        transferBuffers.push(index.buffer);
+      const array = geometry.index.array;
+      index = array;
+      transferBuffers.push(index.buffer);
     }
 
     // Matrix
@@ -143,11 +154,11 @@ export class CSGManager {
       attributes,
       index,
       matrix,
-      _transferBuffers: transferBuffers // internal use
+      _transferBuffers: transferBuffers, // internal use
     };
   }
 
   getBuffers(data) {
-      return data._transferBuffers || [];
+    return data._transferBuffers || [];
   }
 }

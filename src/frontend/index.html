@@ -35,43 +35,65 @@
   </head>
   <body>
     <!-- Top Menu Bar -->
-    <div id="menubar">
+    <div id="menubar" role="menubar">
       <div class="menu-brand">Polyhedra</div>
-      <div class="menu-item">
+      <div class="menu-item" tabindex="0" role="menuitem" aria-haspopup="true">
         File
-        <div class="menu-dropdown">
-          <a href="#" id="menu-file-load" title="Load scene from file">Open Scene</a>
-          <a href="#" id="menu-file-save" title="Save current scene to file">Save Scene</a>
-          <a href="#" id="menu-file-import">Import Model (OBJ/GLTF)</a>
+        <div class="menu-dropdown" role="menu">
+          <a
+            href="#"
+            id="menu-file-load"
+            title="Load scene from file"
+            role="menuitem"
+            >Open Scene</a
+          >
+          <a
+            href="#"
+            id="menu-file-save"
+            title="Save current scene to file"
+            role="menuitem"
+            >Save Scene</a
+          >
+          <a href="#" id="menu-file-import" role="menuitem"
+            >Import Model (OBJ/GLTF)</a
+          >
         </div>
       </div>
-      <div class="menu-item">
+      <div class="menu-item" tabindex="0" role="menuitem" aria-haspopup="true">
         Edit
-        <div class="menu-dropdown">
-          <a href="#" id="menu-edit-undo">Undo</a>
-          <a href="#" id="menu-edit-redo">Redo</a>
+        <div class="menu-dropdown" role="menu">
+          <a href="#" id="menu-edit-undo" role="menuitem">Undo</a>
+          <a href="#" id="menu-edit-redo" role="menuitem">Redo</a>
           <div class="menu-divider"></div>
-          <a href="#" id="menu-edit-delete">Delete Selected</a>
-          <a href="#" id="menu-edit-duplicate">Duplicate Selected</a>
+          <a href="#" id="menu-edit-delete" role="menuitem">Delete Selected</a>
+          <a href="#" id="menu-edit-duplicate" role="menuitem"
+            >Duplicate Selected</a
+          >
         </div>
       </div>
-      <div class="menu-item">
+      <div class="menu-item" tabindex="0" role="menuitem" aria-haspopup="true">
         Add
-        <div class="menu-dropdown">
-          <a href="#" id="menu-add-box">Box</a>
-          <a href="#" id="menu-add-sphere">Sphere</a>
-          <a href="#" id="menu-add-cylinder">Cylinder</a>
-          <a href="#" id="menu-add-cone">Cone</a>
-          <a href="#" id="menu-add-torus">Torus</a>
+        <div class="menu-dropdown" role="menu">
+          <a href="#" id="menu-add-box" role="menuitem">Box</a>
+          <a href="#" id="menu-add-sphere" role="menuitem">Sphere</a>
+          <a href="#" id="menu-add-cylinder" role="menuitem">Cylinder</a>
+          <a href="#" id="menu-add-cone" role="menuitem">Cone</a>
+          <a href="#" id="menu-add-torus" role="menuitem">Torus</a>
           <div class="menu-divider"></div>
-          <a href="#" id="menu-add-plane">Plane</a>
-          <a href="#" id="menu-add-teapot">Teapot</a>
+          <a href="#" id="menu-add-plane" role="menuitem">Plane</a>
+          <a href="#" id="menu-add-teapot" role="menuitem">Teapot</a>
         </div>
       </div>
-      <div class="menu-item">
+      <div class="menu-item" tabindex="0" role="menuitem" aria-haspopup="true">
         View
-        <div class="menu-dropdown">
-          <a href="#" id="menu-view-fullscreen" title="Toggle Fullscreen">Fullscreen</a>
+        <div class="menu-dropdown" role="menu">
+          <a
+            href="#"
+            id="menu-view-fullscreen"
+            title="Toggle Fullscreen"
+            role="menuitem"
+            >Fullscreen</a
+          >
         </div>
       </div>
     </div>
@@ -82,12 +104,17 @@
       <div id="toolbar">
         <!-- Tools will be injected here by main.js -->
       </div>
-      
+
       <!-- Center Canvas Area -->
       <div id="viewport">
-        <canvas id="c" aria-label="3D Scene Viewer" title="3D Scene Viewer" role="region"></canvas>
+        <canvas
+          id="c"
+          aria-label="3D Scene Viewer"
+          title="3D Scene Viewer"
+          role="region"
+        ></canvas>
       </div>
-      
+
       <!-- Right Sidebar (Outliner & Properties) -->
       <div id="sidebar">
         <div id="scene-graph-panel">
@@ -100,10 +127,20 @@
       </div>
     </div>
 
-    <input type="file" id="file-input" accept=".polyhedra" style="display: none" />
-    <input type="file" id="model-import-input" accept=".obj,.glb,.gltf" style="display: none" />
+    <input
+      type="file"
+      id="file-input"
+      accept=".polyhedra"
+      style="display: none"
+    />
+    <input
+      type="file"
+      id="model-import-input"
+      accept=".obj,.glb,.gltf"
+      style="display: none"
+    />
     <script type="module">
-      import { App } from './main.js';
+      import { App } from "./main.js";
       new App();
     </script>
   </body>

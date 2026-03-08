@@ -1,4 +1,4 @@
-import { Events } from './constants.js';
+import { Events } from "./constants.js";
 
 export class History {
   constructor(eventBus) {
@@ -9,7 +9,9 @@ export class History {
     this.currentIndex = -1;
     this.transformControls = null;
 
-    this.eventBus.subscribe(Events.HISTORY_CHANGE, (command) => this.add(command));
+    this.eventBus.subscribe(Events.HISTORY_CHANGE, (command) =>
+      this.add(command),
+    );
   }
 
   setTransformControls(controls) {
@@ -24,7 +26,7 @@ export class History {
   saveState() {
     // This is a placeholder. Real implementation would serialize scene and camera.
     // For now, we just push a dummy state.
-    this.add({ type: 'dummy_state', undo: () => {}, execute: () => {} });
+    this.add({ type: "dummy_state", undo: () => {}, execute: () => {} });
   }
 
   undo() {

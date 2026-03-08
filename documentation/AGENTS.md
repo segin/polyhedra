@@ -28,6 +28,7 @@ _Directive: The AI agent must move completed tasks from "Current Focus" to "Comp
 _Directive: The AI agent must update "Next Steps" with the immediate next actions based on the roadmap._
 
 ### Current Focus:
+
 - Creating auxiliary scripts as requested by the user
 - Monitoring for additional enhancement requests
 - Finished deep dive audit tasks, specifically TEST-001 and TEST-002:

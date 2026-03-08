@@ -1,5 +1,5 @@
-import * as THREE from 'three';
-import { Events } from './constants.js';
+import * as THREE from "three";
+import { Events } from "./constants.js";
 
 export class Pointer {
   constructor(camera, scene, renderer, eventBus) {
@@ -13,9 +13,18 @@ export class Pointer {
     this.selectedObject = null;
     this.isDragging = false;
 
-    this.renderer.domElement.addEventListener('pointerdown', this.onPointerDown.bind(this));
-    this.renderer.domElement.addEventListener('pointermove', this.onPointerMove.bind(this));
-    this.renderer.domElement.addEventListener('pointerup', this.onPointerUp.bind(this));
+    this.renderer.domElement.addEventListener(
+      "pointerdown",
+      this.onPointerDown.bind(this),
+    );
+    this.renderer.domElement.addEventListener(
+      "pointermove",
+      this.onPointerMove.bind(this),
+    );
+    this.renderer.domElement.addEventListener(
+      "pointerup",
+      this.onPointerUp.bind(this),
+    );
 
     this.eventBus.subscribe(Events.SELECTION_CHANGE, (object) => {
       this.selectedObject = object;
@@ -67,7 +76,10 @@ export class Pointer {
     this.removeOutline(); // Remove any existing outline
 
     const geometry = new THREE.EdgesGeometry(object.geometry);
-    const material = new THREE.LineBasicMaterial({ color: 0xffff00, linewidth: 2 });
+    const material = new THREE.LineBasicMaterial({
+      color: 0xffff00,
+      linewidth: 2,
+    });
     this.outline = new THREE.LineSegments(geometry, material);
     this.outline.renderOrder = 1; // Render outline on top
     object.add(this.outline);
