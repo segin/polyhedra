@@ -91,7 +91,7 @@ export class App {
 
     // App State
     this.selectedObject = null;
-    this.objects = [];
+    this.objects = new Set();
     this.sceneGraphItemMap = new Map();
 
     // History system for undo/redo
@@ -241,7 +241,7 @@ export class App {
   async importModel(file) {
       try {
           const object = await this.modelLoader.loadModel(file);
-          this.objects.push(object);
+          this.objects.add(object);
           this.selectObject(object);
           this.updateSceneGraph();
           this.saveState('Import Model');
@@ -388,7 +388,7 @@ export class App {
       this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
       this.raycaster.setFromCamera(this.mouse, this.camera);
-      const intersects = this.raycaster.intersectObjects(this.objects);
+      const intersects = this.raycaster.intersectObjects([...this.objects]);
 
       if (intersects.length > 0) {
         this.selectObject(intersects[0].object);
@@ -539,8 +539,7 @@ export class App {
   deleteObject(object) {
     if (object) {
       this.objectManager.deleteObject(object);
-      const index = this.objects.indexOf(object);
-      if (index > -1) this.objects.splice(index, 1);
+      this.objects.delete(object);
       this.saveState('Delete object');
     }
   }
@@ -555,7 +554,7 @@ export class App {
       if (mesh) {
         mesh.position.x += 1;
         this.scene.add(mesh);
-        this.objects.push(mesh);
+        this.objects.add(mesh);
         this.selectObject(mesh);
         this.saveState('Duplicate object');
       }
@@ -564,7 +563,7 @@ export class App {
 
   performCSG(baseObject, targetUuid, operation) {
     if (!baseObject || !targetUuid) return;
-    const targetObject = this.objects.find(o => o.uuid === targetUuid);
+    const targetObject = [...this.objects].find(o => o.uuid === targetUuid);
     if (!targetObject) {
       Logger.warn('CSG Target not found');
       return;
@@ -594,7 +593,7 @@ export class App {
         this.deleteObject(targetObject);
         
         this.scene.add(resultMesh);
-        this.objects.push(resultMesh);
+        this.objects.add(resultMesh);
         this.selectObject(resultMesh);
         
         this.updateSceneGraph();
@@ -632,7 +631,7 @@ export class App {
         this.primitiveCounter++;
         mesh.name = `${type}_${this.primitiveCounter}`;
         // scene.add is already called by ObjectFactory
-        this.objects.push(mesh);
+        this.objects.add(mesh);
         this.selectObject(mesh);
         this.updateSceneGraph();
         this.saveState(`Add ${type}`);
@@ -745,7 +744,7 @@ export class App {
 
     // CSG Operations
     // filter to find other meshes that have geometry
-    const otherObjects = this.objects.filter(o => o !== object && o.parent === this.scene && o.isMesh !== false && Boolean(o.geometry));
+    const otherObjects = [...this.objects].filter(o => o !== object && o.parent === this.scene && o.isMesh !== false && Boolean(o.geometry));
     if (otherObjects.length > 0) {
       const csgFolder = this.propertiesFolder.addFolder('CSG Operations');
       const objectOptions = {};
@@ -842,7 +841,7 @@ export class App {
     if (!this.objectsList) return;
 
     // Handle Empty List Case
-    if (this.objects.length === 0) {
+    if (this.objects.size === 0) {
       this.objectsList.innerHTML = '';
       const li = document.createElement('li');
       li.setAttribute('role', 'listitem');
@@ -866,7 +865,7 @@ export class App {
 
     let currentDom = this.objectsList.firstElementChild;
 
-    this.objects.forEach((obj, idx) => {
+    [...this.objects].forEach((obj, idx) => {
       let li = this.sceneGraphItemMap.get(obj.uuid);
 
       // Check if stale (bound to old object instance)
@@ -903,8 +902,8 @@ export class App {
     }
 
     // Cleanup Map
-    if (this.sceneGraphItemMap.size > this.objects.length) {
-      const activeUuids = new Set(this.objects.map((o) => o.uuid));
+    if (this.sceneGraphItemMap.size > this.objects.size) {
+      const activeUuids = new Set([...this.objects].map((o) => o.uuid));
       for (const uuid of this.sceneGraphItemMap.keys()) {
         if (!activeUuids.has(uuid)) {
           this.sceneGraphItemMap.delete(uuid);
@@ -1030,12 +1029,12 @@ export class App {
     try {
       const loadedScene = await this.sceneStorage.loadScene(file);
       this.objects.forEach(obj => this.scene.remove(obj));
-      this.objects = [];
+      this.objects = new Set();
       
       loadedScene.traverse(child => {
         // @ts-ignore
         if (child.isMesh) {
-          this.objects.push(child);
+          this.objects.add(child);
           this.scene.add(child);
         }
       });
@@ -1061,7 +1060,7 @@ export class App {
         lastState.objects.forEach(obj => lastStateMap.set(obj.uuid, obj));
     }
 
-    const stateObjects = this.objects.map(obj => {
+    const stateObjects = [...this.objects].map(obj => {
         const lastObjState = lastStateMap.get(obj.uuid);
 
         // If object hasn't changed, reuse the state object (Structural Sharing)
@@ -1196,17 +1195,17 @@ export class App {
 
     await Promise.all(promises);
 
-    // Update objects array
-    this.objects = newObjects;
+    // Update objects set
+    this.objects = new Set(newObjects);
     // Sort objects to match state order? state.objects order is preserved in loop
     // But async creation might mess order if we just push.
     // We should re-sort based on state order.
     const objMap = new Map();
     this.objects.forEach(o => objMap.set(o.uuid, o));
-    this.objects = state.objects.map(d => objMap.get(d.uuid)).filter(o => o);
+    this.objects = new Set(state.objects.map(d => objMap.get(d.uuid)).filter(o => o));
 
     if (state.selectedUuid) {
-      const selected = this.objects.find(o => o.uuid === state.selectedUuid);
+      const selected = [...this.objects].find(o => o.uuid === state.selectedUuid);
       if (selected) this.selectObject(selected);
     } else {
       this.deselectObject();
