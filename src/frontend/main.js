@@ -1384,6 +1384,7 @@ export class App {
     // Set of UUIDs that are in the new state
     const newStateUuids = new Set();
     const newObjects = [];
+    const newObjectsSet = new Set();
     const promises = [];
 
     // Update existing objects or create new ones
@@ -1416,14 +1417,20 @@ export class App {
                      if (mesh) {
                         this._applyStateToMesh(mesh, data);
                         // scene.add is handled by objectManager usually, but let's ensure it's in our list
-                        if (!newObjects.includes(mesh)) newObjects.push(mesh);
+                        if (!newObjectsSet.has(mesh)) {
+                            newObjectsSet.add(mesh);
+                            newObjects.push(mesh);
+                        }
                      }
                      return mesh;
                  })());
             } else {
                 // Update existing object properties
                 this._applyStateToMesh(existingObj, data);
-                newObjects.push(existingObj);
+                if (!newObjectsSet.has(existingObj)) {
+                    newObjectsSet.add(existingObj);
+                    newObjects.push(existingObj);
+                }
             }
         } else {
             // Create new object
@@ -1432,7 +1439,10 @@ export class App {
                 if (mesh) {
                     this._applyStateToMesh(mesh, data);
                     // scene.add is handled by objectManager usually, but let's ensure it's in our list
-                    if (!newObjects.includes(mesh)) newObjects.push(mesh);
+                    if (!newObjectsSet.has(mesh)) {
+                        newObjectsSet.add(mesh);
+                        newObjects.push(mesh);
+                    }
                 }
                 return mesh;
             })());
