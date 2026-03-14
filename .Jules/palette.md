@@ -1,8 +1,3 @@
-## 2026-02-05 - Accessibility in Scene Graph
-**Learning:** Scene graph list items need `role="button"` and `tabindex="0"` for keyboard accessibility, plus `keydown` handlers. Icon-only buttons (visibility/delete) need dynamic `aria-label` updates.
-**Action:** Always verify keyboard navigation for interactive list items.
-
-## 2026-02-06 - User Feedback & Notifications
-**Learning:** System alerts (`alert()`) are blocking and disruptive. `console.log` is invisible to end-users.
-**Action:** Replaced critical user feedback (save/load status) with a non-blocking `ToastManager` system.
-**Accessibility:** Implemented `role="status"` for info/success and `role="alert"` with `aria-live="assertive"` for errors to ensure screen readers announce critical issues immediately.
+## 2026-03-12 - Keyboard Accessibility Learnings
+**Learning:** For custom UI menus built with non-standard elements (like `<div>`), providing a `tabindex="0"` and `role="button"` makes them focusable, but CSS rules like `:focus-visible` or `:focus-within` are essential to display visual feedback (like dropdowns or outlines) without relying purely on hover states.
+**Action:** When creating interactive UI components, ensure that both focusability (`tabindex`) and visual focus states are implemented for keyboard users.

@@ -1,0 +1,93 @@
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+
+✓ Starting...
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+
+  We detected TypeScript in your project and reconfigured your tsconfig.json file for you. Strict-mode is set to false by default.
+  The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+
+	- lib was set to dom,dom.iterable,esnext
+	- skipLibCheck was set to true
+	- strict was set to false
+	- incremental was set to true
+	- include was updated to add '.next/types/**/*.ts'
+	- include was updated to add '.next/dev/types/**/*.ts'
+	- plugins was updated to add { name: 'next' }
+	- exclude was set to ['node_modules']
+
+  The following mandatory changes were made to your tsconfig.json:
+
+	- resolveJsonModule was set to true (to match webpack resolution)
+	- isolatedModules was set to true (requirement for SWC / Babel)
+	- jsx was set to react-jsx (next.js uses the React automatic runtime)
+
+✓ Ready in 824ms
+  Using external babel configuration from /app/babel.config.cjs
+○ Compiling / ...
+⨯ ./src/app/layout.tsx
+Error evaluating Node.js code
+Error: The Next.js Babel loader does not support .mjs or .cjs config files.
+    [at getCustomBabelConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:199:33)]
+    [at getFreshConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:273:42)]
+    [at getConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:424:31)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:103:5)]
+    [at async transform (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/transform.js:74:25)]
+    [at async (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/index.js:36:108)]
+    at async DummySpan.traceAsyncFn (turbopack:///[turbopack-node]/transforms/webpack-loaders.ts:115:12) [/app/.next/dev/build/chunks/[root-of-the-server]__6e020478._.js:126:16]
+    [at async nextBabelLoader (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/index.js:36:63)]
+    at async DummySpan.traceAsyncFn (turbopack:///[turbopack-node]/transforms/webpack-loaders.ts:115:12) [/app/.next/dev/build/chunks/[root-of-the-server]__6e020478._.js:126:16]
+
+
+
+./src/app/page.tsx
+Error evaluating Node.js code
+Error: The Next.js Babel loader does not support .mjs or .cjs config files.
+    [at getCustomBabelConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:199:33)]
+    [at getFreshConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:273:42)]
+    [at getConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:424:31)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:103:5)]
+    [at async transform (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/transform.js:74:25)]
+    [at async (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/index.js:36:108)]
+    at async DummySpan.traceAsyncFn (turbopack:///[turbopack-node]/transforms/webpack-loaders.ts:115:12) [/app/.next/dev/build/chunks/[root-of-the-server]__6e020478._.js:126:16]
+    [at async nextBabelLoader (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/index.js:36:63)]
+    at async DummySpan.traceAsyncFn (turbopack:///[turbopack-node]/transforms/webpack-loaders.ts:115:12) [/app/.next/dev/build/chunks/[root-of-the-server]__6e020478._.js:126:16]
+
+
+ GET / 500 in 5.6s (compile: 5.4s, render: 179ms)
+⨯ ./src/app/layout.tsx
+Error evaluating Node.js code
+Error: The Next.js Babel loader does not support .mjs or .cjs config files.
+    [at getCustomBabelConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:199:33)]
+    [at getFreshConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:273:42)]
+    [at getConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:424:31)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:103:5)]
+    [at async transform (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/transform.js:74:25)]
+    [at async (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/index.js:36:108)]
+    at async DummySpan.traceAsyncFn (turbopack:///[turbopack-node]/transforms/webpack-loaders.ts:115:12) [/app/.next/dev/build/chunks/[root-of-the-server]__6e020478._.js:126:16]
+    [at async nextBabelLoader (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/index.js:36:63)]
+    at async DummySpan.traceAsyncFn (turbopack:///[turbopack-node]/transforms/webpack-loaders.ts:115:12) [/app/.next/dev/build/chunks/[root-of-the-server]__6e020478._.js:126:16]
+
+
+
+./src/app/page.tsx
+Error evaluating Node.js code
+Error: The Next.js Babel loader does not support .mjs or .cjs config files.
+    [at getCustomBabelConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:199:33)]
+    [at getFreshConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:273:42)]
+    [at getConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:424:31)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:103:5)]
+    [at async transform (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/transform.js:74:25)]
+    [at async (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/index.js:36:108)]
+    at async DummySpan.traceAsyncFn (turbopack:///[turbopack-node]/transforms/webpack-loaders.ts:115:12) [/app/.next/dev/build/chunks/[root-of-the-server]__6e020478._.js:126:16]
+    [at async nextBabelLoader (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/index.js:36:63)]
+    at async DummySpan.traceAsyncFn (turbopack:///[turbopack-node]/transforms/webpack-loaders.ts:115:12) [/app/.next/dev/build/chunks/[root-of-the-server]__6e020478._.js:126:16]
+
+
+ GET / 500 in 30ms (compile: 9ms, render: 21ms)
+[?25h

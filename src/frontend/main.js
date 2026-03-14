@@ -1093,6 +1093,7 @@ export class App {
   createSceneGraphItem(obj) {
     const li = document.createElement('li');
     li.setAttribute('role', 'listitem');
+    li.setAttribute('tabindex', '0');
     li.style.cssText = `
       padding: 5px;
       margin: 2px 0;
@@ -1139,6 +1140,12 @@ export class App {
     li.appendChild(controls);
 
     li.onclick = () => this.selectObject(obj);
+    li.onkeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.selectObject(obj);
+      }
+    };
 
     // Drag and Drop
     li.draggable = true;

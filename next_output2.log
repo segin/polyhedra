@@ -1,0 +1,39 @@
+⚠ Port 3000 is in use by process 10874, using available port 3001 instead.
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.0.2:3001
+
+✓ Starting...
+✓ Ready in 773ms
+  Using external babel configuration from /app/babel.config.cjs
+⨯ ./src/app/layout.tsx
+Error evaluating Node.js code
+Error: The Next.js Babel loader does not support .mjs or .cjs config files.
+    [at getCustomBabelConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:199:33)]
+    [at getFreshConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:273:42)]
+    [at getConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:424:31)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:103:5)]
+    [at async transform (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/transform.js:74:25)]
+    [at async (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/index.js:36:108)]
+    at async DummySpan.traceAsyncFn (turbopack:///[turbopack-node]/transforms/webpack-loaders.ts:115:12) [/app/.next/dev/build/chunks/[root-of-the-server]__6e020478._.js:126:16]
+    [at async nextBabelLoader (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/index.js:36:63)]
+    at async DummySpan.traceAsyncFn (turbopack:///[turbopack-node]/transforms/webpack-loaders.ts:115:12) [/app/.next/dev/build/chunks/[root-of-the-server]__6e020478._.js:126:16]
+
+
+
+./src/app/page.tsx
+Error evaluating Node.js code
+Error: The Next.js Babel loader does not support .mjs or .cjs config files.
+    [at getCustomBabelConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:199:33)]
+    [at getFreshConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:273:42)]
+    [at getConfig (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/get-config.js:424:31)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:103:5)]
+    [at async transform (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/transform.js:74:25)]
+    [at async (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/index.js:36:108)]
+    at async DummySpan.traceAsyncFn (turbopack:///[turbopack-node]/transforms/webpack-loaders.ts:115:12) [/app/.next/dev/build/chunks/[root-of-the-server]__6e020478._.js:126:16]
+    [at async nextBabelLoader (/app/node_modules/.pnpm/next@16.1.6_@babel+core@7.29.0_react-dom@19.2.4_react@19.2.4__react@19.2.4/node_modules/next/dist/build/babel/loader/index.js:36:63)]
+    at async DummySpan.traceAsyncFn (turbopack:///[turbopack-node]/transforms/webpack-loaders.ts:115:12) [/app/.next/dev/build/chunks/[root-of-the-server]__6e020478._.js:126:16]
+
+
+ GET / 500 in 2.0s (compile: 1827ms, render: 188ms)
+[?25h

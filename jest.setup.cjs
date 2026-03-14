@@ -756,6 +756,9 @@ const THREE = {
     return l;
   }),
   Object3D: Object3D,
+  OrthographicCamera: jest.fn().mockImplementation(() => {
+    return new Object3D("OrthographicCamera");
+  }),
   Scene: jest.fn().mockImplementation(() => {
     const s = new Object3D('Scene');
     return s;
@@ -797,11 +800,22 @@ const THREE = {
     return {
       domElement: canvas,
       setSize: jest.fn(),
+      getSize: jest.fn(() => ({ width: 800, height: 600 })),
       setPixelRatio: jest.fn(),
+      getPixelRatio: jest.fn(() => 1),
       shadowMap: { enabled: false, type: 1 },
+    };
+  }),
+  WebGLRenderTarget: jest.fn().mockImplementation(() => {
+    return {
+      texture: new Object3D("Texture"),
       render: jest.fn(),
       dispose: jest.fn(),
+      clone: jest.fn(() => new THREE.WebGLRenderTarget()),
     };
+  }),
+  OrthographicCamera: jest.fn().mockImplementation(() => {
+    return new Object3D("OrthographicCamera");
   }),
   Clock: jest.fn(() => ({
     getDelta: jest.fn(() => 0.016),
