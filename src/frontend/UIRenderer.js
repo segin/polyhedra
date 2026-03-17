@@ -13,16 +13,30 @@ export class UIRenderer {
     scene.children.forEach((object) => {
       if (object.isMesh || object.isLight) {
         const li = document.createElement('li');
+        const objectName = object.name || 'Unnamed Object';
         const nameSpan = document.createElement('span');
-        nameSpan.textContent = object.name;
+        nameSpan.textContent = objectName;
         nameSpan.style.cursor = 'pointer';
-        nameSpan.addEventListener('click', () => {
+        nameSpan.setAttribute('role', 'button');
+        nameSpan.setAttribute('tabindex', '0');
+        nameSpan.setAttribute('aria-label', `Select ${objectName}`);
+
+        const selectObject = () => {
           this.eventBus.publish(Events.SELECTION_CHANGE, object);
+        };
+
+        nameSpan.addEventListener('click', selectObject);
+        nameSpan.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectObject();
+          }
         });
         li.appendChild(nameSpan);
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
+        deleteButton.setAttribute('aria-label', `Delete ${objectName}`);
         deleteButton.onclick = () => {
           this.eventBus.publish(Events.DELETE_OBJECT, object);
         };
