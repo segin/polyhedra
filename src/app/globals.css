@@ -67,7 +67,9 @@ body {
   transition: background 0.2s;
 }
 
-.menu-item:hover {
+.menu-item:hover,
+.menu-item:focus-visible,
+.menu-item:focus-within {
   background: var(--bg-hover);
 }
 
@@ -85,7 +87,8 @@ body {
   border-radius: 0 0 4px 4px;
 }
 
-.menu-item:hover .menu-dropdown {
+.menu-item:hover .menu-dropdown,
+.menu-item:focus-within .menu-dropdown {
   display: block;
 }
 
@@ -97,7 +100,8 @@ body {
   font-size: 13px;
 }
 
-.menu-dropdown a:hover {
+.menu-dropdown a:hover,
+.menu-dropdown a:focus-visible {
   background: var(--accent);
   color: #fff;
 }
@@ -407,7 +411,9 @@ body {
   cursor: pointer;
 }
 
-.menu-item:hover {
+.menu-item:hover,
+.menu-item:focus-visible,
+.menu-item:focus-within {
   background: var(--bg-hover);
 }
 
@@ -424,7 +430,8 @@ body {
   padding: 5px 0;
 }
 
-.menu-item:hover .menu-dropdown {
+.menu-item:hover .menu-dropdown,
+.menu-item:focus-within .menu-dropdown {
   display: block;
 }
 
@@ -440,7 +447,8 @@ body {
   cursor: not-allowed;
 }
 
-.menu-dropdown a:hover:not(.disabled) {
+.menu-dropdown a:hover:not(.disabled),
+.menu-dropdown a:focus-visible:not(.disabled) {
   background: var(--accent);
   color: #fff;
 }
