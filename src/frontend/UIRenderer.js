@@ -13,17 +13,29 @@ export class UIRenderer {
     scene.children.forEach((object) => {
       if (object.isMesh || object.isLight) {
         const li = document.createElement('li');
+        li.setAttribute('tabindex', '0');
+        li.setAttribute('role', 'button');
+        li.classList.add('scene-graph-item');
+
         const nameSpan = document.createElement('span');
         nameSpan.textContent = object.name;
         nameSpan.style.cursor = 'pointer';
-        nameSpan.addEventListener('click', () => {
+
+        li.addEventListener('click', () => {
           this.eventBus.publish(Events.SELECTION_CHANGE, object);
+        });
+        li.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.eventBus.publish(Events.SELECTION_CHANGE, object);
+          }
         });
         li.appendChild(nameSpan);
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
-        deleteButton.onclick = () => {
+        deleteButton.onclick = (e) => {
+          e.stopPropagation();
           this.eventBus.publish(Events.DELETE_OBJECT, object);
         };
         li.appendChild(deleteButton);
