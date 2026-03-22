@@ -639,3 +639,9 @@ body {
   background: var(--accent);
   color: #fff;
 }
+
+/* Accessibility Improvements */
+.menu-item:focus-within .menu-dropdown,
+.menu-item:focus-visible .menu-dropdown {
+  display: block;
+}
