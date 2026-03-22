@@ -85,7 +85,9 @@ body {
   border-radius: 0 0 4px 4px;
 }
 
-.menu-item:hover .menu-dropdown {
+.menu-item:hover .menu-dropdown,
+.menu-item:focus-within .menu-dropdown,
+.menu-item:focus .menu-dropdown {
   display: block;
 }
 
@@ -424,7 +426,9 @@ body {
   padding: 5px 0;
 }
 
-.menu-item:hover .menu-dropdown {
+.menu-item:hover .menu-dropdown,
+.menu-item:focus-within .menu-dropdown,
+.menu-item:focus .menu-dropdown {
   display: block;
 }
 

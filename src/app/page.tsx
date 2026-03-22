@@ -28,7 +28,7 @@ export default function Home() {
       {/* Top Menu Bar */}
       <div id="menubar">
         <div className="menu-brand">Polyhedra</div>
-        <div className="menu-item">
+        <div className="menu-item" tabIndex={0} role="button" aria-haspopup="true" aria-expanded="false">
           File
           <div className="menu-dropdown">
             <a href="#" id="menu-file-load" title="Load scene from file">Open Scene</a>
@@ -36,7 +36,7 @@ export default function Home() {
             <a href="#" id="menu-file-import">Import Model (OBJ/GLTF)</a>
           </div>
         </div>
-        <div className="menu-item">
+        <div className="menu-item" tabIndex={0} role="button" aria-haspopup="true" aria-expanded="false">
           Edit
           <div className="menu-dropdown">
             <a href="#" id="menu-edit-undo">Undo</a>
@@ -46,7 +46,7 @@ export default function Home() {
             <a href="#" id="menu-edit-duplicate">Duplicate Selected</a>
           </div>
         </div>
-        <div className="menu-item">
+        <div className="menu-item" tabIndex={0} role="button" aria-haspopup="true" aria-expanded="false">
           Add
           <div className="menu-dropdown">
             <a href="#" id="menu-add-box">Box</a>
@@ -59,7 +59,7 @@ export default function Home() {
             <a href="#" id="menu-add-teapot">Teapot</a>
           </div>
         </div>
-        <div className="menu-item">
+        <div className="menu-item" tabIndex={0} role="button" aria-haspopup="true" aria-expanded="false">
           View
           <div className="menu-dropdown">
             <a href="#" id="menu-view-fullscreen" title="Toggle Fullscreen">Fullscreen</a>
