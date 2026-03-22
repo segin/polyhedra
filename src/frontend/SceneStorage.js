@@ -145,13 +145,17 @@ export class SceneStorage {
           // Load all unique binary files
           // We can infer count from mapping max index or just check files
           const uniqueBufferCount = Math.max(...bufferMapping, -1) + 1;
-          const uniqueBuffers = await Promise.all(
-              Array.from({ length: uniqueBufferCount }).map(async (_, i) => {
-                  const binFile = loadedZip.file(`buffers/bin_${i}.bin`);
-                  if (!binFile) throw new Error(`Buffer file bin_${i}.bin missing`);
+          const uniqueBuffers = [];
+          const concurrencyLimit = 10;
+          for (let i = 0; i < uniqueBufferCount; i += concurrencyLimit) {
+              const chunk = Array.from({ length: Math.min(concurrencyLimit, uniqueBufferCount - i) }).map(async (_, j) => {
+                  const index = i + j;
+                  const binFile = loadedZip.file(`buffers/bin_${index}.bin`);
+                  if (!binFile) throw new Error(`Buffer file bin_${index}.bin missing`);
                   return binFile.async('arraybuffer');
-              })
-          );
+              });
+              uniqueBuffers.push(...(await Promise.all(chunk)));
+          }
 
           // Reconstruct the buffers array for the worker
           buffers = bufferMapping.map(index => uniqueBuffers[index]);
