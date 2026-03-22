@@ -53,7 +53,8 @@ describe('Scene Graph Accessibility', () => {
         
         listItems.forEach(item => {
             // These attributes should be present for better accessibility
-            expect(item.getAttribute('role')).toBe('listitem');
+            expect(item.getAttribute('role')).toBe('button');
+            expect(item.getAttribute('tabindex')).toBe('0');
         });
     });
 

@@ -1092,7 +1092,8 @@ export class App {
 
   createSceneGraphItem(obj) {
     const li = document.createElement('li');
-    li.setAttribute('role', 'listitem');
+    li.setAttribute('role', 'button');
+    li.setAttribute('tabindex', '0');
     li.style.cssText = `
       padding: 5px;
       margin: 2px 0;
@@ -1100,7 +1101,19 @@ export class App {
       cursor: pointer;
       display: flex;
       justify-content: space-between;
+      outline: none;
     `;
+
+    li.addEventListener('focus', () => li.style.outline = '2px solid white');
+    li.addEventListener('blur', () => li.style.outline = 'none');
+
+    li.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.selectObject(obj);
+      }
+    });
+
     // @ts-ignore
     li._boundObject = obj;
 
