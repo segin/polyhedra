@@ -6,3 +6,7 @@
 **Learning:** System alerts (`alert()`) are blocking and disruptive. `console.log` is invisible to end-users.
 **Action:** Replaced critical user feedback (save/load status) with a non-blocking `ToastManager` system.
 **Accessibility:** Implemented `role="status"` for info/success and `role="alert"` with `aria-live="assertive"` for errors to ensure screen readers announce critical issues immediately.
+
+## 2026-03-16 - Explicit Meaningful Labels for List Items
+**Learning:** Icon-only or generic-text buttons inside dynamic lists (like a scene graph's delete buttons) become unhelpful for screen readers because multiple items just say "Delete".
+**Action:** When mapping over items to render UI elements, attach `aria-label` attributes that include contextual data (like `Delete ${object.name}`) instead of just static text.

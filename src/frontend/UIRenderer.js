@@ -23,6 +23,8 @@ export class UIRenderer {
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
+        deleteButton.setAttribute('aria-label', `Delete ${object.name}`);
+        deleteButton.title = `Delete ${object.name}`;
         deleteButton.onclick = () => {
           this.eventBus.publish(Events.DELETE_OBJECT, object);
         };
