@@ -2,11 +2,11 @@
 
 ## Phase 1: Core Animation Engine
 - [x] Task: Create animation state manager. [d9bf112]
-    - [ ] Write unit tests for `AnimationManager` (state, keyframe interpolation).
-    - [ ] Implement `AnimationManager` to manage keyframes and playback.
-- [ ] Task: Integrate animation with `SceneGraph`.
-    - [ ] Write tests for property updates via animation loop.
-    - [ ] Update `Engine.js` or `SceneManager.js` to support animated property updates.
+    - [x] Write unit tests for `AnimationManager` (state, keyframe interpolation).
+    - [x] Implement `AnimationManager` to manage keyframes and playback.
+- [x] Task: Integrate animation with `SceneGraph`. [1829468]
+    - [x] Write tests for property updates via animation loop.
+    - [x] Update `Engine.js` or `SceneManager.js` to support animated property updates.
 - [ ] Task: Conductor - User Manual Verification 'Core Animation Engine' (Protocol in workflow.md)
 
 ## Phase 2: User Interface & Timeline
