@@ -13,12 +13,47 @@ jest.mock('three', () => {
         GridHelper: jest.fn(),
         AxesHelper: jest.fn(),
         Raycaster: jest.fn(),
-        Vector2: jest.fn(),
+        Vector2: jest.fn((x = 0, y = 0) => {
+            const v = {
+                x, y,
+                set: jest.fn(function(nx, ny) { this.x = nx; this.y = ny; return this; }),
+                copy: jest.fn(function(ov) { this.x = ov.x; this.y = ov.y; return this; }),
+                clone: jest.fn(function() { return { ...this }; })
+            };
+            Object.defineProperty(v, 'width', {
+                get: function() { return this.x; },
+                set: function(val) { this.x = val; },
+                configurable: true,
+                enumerable: true
+            });
+            Object.defineProperty(v, 'height', {
+                get: function() { return this.y; },
+                set: function(val) { this.y = val; },
+                configurable: true,
+                enumerable: true
+            });
+            return v;
+        }),
         Vector3: jest.fn(),
         Color: jest.fn(),
-        PCFSoftShadowMap: 1,
+        PCFSoftShadowMap: 'PCFSoftShadowMap',
+        DoubleSide: 'DoubleSide',
+        FrontSide: 'FrontSide',
         BufferAttribute: jest.fn(),
-        BufferGeometry: jest.fn(),
+        BufferGeometry: jest.fn(() => ({ dispose: jest.fn(), setAttribute: jest.fn(), getAttribute: jest.fn(), computeVertexNormals: jest.fn() })),
+        Float32BufferAttribute: jest.fn(function(array, itemSize) {
+            this.array = array;
+            this.itemSize = itemSize;
+            this.count = array ? array.length / itemSize : 0;
+        }),
+        Uint32BufferAttribute: jest.fn(function(array, itemSize) {
+            this.array = array;
+            this.itemSize = itemSize;
+            this.count = array ? array.length / itemSize : 0;
+        }),
+        OrthographicCamera: jest.fn(() => ({ position: { set: jest.fn() }, updateProjectionMatrix: jest.fn(), quaternion: { set: jest.fn() } })),
+        ShaderMaterial: jest.fn(() => ({ dispose: jest.fn(), uniforms: {} })),
+        WebGLRenderTarget: jest.fn(() => ({ setSize: jest.fn(), dispose: jest.fn(), clone: jest.fn().mockReturnThis(), texture: { dispose: jest.fn() } })),
         Mesh: jest.fn(),
         Group: jest.fn(),
         TOUCH: {
@@ -68,6 +103,31 @@ jest.mock('../src/frontend/ToastManager.js');
 jest.mock('../src/frontend/LightManager.js');
 jest.mock('../src/frontend/ModelLoader.js');
 
+jest.mock('three/examples/jsm/postprocessing/EffectComposer.js', () => ({
+    __esModule: true,
+    EffectComposer: jest.fn().mockImplementation(() => ({
+        addPass: jest.fn(),
+        render: jest.fn(),
+        setSize: jest.fn(),
+        setPixelRatio: jest.fn(),
+    })),
+}), { virtual: true });
+
+jest.mock('three/examples/jsm/postprocessing/RenderPass.js', () => ({
+    __esModule: true,
+    RenderPass: jest.fn(),
+}), { virtual: true });
+
+jest.mock('three/examples/jsm/postprocessing/OutlinePass.js', () => ({
+    __esModule: true,
+    OutlinePass: jest.fn().mockImplementation(() => ({
+        render: jest.fn(),
+        selectedObjects: [],
+        visibleEdgeColor: { set: jest.fn() },
+        hiddenEdgeColor: { set: jest.fn() },
+    })),
+}), { virtual: true });
+
 describe('Redundant Render Check', () => {
     let app;
     let renderSpy;
@@ -87,6 +147,17 @@ describe('Redundant Render Check', () => {
         THREE.WebGLRenderer.mockImplementation(() => ({
             setSize: jest.fn(),
             setPixelRatio: jest.fn(),
+            getPixelRatio: jest.fn(() => 1),
+            getSize: jest.fn((v) => {
+                if (v && typeof v.set === 'function') v.set(800, 600);
+                if (v) {
+                    v.x = 800;
+                    v.y = 600;
+                    v.width = 800;
+                    v.height = 600;
+                }
+                return v;
+            }),
             render: renderSpy,
             domElement: document.createElement('canvas'),
             shadowMap: { enabled: false, type: null }
@@ -177,10 +248,13 @@ describe('Redundant Render Check', () => {
         // console.log('Instance:', transformControlsInstance);
 
         // Check initialization
-        expect(renderSpy).toHaveBeenCalled(); // Once from constructor -> animate()
+        const { EffectComposer } = require('three/examples/jsm/postprocessing/EffectComposer.js');
+        const composerRenderSpy = EffectComposer.mock.results[0].value.render;
+        expect(renderSpy.mock.calls.length + composerRenderSpy.mock.calls.length).toBeGreaterThanOrEqual(1);
 
-        // Clear render mock to reset count
+        // Clear render mocks to reset count
         renderSpy.mockClear();
+        composerRenderSpy.mockClear();
 
         // Trigger 'change' event
         transformControlsInstance.dispatchEvent({ type: 'change' });
@@ -188,5 +262,6 @@ describe('Redundant Render Check', () => {
         // ASSERTION
         // After fix: expected to be called 0 times (redundant call removed)
         expect(renderSpy).not.toHaveBeenCalled();
+        expect(composerRenderSpy).not.toHaveBeenCalled();
     });
 });

@@ -162,6 +162,10 @@ class Vector2 {
     this.x = x;
     this.y = y;
   }
+  get width() { return this.x; }
+  set width(v) { this.x = v; }
+  get height() { return this.y; }
+  set height(v) { this.y = v; }
   set(x, y) {
     this.x = x;
     this.y = y;
@@ -610,7 +614,18 @@ const THREE = {
     .fn()
     .mockImplementation((x, y, z, w) => new Quaternion(x, y, z, w)),
   Euler: jest.fn().mockImplementation((x, y, z) => new Euler(x, y, z)),
-  Color: jest.fn().mockImplementation((c) => new Color(c)),
+  Color: jest.fn().mockImplementation((c) => ({
+    set: jest.fn().mockReturnThis(),
+    setHex: jest.fn().mockReturnThis(),
+    copy: jest.fn().mockReturnThis(),
+    getHex: jest.fn(() => 0),
+    getHexString: jest.fn(() => "000000"),
+    getStyle: jest.fn(() => "#00ff00"),
+  })),
+  UniformsUtils: {
+    clone: jest.fn((u) => ({ ...u })),
+    merge: jest.fn((u) => ({ ...u })),
+  },
   Spherical: class Spherical {
     constructor() {
       this.radius = 1;
@@ -798,11 +813,28 @@ const THREE = {
       domElement: canvas,
       setSize: jest.fn(),
       setPixelRatio: jest.fn(),
+      getPixelRatio: jest.fn(() => 1),
+      getSize: jest.fn((v) => {
+        if (v && typeof v.set === 'function') v.set(800, 600);
+        if (v) {
+          v.x = 800;
+          v.y = 600;
+          v.width = 800;
+          v.height = 600;
+        }
+        return v;
+      }),
       shadowMap: { enabled: false, type: 1 },
       render: jest.fn(),
       dispose: jest.fn(),
     };
   }),
+  WebGLRenderTarget: jest.fn().mockImplementation(() => ({
+    setSize: jest.fn(),
+    dispose: jest.fn(),
+    clone: jest.fn().mockReturnThis(),
+    texture: { dispose: jest.fn() },
+  })),
   Clock: jest.fn(() => ({
     getDelta: jest.fn(() => 0.016),
   })),
@@ -982,6 +1014,32 @@ jest.mock('three/examples/jsm/exporters/STLExporter.js', () => ({
     }))
 }), { virtual: true });
 
+// Mock postprocessing
+jest.mock("three/examples/jsm/postprocessing/EffectComposer.js", () => ({
+  __esModule: true,
+  EffectComposer: jest.fn().mockImplementation(() => ({
+    addPass: jest.fn(),
+    render: jest.fn(),
+    setSize: jest.fn(),
+    setPixelRatio: jest.fn(),
+  })),
+}), { virtual: true });
+
+jest.mock("three/examples/jsm/postprocessing/RenderPass.js", () => ({
+  __esModule: true,
+  RenderPass: jest.fn(),
+}), { virtual: true });
+
+jest.mock("three/examples/jsm/postprocessing/OutlinePass.js", () => ({
+  __esModule: true,
+  OutlinePass: jest.fn().mockImplementation(() => ({
+    render: jest.fn(),
+    selectedObjects: [],
+    visibleEdgeColor: { set: jest.fn() },
+    hiddenEdgeColor: { set: jest.fn() },
+  })),
+}), { virtual: true });
+
 // Mock OrbitControls
 jest.doMock('three/examples/jsm/controls/OrbitControls.js', () => ({
   __esModule: true,
@@ -1012,30 +1070,29 @@ jest.doMock('three/examples/jsm/controls/TransformControls.js', () => ({
 }), { virtual: true });
 // Mock dat.gui
 const createChainableMock = () => {
-  const obj = {};
-  obj.name = jest.fn(() => obj);
-  obj.listen = jest.fn(() => obj);
-  obj.onChange = jest.fn(() => obj);
-  obj.step = jest.fn(() => obj);
-  obj.min = jest.fn(() => obj);
-  obj.max = jest.fn(() => obj);
+  const obj = {
+    name: jest.fn().mockReturnThis(),
+    onChange: jest.fn().mockReturnThis(),
+    onFinishChange: jest.fn().mockReturnThis(),
+    min: jest.fn().mockReturnThis(),
+    max: jest.fn().mockReturnThis(),
+    step: jest.fn().mockReturnThis(),
+    listen: jest.fn().mockReturnThis(),
+    remove: jest.fn().mockReturnThis(),
+    open: jest.fn().mockReturnThis(),
+    close: jest.fn().mockReturnThis(),
+    addColor: jest.fn(() => createChainableMock()),
+    add: jest.fn(() => createChainableMock()),
+    addFolder: jest.fn(() => createChainableMock()),
+    removeFolder: jest.fn().mockReturnThis(),
+    __controllers: [],
+    __folders: {},
+  };
   return obj;
 };
 
 jest.mock("dat.gui", () => ({
-  GUI: jest.fn().mockImplementation(() => ({
-    addFolder: jest.fn(() => ({
-      add: jest.fn(() => createChainableMock()),
-      addColor: jest.fn(() => createChainableMock()),
-      open: jest.fn(),
-      close: jest.fn(),
-      removeFolder: jest.fn(),
-      remove: jest.fn(),
-      __controllers: [],
-      __folders: {},
-    })),
-    add: jest.fn(() => createChainableMock()),
-  })),
+  GUI: jest.fn().mockImplementation(() => createChainableMock()),
 }));
 
 global.JSZip = jest.fn(() => ({

@@ -24,6 +24,7 @@ jest.mock('three', () => {
         })),
         BufferGeometry: jest.fn(() => ({
             setAttribute: jest.fn(),
+            getAttribute: jest.fn(),
             dispose: jest.fn(),
         })),
         BoxGeometry: jest.fn(() => ({
@@ -46,6 +47,21 @@ jest.mock('three', () => {
             updateProjectionMatrix: jest.fn(),
         })),
         Color: jest.fn(),
+        WebGLRenderTarget: jest.fn().mockImplementation(() => ({
+            setSize: jest.fn(),
+            clone: jest.fn(),
+            dispose: jest.fn(),
+            texture: {}
+        })),
+        Float32BufferAttribute: jest.fn(),
+        Uint32BufferAttribute: jest.fn(),
+        OrthographicCamera: jest.fn().mockImplementation(() => ({
+            position: { clone: jest.fn(), copy: jest.fn() },
+            updateProjectionMatrix: jest.fn()
+        })),
+        PCFSoftShadowMap: 2,
+        DoubleSide: 2,
+        FrontSide: 0,
     };
 });
 

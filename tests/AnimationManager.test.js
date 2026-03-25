@@ -80,4 +80,18 @@ describe('AnimationManager', () => {
     const value = animationManager.getValueAtTime(mockObject.uuid, 'position.x', 2);
     expect(value).toBe(10);
   });
+
+  it('should advance currentTime and update objects when playing', () => {
+    const scene = new THREE.Scene();
+    scene.add(mockObject);
+    
+    animationManager.addKeyframe(mockObject.uuid, 'position.x', 0, 0);
+    animationManager.addKeyframe(mockObject.uuid, 'position.x', 1, 10);
+    
+    animationManager.play();
+    animationManager.update(0.5, scene);
+    
+    expect(animationManager.currentTime).toBe(0.5);
+    expect(mockObject.position.x).toBe(5);
+  });
 });

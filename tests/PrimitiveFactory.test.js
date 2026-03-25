@@ -23,8 +23,27 @@ jest.mock('three', () => ({
   Group: class { constructor() { this.add = jest.fn(); this.position = { set: jest.fn() }; } },
   Vector2: jest.fn(),
   Vector3: jest.fn(),
-  FrontSide: 'FrontSide',
-  DoubleSide: 'DoubleSide',
+  WebGLRenderTarget: jest.fn().mockImplementation(() => ({
+    setSize: jest.fn(),
+    clone: jest.fn(),
+    dispose: jest.fn(),
+    texture: {}
+  })),
+  BufferGeometry: jest.fn().mockImplementation(() => ({
+    dispose: jest.fn(),
+    setAttribute: jest.fn(),
+    getAttribute: jest.fn()
+  })),
+  Float32BufferAttribute: jest.fn(),
+  Uint32BufferAttribute: jest.fn(),
+  OrthographicCamera: jest.fn().mockImplementation(() => ({
+    position: { clone: jest.fn(), copy: jest.fn() },
+    updateProjectionMatrix: jest.fn()
+  })),
+  ShaderMaterial: jest.fn(),
+  PCFSoftShadowMap: 2,
+  DoubleSide: 2,
+  FrontSide: 0,
 }));
 
 // jest.mock calls for three/examples/jsm/... removed as they are handled by moduleNameMapper

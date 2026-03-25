@@ -9,6 +9,17 @@ jest.mock('three', () => {
             domElement: { addEventListener: jest.fn() },
             setSize: jest.fn(),
             setPixelRatio: jest.fn(),
+            getPixelRatio: jest.fn(() => 1),
+            getSize: jest.fn((v) => {
+                if (v && typeof v.set === 'function') v.set(800, 600);
+                if (v) {
+                    v.x = 800;
+                    v.y = 600;
+                    v.width = 800;
+                    v.height = 600;
+                }
+                return v;
+            }),
             shadowMap: { enabled: false, type: null }
         })),
         Clock: jest.fn(() => ({
@@ -17,7 +28,27 @@ jest.mock('three', () => {
             start: jest.fn(),
             stop: jest.fn()
         })),
-        Vector2: jest.fn(() => ({ x: 0, y: 0, set: jest.fn() })),
+        Vector2: jest.fn((x = 0, y = 0) => {
+            const v = {
+                x, y,
+                set: jest.fn(function(nx, ny) { this.x = nx; this.y = ny; return this; }),
+                copy: jest.fn(function(ov) { this.x = ov.x; this.y = ov.y; return this; }),
+                clone: jest.fn(function() { return { ...this }; })
+            };
+            Object.defineProperty(v, 'width', {
+                get: function() { return this.x; },
+                set: function(val) { this.x = val; },
+                configurable: true,
+                enumerable: true
+            });
+            Object.defineProperty(v, 'height', {
+                get: function() { return this.y; },
+                set: function(val) { this.y = val; },
+                configurable: true,
+                enumerable: true
+            });
+            return v;
+        }),
         Vector3: jest.fn(() => ({
             x: 0, y: 0, z: 0,
             set: jest.fn(function(x,y,z) { this.x=x; this.y=y; this.z=z; return this; }),
@@ -30,8 +61,23 @@ jest.mock('three', () => {
         DirectionalLight: jest.fn(() => ({ shadow: { mapSize: {} } })),
         GridHelper: jest.fn(),
         AxesHelper: jest.fn(),
+        BufferGeometry: jest.fn(() => ({ dispose: jest.fn(), setAttribute: jest.fn(), getAttribute: jest.fn(), computeVertexNormals: jest.fn() })),
+        Float32BufferAttribute: jest.fn(function(array, itemSize) {
+            this.array = array;
+            this.itemSize = itemSize;
+            this.count = array ? array.length / itemSize : 0;
+        }),
+        Uint32BufferAttribute: jest.fn(function(array, itemSize) {
+            this.array = array;
+            this.itemSize = itemSize;
+            this.count = array ? array.length / itemSize : 0;
+        }),
+        ShaderMaterial: jest.fn(() => ({ dispose: jest.fn(), uniforms: {} })),
+        OrthographicCamera: jest.fn(() => ({ position: { set: jest.fn() }, updateProjectionMatrix: jest.fn(), quaternion: { set: jest.fn() } })),
+        WebGLRenderTarget: jest.fn(() => ({ setSize: jest.fn(), dispose: jest.fn(), clone: jest.fn().mockReturnThis(), texture: { dispose: jest.fn() } })),
         PCFSoftShadowMap: 'PCFSoftShadowMap',
-        DoubleSide: 'DoubleSide'
+        DoubleSide: 'DoubleSide',
+        FrontSide: 'FrontSide'
     };
 });
 

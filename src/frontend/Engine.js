@@ -7,11 +7,13 @@ export class Engine {
      * @param {HTMLCanvasElement} canvas
      * @param {any} physicsManager
      * @param {any} transformControls
+     * @param {any} animationManager
      */
-    constructor(canvas, physicsManager, transformControls) {
+    constructor(canvas, physicsManager, transformControls, animationManager) {
         this.canvas = canvas;
         this.physicsManager = physicsManager;
         this.transformControls = transformControls;
+        this.animationManager = animationManager;
         this.scene = new THREE.Scene();
         this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, powerPreference: "high-performance" });
         this.camera = new THREE.PerspectiveCamera(75, 2, 0.1, 5);
@@ -64,6 +66,7 @@ export class Engine {
     animate() {
         const deltaTime = this.clock.getDelta();
         if (this.physicsManager) this.physicsManager.update(deltaTime);
+        if (this.animationManager) this.animationManager.update(deltaTime, this.scene);
         if (this.transformControls) this.transformControls.update();
         if (this.controls) this.controls.update();
         this.render();

@@ -60,6 +60,16 @@ export class AnimationManager {
     this.currentTime = time;
   }
 
+  update(deltaTime, scene) {
+    if (!this.isPlaying) return;
+
+    this.currentTime += deltaTime;
+
+    scene.traverse((object) => {
+      this.updateObject(object);
+    });
+  }
+
   updateObject(object) {
     const uuid = object.uuid;
     const objectKeyframes = this.keyframes[uuid];

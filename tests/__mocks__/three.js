@@ -225,8 +225,10 @@ const THREE_MOCK = {
     this.equals = jest.fn((v) => this.x === v.x && this.y === v.y && this.z === v.z && this.w === v.w);
   }),
   Color: jest.fn().mockImplementation(function(c) {
-    this.set = jest.fn();
-    this.getHexString = jest.fn(() => 'ffffff');
+    this.set = jest.fn().mockReturnThis();
+    this.copy = jest.fn().mockReturnThis();
+    this.setHex = jest.fn().mockReturnThis();
+    this.getHexString = jest.fn(() => "000000");
     this.clone = jest.fn(() => new THREE_MOCK.Color(c));
     this.equals = jest.fn((v) => true);
   }),
@@ -256,12 +258,39 @@ const THREE_MOCK = {
     this.x = x; this.y = y;
     this.set = jest.fn((nx, ny) => { this.x = nx; this.y = ny; return this; });
   }),
+  WebGLRenderTarget: jest.fn().mockImplementation(() => ({
+    setSize: jest.fn(),
+    clone: jest.fn(),
+    dispose: jest.fn(),
+    texture: {}
+  })),
   BufferGeometry: jest.fn().mockImplementation(() => ({
     type: 'BufferGeometry',
     attributes: {},
     parameters: {},
+    dispose: jest.fn(),
+    setAttribute: jest.fn(),
+    getAttribute: jest.fn()
+  })),
+  Float32BufferAttribute: jest.fn(),
+  Uint32BufferAttribute: jest.fn(),
+  OrthographicCamera: jest.fn().mockImplementation(() => ({
+    position: new THREE_MOCK.Vector3(),
+    rotation: new THREE_MOCK.Euler(),
+    scale: new THREE_MOCK.Vector3(1, 1, 1),
+    quaternion: new THREE_MOCK.Quaternion(),
+    updateProjectionMatrix: jest.fn(),
+    clone: jest.fn()
+  })),
+  ShaderMaterial: jest.fn().mockImplementation(() => ({
+    uniforms: {},
+    vertexShader: '',
+    fragmentShader: '',
     dispose: jest.fn()
   })),
+  PCFSoftShadowMap: 2,
+  DoubleSide: 2,
+  FrontSide: 0,
   BoxGeometry: jest.fn().mockImplementation(() => new THREE_MOCK.BufferGeometry()),
   SphereGeometry: jest.fn().mockImplementation(() => new THREE_MOCK.BufferGeometry()),
 };

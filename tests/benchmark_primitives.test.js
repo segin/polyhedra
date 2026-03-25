@@ -8,25 +8,30 @@ jest.mock("three");
 global.requestAnimationFrame = jest.fn();
 
 // Mock dat.gui
+const createChainableMock = () => {
+  const obj = {
+    name: jest.fn().mockReturnThis(),
+    onChange: jest.fn().mockReturnThis(),
+    onFinishChange: jest.fn().mockReturnThis(),
+    min: jest.fn().mockReturnThis(),
+    max: jest.fn().mockReturnThis(),
+    step: jest.fn().mockReturnThis(),
+    listen: jest.fn().mockReturnThis(),
+    remove: jest.fn().mockReturnThis(),
+    open: jest.fn().mockReturnThis(),
+    close: jest.fn().mockReturnThis(),
+    addColor: jest.fn(() => createChainableMock()),
+    add: jest.fn(() => createChainableMock()),
+    addFolder: jest.fn(() => createChainableMock()),
+    removeFolder: jest.fn().mockReturnThis(),
+    __controllers: [],
+    __folders: {},
+  };
+  return obj;
+};
+
 jest.mock("dat.gui", () => ({
-  GUI: jest.fn(() => ({
-    addFolder: jest.fn(() => ({
-      add: jest.fn(() => ({
-        name: jest.fn(() => ({ onChange: jest.fn() })),
-        onChange: jest.fn(),
-      })),
-      addColor: jest.fn(() => ({
-        name: jest.fn(() => ({ onChange: jest.fn() })),
-        onChange: jest.fn(),
-      })),
-      open: jest.fn(),
-      close: jest.fn(),
-      remove: jest.fn(),
-      removeFolder: jest.fn(),
-      __controllers: [],
-      __folders: [],
-    })),
-  })),
+  GUI: jest.fn().mockImplementation(() => createChainableMock()),
 }));
 
 // Mock controls

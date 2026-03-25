@@ -20,6 +20,7 @@ import { ToastManager } from './ToastManager.js';
 import { LightManager } from './LightManager.js';
 import { Logger } from './utils/Logger.js';
 import { ModelLoader } from './ModelLoader.js';
+import { AnimationManager } from './AnimationManager.js';
 import { ErrorHandler } from './ErrorHandler.js';
 import { ShaderEditor } from './ShaderEditor.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -81,6 +82,9 @@ export class App {
 
     this.physicsManager = new PhysicsManager(this.scene);
     this.container.register('PhysicsManager', this.physicsManager);
+
+    this.animationManager = new AnimationManager();
+    this.container.register('AnimationManager', this.animationManager);
 
     this.sceneManager = new SceneManager(this.renderer, this.camera, this.inputManager, this.scene);
     this.container.register('SceneManager', this.sceneManager);
@@ -1476,6 +1480,7 @@ export class App {
     TWEEN.update();
     if (this.viewCube) this.viewCube.update();
     if (this.physicsManager) this.physicsManager.update(delta);
+    if (this.animationManager) this.animationManager.update(delta, this.scene);
     this.orbitControls.update();
     
     if (this.composer) {

@@ -28,6 +28,27 @@ jest.mock('three', () => ({
   Mesh: jest.fn(),
   Group: jest.fn(),
   CatmullRomCurve3: jest.fn(),
+  WebGLRenderTarget: jest.fn().mockImplementation(() => ({
+    setSize: jest.fn(),
+    clone: jest.fn(),
+    dispose: jest.fn(),
+    texture: {}
+  })),
+  BufferGeometry: jest.fn().mockImplementation(() => ({
+    dispose: jest.fn(),
+    setAttribute: jest.fn(),
+    getAttribute: jest.fn()
+  })),
+  Float32BufferAttribute: jest.fn(),
+  Uint32BufferAttribute: jest.fn(),
+  OrthographicCamera: jest.fn().mockImplementation(() => ({
+    position: { clone: jest.fn(), copy: jest.fn() },
+    updateProjectionMatrix: jest.fn()
+  })),
+  ShaderMaterial: jest.fn(),
+  PCFSoftShadowMap: 2,
+  DoubleSide: 2,
+  FrontSide: 0,
 }));
 
 jest.mock('three/examples/jsm/controls/OrbitControls.js', () => ({
