@@ -1,7 +1,7 @@
 # Implementation Plan: Animation and Rendering Export
 
 ## Phase 1: Core Animation Engine
-- [ ] Task: Create animation state manager.
+- [x] Task: Create animation state manager. [d9bf112]
     - [ ] Write unit tests for `AnimationManager` (state, keyframe interpolation).
     - [ ] Implement `AnimationManager` to manage keyframes and playback.
 - [ ] Task: Integrate animation with `SceneGraph`.
