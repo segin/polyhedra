@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Implement core animation system and rendering export**
+- [~] **Track: Implement core animation system and rendering export**
   *Link: [./tracks/animation_rendering_20260305/](./tracks/animation_rendering_20260305/)*
