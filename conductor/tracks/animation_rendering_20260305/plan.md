@@ -16,12 +16,12 @@
 - [x] Task: Conductor - User Manual Verification 'User Interface & Timeline' (Protocol in workflow.md)
 
 ## Phase 3: Rendering Export
-- [~] Task: Static image export.
-    - [ ] Write tests for capturing current frame as PNG/JPG.
-    - [ ] Implement "Save Image" button and backend/client-side download logic.
-- [ ] Task: Animated rendering export.
-    - [ ] Write tests for frame-by-frame rendering and encoding.
-    - [ ] Integrate a library for video/GIF generation.
+- [x] Task: Static image export. [f0244ff]
+    - [x] Write tests for capturing current frame as PNG/JPG.
+    - [x] Implement "Save Image" button and backend/client-side download logic.
+- [x] Task: Animated rendering export. [f0244ff]
+    - [x] Write tests for frame-by-frame rendering and encoding.
+    - [x] Integrate a library for video/GIF generation.
 - [ ] Task: Conductor - User Manual Verification 'Rendering Export' (Protocol in workflow.md)
 
 ---
