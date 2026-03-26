@@ -89,7 +89,14 @@ body {
   display: block;
 }
 
-.menu-dropdown a {
+.menu-dropdown a,
+.menu-dropdown button {
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
   display: block;
   padding: 10px 15px;
   color: var(--text-main);
@@ -97,7 +104,8 @@ body {
   font-size: 13px;
 }
 
-.menu-dropdown a:hover {
+.menu-dropdown a:hover,
+.menu-dropdown button:hover {
   background: var(--accent);
   color: #fff;
 }
@@ -428,19 +436,28 @@ body {
   display: block;
 }
 
-.menu-dropdown a {
+.menu-dropdown a,
+.menu-dropdown button {
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
   display: block;
   padding: 8px 15px;
   color: var(--text-main);
   text-decoration: none;
 }
 
-.menu-dropdown a.disabled {
+.menu-dropdown a.disabled,
+.menu-dropdown button.disabled {
   color: var(--text-muted);
   cursor: not-allowed;
 }
 
-.menu-dropdown a:hover:not(.disabled) {
+.menu-dropdown a:hover:not(.disabled),
+.menu-dropdown button:hover:not(.disabled) {
   background: var(--accent);
   color: #fff;
 }

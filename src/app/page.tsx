@@ -31,38 +31,38 @@ export default function Home() {
         <div className="menu-item">
           File
           <div className="menu-dropdown">
-            <a href="#" id="menu-file-load" title="Load scene from file">Open Scene</a>
-            <a href="#" id="menu-file-save" title="Save current scene to file">Save Scene</a>
-            <a href="#" id="menu-file-import">Import Model (OBJ/GLTF)</a>
+            <button className="menu-button" id="menu-file-load" title="Load scene from file">Open Scene</button>
+            <button className="menu-button" id="menu-file-save" title="Save current scene to file">Save Scene</button>
+            <button className="menu-button" id="menu-file-import">Import Model (OBJ/GLTF)</button>
           </div>
         </div>
         <div className="menu-item">
           Edit
           <div className="menu-dropdown">
-            <a href="#" id="menu-edit-undo">Undo</a>
-            <a href="#" id="menu-edit-redo">Redo</a>
+            <button className="menu-button" id="menu-edit-undo">Undo</button>
+            <button className="menu-button" id="menu-edit-redo">Redo</button>
             <div className="menu-divider"></div>
-            <a href="#" id="menu-edit-delete">Delete Selected</a>
-            <a href="#" id="menu-edit-duplicate">Duplicate Selected</a>
+            <button className="menu-button" id="menu-edit-delete">Delete Selected</button>
+            <button className="menu-button" id="menu-edit-duplicate">Duplicate Selected</button>
           </div>
         </div>
         <div className="menu-item">
           Add
           <div className="menu-dropdown">
-            <a href="#" id="menu-add-box">Box</a>
-            <a href="#" id="menu-add-sphere">Sphere</a>
-            <a href="#" id="menu-add-cylinder">Cylinder</a>
-            <a href="#" id="menu-add-cone">Cone</a>
-            <a href="#" id="menu-add-torus">Torus</a>
+            <button className="menu-button" id="menu-add-box">Box</button>
+            <button className="menu-button" id="menu-add-sphere">Sphere</button>
+            <button className="menu-button" id="menu-add-cylinder">Cylinder</button>
+            <button className="menu-button" id="menu-add-cone">Cone</button>
+            <button className="menu-button" id="menu-add-torus">Torus</button>
             <div className="menu-divider"></div>
-            <a href="#" id="menu-add-plane">Plane</a>
-            <a href="#" id="menu-add-teapot">Teapot</a>
+            <button className="menu-button" id="menu-add-plane">Plane</button>
+            <button className="menu-button" id="menu-add-teapot">Teapot</button>
           </div>
         </div>
         <div className="menu-item">
           View
           <div className="menu-dropdown">
-            <a href="#" id="menu-view-fullscreen" title="Toggle Fullscreen">Fullscreen</a>
+            <button className="menu-button" id="menu-view-fullscreen" title="Toggle Fullscreen">Fullscreen</button>
           </div>
         </div>
       </div>
