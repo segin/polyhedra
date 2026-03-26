@@ -13,7 +13,7 @@
 - [x] Task: Develop animation timeline UI. [91a2ce8]
     - [x] Write tests for timeline interaction (scrubbing, adding keyframes).
     - [x] Implement a mobile-friendly timeline component.
-- [ ] Task: Conductor - User Manual Verification 'User Interface & Timeline' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'User Interface & Timeline' (Protocol in workflow.md)
 
 ## Phase 3: Rendering Export
 - [ ] Task: Static image export.
