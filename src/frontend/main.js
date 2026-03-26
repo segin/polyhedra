@@ -21,6 +21,7 @@ import { LightManager } from './LightManager.js';
 import { Logger } from './utils/Logger.js';
 import { ModelLoader } from './ModelLoader.js';
 import { AnimationManager } from './AnimationManager.js';
+import { TimelineUI } from './TimelineUI.js';
 import { ErrorHandler } from './ErrorHandler.js';
 import { ShaderEditor } from './ShaderEditor.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -86,6 +87,8 @@ export class App {
     this.animationManager = new AnimationManager();
     this.container.register('AnimationManager', this.animationManager);
 
+    this.timelineUI = new TimelineUI(document.body, this.animationManager, EventBus);
+
     this.sceneManager = new SceneManager(this.renderer, this.camera, this.inputManager, this.scene);
     this.container.register('SceneManager', this.sceneManager);
 
@@ -143,10 +146,12 @@ export class App {
           this.selectedObject = selection[0];
           this.transformControls.attach(this.selectedObject);
           this.updatePropertiesPanel(this.selectedObject);
+          if (this.timelineUI) this.timelineUI.setSelectedObject(this.selectedObject);
         } else {
           this.selectedObject = null;
           this.transformControls.detach();
           this.clearPropertiesPanel();
+          if (this.timelineUI) this.timelineUI.setSelectedObject(null);
         }
         this.updateSceneGraph();
       });
@@ -1481,6 +1486,7 @@ export class App {
     if (this.viewCube) this.viewCube.update();
     if (this.physicsManager) this.physicsManager.update(delta);
     if (this.animationManager) this.animationManager.update(delta, this.scene);
+    if (this.timelineUI) this.timelineUI.update();
     this.orbitControls.update();
     
     if (this.composer) {
