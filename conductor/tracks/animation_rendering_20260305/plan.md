@@ -7,7 +7,7 @@
 - [x] Task: Integrate animation with `SceneGraph`. [1829468]
     - [x] Write tests for property updates via animation loop.
     - [x] Update `Engine.js` or `SceneManager.js` to support animated property updates.
-- [ ] Task: Conductor - User Manual Verification 'Core Animation Engine' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Core Animation Engine' (Protocol in workflow.md)
 
 ## Phase 2: User Interface & Timeline
 - [ ] Task: Develop animation timeline UI.
