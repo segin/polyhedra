@@ -22,6 +22,7 @@ import { Logger } from './utils/Logger.js';
 import { ModelLoader } from './ModelLoader.js';
 import { AnimationManager } from './AnimationManager.js';
 import { TimelineUI } from './TimelineUI.js';
+import { ExportManager } from './ExportManager.js';
 import { ErrorHandler } from './ErrorHandler.js';
 import { ShaderEditor } from './ShaderEditor.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -87,7 +88,10 @@ export class App {
     this.animationManager = new AnimationManager();
     this.container.register('AnimationManager', this.animationManager);
 
-    this.timelineUI = new TimelineUI(document.body, this.animationManager, EventBus);
+    this.exportManager = new ExportManager(this.renderer, this.scene, this.camera);
+    this.container.register('ExportManager', this.exportManager);
+
+    this.timelineUI = new TimelineUI(document.body, this.animationManager, EventBus, this.exportManager);
 
     this.sceneManager = new SceneManager(this.renderer, this.camera, this.inputManager, this.scene);
     this.container.register('SceneManager', this.sceneManager);
@@ -380,6 +384,12 @@ export class App {
         icon: '🗑',
         title: 'Delete (Del)',
         action: () => this.deleteSelectedObject(),
+      },
+      {
+        id: 'save-image-btn',
+        icon: '📷',
+        title: 'Save Image',
+        action: () => this.exportManager.saveImage(),
       },
     ];
 
@@ -1489,6 +1499,8 @@ export class App {
     if (this.timelineUI) this.timelineUI.update();
     this.orbitControls.update();
     
+    if (this.exportManager) this.exportManager.capture();
+
     if (this.composer) {
         this.composer.render();
     } else {

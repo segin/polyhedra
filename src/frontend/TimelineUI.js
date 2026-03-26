@@ -1,8 +1,9 @@
 export class TimelineUI {
-  constructor(container, animationManager, eventBus) {
+  constructor(container, animationManager, eventBus, exportManager) {
     this.container = container;
     this.animationManager = animationManager;
     this.eventBus = eventBus;
+    this.exportManager = exportManager;
     this.selectedObject = null;
 
     this.init();
@@ -48,9 +49,20 @@ export class TimelineUI {
     this.addKeyframeBtn.style.padding = '5px 10px';
     this.addKeyframeBtn.addEventListener('click', () => this.addKeyframe());
 
+    this.recordBtn = document.createElement('button');
+    this.recordBtn.className = 'record-btn';
+    this.recordBtn.textContent = 'REC';
+    this.recordBtn.style.padding = '5px 15px';
+    this.recordBtn.style.backgroundColor = '#440000';
+    this.recordBtn.style.color = 'white';
+    this.recordBtn.style.borderRadius = '50%';
+    this.recordBtn.style.border = '2px solid white';
+    this.recordBtn.addEventListener('click', () => this.toggleRecord());
+
     timelineContainer.appendChild(this.playPauseBtn);
     timelineContainer.appendChild(this.slider);
     timelineContainer.appendChild(this.addKeyframeBtn);
+    timelineContainer.appendChild(this.recordBtn);
 
     this.container.appendChild(timelineContainer);
   }
@@ -62,6 +74,22 @@ export class TimelineUI {
     } else {
       this.animationManager.play();
       this.playPauseBtn.textContent = 'Pause';
+    }
+  }
+
+  toggleRecord() {
+    if (!this.exportManager) return;
+
+    if (this.exportManager.isRecording) {
+      this.exportManager.stopRecording();
+      this.recordBtn.textContent = 'REC';
+      this.recordBtn.style.backgroundColor = '#440000';
+    } else {
+      this.exportManager.startRecording();
+      if (this.exportManager.isRecording) {
+        this.recordBtn.textContent = 'STOP';
+        this.recordBtn.style.backgroundColor = '#ff0000';
+      }
     }
   }
 

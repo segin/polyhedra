@@ -26,7 +26,8 @@ const filesToCopy = [
   { src: 'three-csg-ts/lib/esm/index.js', dest: 'three-csg-ts.js' },
   { src: 'three/examples/jsm/geometries/TeapotGeometry.js', dest: 'TeapotGeometry.js' },
   { src: 'three/examples/jsm/loaders/FontLoader.js', dest: 'FontLoader.js' },
-  { src: 'three/examples/jsm/geometries/TextGeometry.js', dest: 'TextGeometry.js' }
+  { src: 'three/examples/jsm/geometries/TextGeometry.js', dest: 'TextGeometry.js' },
+  { src: 'ccapture.js/build/CCapture.all.min.js', dest: 'CCapture.all.min.js' }
 ];
 
 for (const file of filesToCopy) {

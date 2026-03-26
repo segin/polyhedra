@@ -1,7 +1,15 @@
 import { Events, ObjectTypes } from './constants.js';
+import { AddObjectCommand, RemoveObjectCommand, GroupCommand, UngroupCommand, Command } from './commands/index.js';
+import { OBJLoader } from './vendor/OBJLoader.js';
+import { GLTFLoader } from './vendor/GLTFLoader.js';
+import { OBJExporter } from 'three/examples/jsm/exporters/OBJExporter.js';
+import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
+import log from './logger.js';
+
+/* global FileReader */
 
 export class UIManager {
-    constructor(eventBus, objectFactory, csgManager, groupManager, lightManager, sceneStorage, engine, transformControls, state, gui) {
+    constructor(eventBus, objectFactory, csgManager, groupManager, lightManager, sceneStorage, engine, transformControls, state, gui, exportManager) {
         this.eventBus = eventBus;
         this.objectFactory = objectFactory;
         this.csgManager = csgManager;
@@ -12,6 +20,7 @@ export class UIManager {
         this.transformControls = transformControls;
         this.state = state;
         this.gui = gui;
+        this.exportManager = exportManager;
 
         this.setupUIButtons();
     }

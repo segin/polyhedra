@@ -110,7 +110,7 @@ describe('Toolbar', () => {
 
     // Verify buttons exist
     const ui = document.getElementById('toolbar');
-    expect(ui.querySelectorAll('button').length).toBe(6);
+    expect(ui.querySelectorAll('button').length).toBe(7);
 
     const translateBtn = document.getElementById('translate-btn');
     expect(translateBtn).not.toBeNull();
@@ -131,6 +131,22 @@ describe('Toolbar', () => {
 
     const deleteBtn = document.getElementById('delete-btn');
     expect(deleteBtn).not.toBeNull();
+
+    const saveImageBtn = document.getElementById('save-image-btn');
+    expect(saveImageBtn).not.toBeNull();
+  });
+
+  test('clicking export buttons triggers actions', () => {
+    const mockApp = {
+      transformControls: { setMode: jest.fn() },
+      exportManager: { saveImage: jest.fn() },
+      setupToolbar: App.prototype.setupToolbar,
+    };
+
+    mockApp.setupToolbar();
+
+    document.getElementById('save-image-btn').click();
+    expect(mockApp.exportManager.saveImage).toHaveBeenCalled();
   });
 
   test('clicking buttons triggers actions and updates state', () => {

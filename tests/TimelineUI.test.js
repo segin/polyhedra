@@ -61,4 +61,29 @@ describe('TimelineUI', () => {
     expect(keyframes[0].time).toBe(2);
     expect(keyframes[0].value).toBe(10);
   });
+
+  it('should toggle recording via ExportManager', () => {
+    const mockExportManager = {
+      isRecording: false,
+      startRecording: jest.fn(function() { this.isRecording = true; }),
+      stopRecording: jest.fn(function() { this.isRecording = false; })
+    };
+    
+    // Clear container from beforeEach
+    uiContainer.innerHTML = '';
+    
+    // Re-instantiate with mock export manager
+    timelineUI = new TimelineUI(uiContainer, animationManager, EventBus, mockExportManager);
+    
+    const recordBtn = uiContainer.querySelector('.record-btn');
+    expect(recordBtn).not.toBeNull();
+    
+    recordBtn.click();
+    expect(mockExportManager.startRecording).toHaveBeenCalled();
+    expect(recordBtn.textContent).toBe('STOP');
+    
+    recordBtn.click();
+    expect(mockExportManager.stopRecording).toHaveBeenCalled();
+    expect(recordBtn.textContent).toBe('REC');
+  });
 });
