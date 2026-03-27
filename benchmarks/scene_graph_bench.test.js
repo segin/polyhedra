@@ -31,7 +31,16 @@ jest.mock('dat.gui', () => ({
 
 // Mock internal dependencies
 jest.mock('../src/frontend/SceneStorage.js', () => ({ SceneStorage: jest.fn() }));
-jest.mock('../src/frontend/utils/ServiceContainer.js', () => ({ ServiceContainer: jest.fn(() => ({ register: jest.fn() })) }));
+jest.mock('../src/frontend/utils/ServiceContainer.js', () => ({ 
+    ServiceContainer: jest.fn(() => ({ 
+        register: jest.fn(),
+        get: jest.fn((name) => {
+            if (name === 'EventBus') return { subscribe: jest.fn(), publish: jest.fn() };
+            if (name === 'StateManager') return { subscribe: jest.fn() };
+            return {};
+        })
+    })) 
+}));
 jest.mock('../src/frontend/StateManager.js', () => ({ StateManager: jest.fn(() => ({ subscribe: jest.fn() })) }));
 jest.mock('../src/frontend/EventBus.js', () => ({ subscribe: jest.fn(), publish: jest.fn() }));
 jest.mock('../src/frontend/ObjectManager.js', () => ({ ObjectManager: jest.fn() }));
@@ -48,7 +57,7 @@ describe('SceneGraph Performance', () => {
     beforeEach(async () => {
         // Setup environment (handled by jsdom environment)
         if (typeof document !== 'undefined') {
-            document.body.innerHTML = '<div id="scene-graph"></div>';
+            document.body.innerHTML = '<div id="scene-graph"></div><div id="objects-list"></div>';
         }
         
         global.requestAnimationFrame = jest.fn();

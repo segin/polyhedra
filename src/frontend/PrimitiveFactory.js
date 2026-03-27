@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { TeapotGeometry } from 'three/examples/jsm/geometries/TeapotGeometry.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import log from './logger.js';
@@ -89,7 +90,12 @@ export class PrimitiveFactory {
           heightSegments: options.heightSegments || 1,
         };
       case 'Lathe':
-        return { segments: 12 };
+        return { 
+          segments: options.segments || 12,
+          points: options.points || [
+            { x: 0, y: 0 }, { x: 0.5, y: 0.5 }, { x: 0, y: 1 }
+          ]
+        };
       case 'Teapot':
         return {
           size: options.size || 0.4,
@@ -215,11 +221,24 @@ export class PrimitiveFactory {
         geometry = new THREE.PlaneGeometry(params.width, params.height, params.widthSegments, params.heightSegments);
         break;
       case 'Lathe':
-        const pointsLathe = [];
-        for (let i = 0; i < 10; i++) {
-          pointsLathe.push(new THREE.Vector2(Math.sin(i * 0.2) * 0.5 + 0.5, (i - 5) * 0.2));
+        const pointsLathe = (params.points || []).map(p => new THREE.Vector2(p.x, p.y));
+        if (pointsLathe.length === 0) {
+          for (let i = 0; i < 10; i++) {
+            pointsLathe.push(new THREE.Vector2(Math.sin(i * 0.2) * 0.5 + 0.5, (i - 5) * 0.2));
+          }
         }
-        geometry = new THREE.LatheGeometry(pointsLathe, 12);
+        geometry = new THREE.LatheGeometry(pointsLathe, params.segments);
+        break;
+      case 'Teapot':
+        geometry = new TeapotGeometry(
+          params.size,
+          params.segments,
+          params.bottom,
+          params.lid,
+          params.body,
+          params.fitLid,
+          params.blinn
+        );
         break;
       case 'Tube':
         const tubePath = options.path || new THREE.CatmullRomCurve3([
@@ -314,31 +333,12 @@ export class PrimitiveFactory {
     }
 
     if (type === 'Teapot') {
-        const teapot = new THREE.Group();
-        teapot.name = 'Teapot';
-        const teapotColor = options.color || 0x800000;
-        
-        teapot.add(this._createMesh(this._getCachedGeometry('Sphere', { radius: 0.4, widthSegments: 32, heightSegments: 32 }), teapotColor));
-        
-        const spout = this._createMesh(this._getCachedGeometry('Cylinder', { radiusTop: 0.05, radiusBottom: 0.08, height: 0.3, radialSegments: 8 }), teapotColor);
-        spout.position.set(0.4, 0, 0);
-        teapot.add(spout);
-        
-        const handle = this._createMesh(this._getCachedGeometry('Torus', { radius: 0.15, tube: 0.03, radialSegments: 8, tubularSegments: 16 }), teapotColor);
-        handle.position.set(-0.4, 0, 0);
-        teapot.add(handle);
-        
-        const lid = this._createMesh(this._getCachedGeometry('Cylinder', { radiusTop: 0.35, radiusBottom: 0.4, height: 0.05, radialSegments: 32 }), teapotColor);
-        lid.position.set(0, 0.4, 0);
-        teapot.add(lid);
-        
-        const knob = this._createMesh(this._getCachedGeometry('Sphere', { radius: 0.08, widthSegments: 16, heightSegments: 16 }), teapotColor);
-        knob.position.set(0, 0.45, 0);
-        teapot.add(knob);
-        
-        teapot.userData.primitiveType = type;
-        teapot.userData.primitiveOptions = options;
-        return teapot;
+        let geometry = this._getCachedGeometry(type, options);
+        let color = options.color || 0x800000;
+        let mesh = this._createMesh(geometry, color);
+        mesh.userData.primitiveType = type;
+        mesh.userData.primitiveOptions = options;
+        return mesh;
     }
 
     let geometry = this._getCachedGeometry(type, options);

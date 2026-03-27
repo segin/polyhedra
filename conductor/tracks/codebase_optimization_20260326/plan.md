@@ -3,12 +3,12 @@
 ## Phase 1: Specialized Geometry Caching
 Focus: Implement caching for Teapot, Tube, and Extrude geometries in `PrimitiveFactory.js`.
 
-- [ ] Task: Write benchmark/test to verify current regeneration of specialized geometries
-- [ ] Task: Implement `Teapot` caching in `PrimitiveFactory.js`
-- [ ] Task: Implement `Tube` caching in `PrimitiveFactory.js`
-- [ ] Task: Implement `Extrude` caching in `PrimitiveFactory.js`
-- [ ] Task: Verify performance improvements with benchmarks
-- [ ] Task: Conductor - User Manual Verification 'Specialized Geometry Caching' (Protocol in workflow.md)
+- [x] Task: Write benchmark/test to verify current regeneration of specialized geometries
+- [x] Task: Implement `Teapot` caching in `PrimitiveFactory.js`
+- [x] Task: Implement `Tube` caching in `PrimitiveFactory.js`
+- [x] Task: Implement `Extrude` caching in `PrimitiveFactory.js`
+- [x] Task: Verify performance improvements with benchmarks
+- [x] Task: Conductor - User Manual Verification 'Specialized Geometry Caching' (Protocol in workflow.md)
 
 ## Phase 2: Strategic Modularization of main.js
 Focus: Extract core responsibilities from `main.js` into independent, testable modules.

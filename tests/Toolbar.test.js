@@ -89,22 +89,39 @@ jest.mock('../src/frontend/ObjectFactory.js');
 jest.mock('../src/frontend/ObjectPropertyUpdater.js');
 jest.mock('../src/frontend/ToastManager.js');
 
+import { UIManager } from '../src/frontend/UIManager.js';
+
+// ... (rest of mocks)
+
 describe('Toolbar', () => {
+  let mockApp;
+
   beforeEach(() => {
     // Setup DOM
     document.body.innerHTML = '<div id="toolbar"></div>';
-  });
-
-  test('setupToolbar creates buttons correctly', () => {
-    // Create a mock app object with the necessary methods/properties
-    const mockApp = {
+    
+    // Create a mock app object with UIManager
+    const exportManagerMock = { saveImage: jest.fn() };
+    const container = { 
+        get: jest.fn((name) => {
+            if (name === 'ExportManager') return exportManagerMock;
+            return {};
+        }) 
+    };
+    const uiManager = new UIManager(container);
+    
+    mockApp = {
+      uiManager: uiManager,
       transformControls: { setMode: jest.fn() },
       undo: jest.fn(),
       redo: jest.fn(),
       deleteSelectedObject: jest.fn(),
+      exportManager: exportManagerMock,
       setupToolbar: App.prototype.setupToolbar,
     };
+  });
 
+  test('setupToolbar creates buttons correctly', () => {
     // Run the method
     mockApp.setupToolbar();
 
@@ -137,12 +154,6 @@ describe('Toolbar', () => {
   });
 
   test('clicking export buttons triggers actions', () => {
-    const mockApp = {
-      transformControls: { setMode: jest.fn() },
-      exportManager: { saveImage: jest.fn() },
-      setupToolbar: App.prototype.setupToolbar,
-    };
-
     mockApp.setupToolbar();
 
     document.getElementById('save-image-btn').click();
@@ -150,14 +161,6 @@ describe('Toolbar', () => {
   });
 
   test('clicking buttons triggers actions and updates state', () => {
-    const mockApp = {
-      transformControls: { setMode: jest.fn() },
-      undo: jest.fn(),
-      redo: jest.fn(),
-      deleteSelectedObject: jest.fn(),
-      setupToolbar: App.prototype.setupToolbar,
-    };
-
     mockApp.setupToolbar();
 
     const translateBtn = document.getElementById('translate-btn');
@@ -177,14 +180,6 @@ describe('Toolbar', () => {
   });
 
   test('edit operations trigger respective methods', () => {
-    const mockApp = {
-      transformControls: { setMode: jest.fn() },
-      undo: jest.fn(),
-      redo: jest.fn(),
-      deleteSelectedObject: jest.fn(),
-      setupToolbar: App.prototype.setupToolbar,
-    };
-
     mockApp.setupToolbar();
 
     document.getElementById('undo-btn').click();

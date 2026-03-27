@@ -61,14 +61,13 @@ describe('3D Primitives Functionality', () => {
       });
     });
 
-    it('should create Teapot as a Group with multiple components', async () => {
-      const THREE = require('three');
+    it('should create Teapot with TeapotGeometry', async () => {
+      const { TeapotGeometry } = require('three/examples/jsm/geometries/TeapotGeometry.js');
       const teapot = await app.addTeapot();
 
       expect(teapot).toBeDefined();
       expect(teapot.name).toContain('Teapot');
-      expect(THREE.Group).toHaveBeenCalled();
-      // Check for children or calls based on mock behavior
+      expect(TeapotGeometry).toHaveBeenCalled();
       expect(app.objects).toContain(teapot);
       expect(app.selectedObject).toBe(teapot);
     });
@@ -294,16 +293,5 @@ describe('3D Primitives Functionality', () => {
       expect(THREE.Vector3).toHaveBeenCalledWith(0, -0.5, 0);
     });
 
-    it('should create Teapot with all components positioned correctly', async () => {
-      const THREE = require('three');
-      const teapot = await app.addTeapot();
-
-      // Verify all geometries were created for teapot components
-      expect(THREE.SphereGeometry).toHaveBeenCalledWith(0.4, 32, 32); // body
-      expect(THREE.CylinderGeometry).toHaveBeenCalledWith(0.05, 0.08, 0.3, 8); // spout
-      expect(THREE.TorusGeometry).toHaveBeenCalledWith(0.15, 0.03, 8, 16); // handle
-      expect(THREE.CylinderGeometry).toHaveBeenCalledWith(0.35, 0.4, 0.05, 32); // lid
-      expect(THREE.SphereGeometry).toHaveBeenCalledWith(0.08, 16, 16); // knob
-    });
   });
 });
