@@ -27,12 +27,8 @@ export class InputManager {
     this.hammer.add(new Hammer.Press({ time: 500 })); // 500ms for long press
     this.hammer.add(new Hammer.Tap({ event: 'doubletap', taps: 2 }));
 
-    // Interaction State
-    let initialZoom = 1;
-
     // Pinch (Zoom)
     this.hammer.on('pinchstart', () => {
-      initialZoom = 1; // reset for next pinch
       this.eventBus.publish(Events.TOUCH_PINCH_START);
     });
 
@@ -60,10 +56,22 @@ export class InputManager {
   }
 
   onKeyDown(event) {
-    switch (event.key) {
+    if (event.target instanceof HTMLInputElement) return;
+
+    switch (event.key.toLowerCase()) {
+      case 'g':
+        this.eventBus.publish(Events.SET_TRANSFORM_MODE, 'translate');
+        break;
+      case 'r':
+        this.eventBus.publish(Events.SET_TRANSFORM_MODE, 'rotate');
+        break;
+      case 's':
+        this.eventBus.publish(Events.SET_TRANSFORM_MODE, 'scale');
+        break;
       case 'z':
         if (event.ctrlKey || event.metaKey) {
-          this.eventBus.publish(Events.UNDO);
+          if (event.shiftKey) this.eventBus.publish(Events.REDO);
+          else this.eventBus.publish(Events.UNDO);
         }
         break;
       case 'y':
@@ -71,12 +79,11 @@ export class InputManager {
           this.eventBus.publish(Events.REDO);
         }
         break;
-      case 'Delete':
-      case 'Backspace':
+      case 'delete':
+      case 'backspace':
         this.eventBus.publish(Events.DELETE_OBJECT);
         break;
       case 'f':
-      case 'F':
         this.eventBus.publish(Events.FOCUS_OBJECT);
         break;
     }

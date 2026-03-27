@@ -13,6 +13,7 @@ export const Events = {
   UNDO: 'undo',
   REDO: 'redo',
   FOCUS_OBJECT: 'focus-object',
+  SET_TRANSFORM_MODE: 'set-transform-mode',
   UPDATE_GRID: 'update-grid',
   TOGGLE_AXES: 'toggle-axes',
   UI_UPDATE_PROPERTIES: 'ui-update-properties',

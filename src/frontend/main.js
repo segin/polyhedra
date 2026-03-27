@@ -15,6 +15,7 @@ import { PrimitiveFactory } from './PrimitiveFactory.js';
 import { ObjectFactory } from './ObjectFactory.js';
 import { ObjectPropertyUpdater } from './ObjectPropertyUpdater.js';
 import { ToastManager } from './ToastManager.js';
+import { LightManager } from './LightManager.js';
 import { Logger } from './utils/Logger.js';
 import { ModelLoader } from './ModelLoader.js';
 import { AnimationManager } from './AnimationManager.js';
@@ -105,6 +106,9 @@ export class App {
     );
     this.container.register('ObjectManager', this.objectManager);
 
+    this.lightManager = new LightManager(this.scene, EventBus);
+    this.container.register('LightManager', this.lightManager);
+
     this.uiManager = new UIManager(this.container);
     this.historyManager = new HistoryManager(this.container);
 
@@ -141,7 +145,8 @@ export class App {
         addCone: () => this.addCone(),
         addTorus: () => this.addTorus(),
         addPlane: () => this.addPlane(),
-        addTeapot: () => this.addTeapot()
+        addTeapot: () => this.addTeapot(),
+        addLight: (type) => this.addLight(type)
     });
 
     this.setupLighting();
@@ -196,6 +201,17 @@ export class App {
       EventBus.subscribe(Events.TOGGLE_AXES, (val) => {
           if (this.axesHelper) this.axesHelper.visible = val;
       });
+
+      EventBus.subscribe(Events.SET_TRANSFORM_MODE, (mode) => {
+          if (this.transformControls) this.transformControls.setMode(mode);
+      });
+
+      EventBus.subscribe(Events.DELETE_OBJECT, () => {
+          this.deleteSelectedObject();
+      });
+
+      EventBus.subscribe(Events.UNDO, () => this.undo());
+      EventBus.subscribe(Events.REDO, () => this.redo());
     }
 
     // Save initial state
@@ -277,8 +293,9 @@ export class App {
     this.renderer.domElement.addEventListener('click', (event) => {
       if (this.transformControls.dragging) return;
 
-      this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      const rect = this.renderer.domElement.getBoundingClientRect();
+      this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
       this.raycaster.setFromCamera(this.mouse, this.camera);
       const intersects = this.raycaster.intersectObjects(this.objects);
@@ -290,36 +307,11 @@ export class App {
       }
     });
 
-    window.addEventListener('keydown', (event) => {
-      if (event.target instanceof HTMLInputElement) return;
-
-      switch (event.key.toLowerCase()) {
-        case 'g': this.transformControls.setMode('translate'); break;
-        case 'r': this.transformControls.setMode('rotate'); break;
-        case 's': this.transformControls.setMode('scale'); break;
-        case 'delete':
-        case 'backspace':
-          if (this.selectedObject) this.deleteObject(this.selectedObject);
-          break;
-        case 'z':
-          if (event.ctrlKey || event.metaKey) {
-            event.preventDefault();
-            if (event.shiftKey) this.redo();
-            else this.undo();
-          }
-          break;
-      }
-    });
+    // Old keydown listener moved to InputManager
   }
 
   setupLighting() {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    this.scene.add(ambientLight);
-
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(5, 10, 7.5);
-    directionalLight.castShadow = true;
-    this.scene.add(directionalLight);
+    // Handled by LightManager now
   }
 
   setupHelpers() {
@@ -523,6 +515,15 @@ export class App {
   async addLathe() { return await this.addPrimitive('Lathe'); }
   async addExtrude() { return await this.addPrimitive('Extrude'); }
   async addText(text, options) { return await this.addPrimitive('Text', { text, ...options }); }
+
+  addLight(type) {
+    const light = this.lightManager.addLight(type, 0xffffff, 1, new THREE.Vector3(0, 5, 0));
+    if (light) {
+        this.saveState(`Add ${type}`);
+        this.toastManager.show(`${type} added`, 'success');
+    }
+    return light;
+  }
 
   async addPrimitive(type, options) {
     const meshOrPromise = this.objectManager.addPrimitive(type, options);

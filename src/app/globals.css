@@ -43,6 +43,67 @@ body {
   z-index: 1000;
 }
 
+.menu-brand {
+  padding: 0 15px;
+  font-weight: bold;
+  color: #fff;
+  border-right: 1px solid var(--border-color);
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.menu-item {
+  padding: 0 12px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.menu-item:hover {
+  background: var(--bg-hover);
+}
+
+.menu-dropdown {
+  display: none;
+  position: absolute;
+  top: var(--menubar-height);
+  left: 0;
+  background: var(--bg-panel);
+  min-width: 220px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+  z-index: 2000;
+  padding: 5px 0;
+  border-radius: 0 0 4px 4px;
+}
+
+.menu-item:hover .menu-dropdown {
+  display: block;
+}
+
+.menu-dropdown a {
+  display: block;
+  padding: 10px 15px;
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.menu-dropdown a:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.menu-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 5px 0;
+}
+
 /* Main Workspace Area */
 #workspace {
   display: flex;

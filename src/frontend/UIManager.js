@@ -26,7 +26,7 @@ export class UIManager {
             this.objectsList.id = 'objects-list';
             // We don't necessarily append it to body here, just ensure it exists
         }
-    } catch (e) {
+    } catch (_e) {
         this.objectsList = document.createElement('ul');
     }
     this.sceneGraphItemMap = new Map();
@@ -215,6 +215,9 @@ export class UIManager {
         'menu-add-torus': () => callbacks.addTorus(),
         'menu-add-plane': () => callbacks.addPlane(),
         'menu-add-teapot': () => callbacks.addTeapot(),
+        'menu-add-ambient-light': () => callbacks.addLight('AmbientLight'),
+        'menu-add-directional-light': () => callbacks.addLight('DirectionalLight'),
+        'menu-add-point-light': () => callbacks.addLight('PointLight'),
         // View
         'menu-view-fullscreen': () => callbacks.toggleFullscreen()
     };

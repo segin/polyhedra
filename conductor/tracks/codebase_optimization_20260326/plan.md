@@ -11,17 +11,19 @@ Focus: Implement caching for Teapot, Tube, and Extrude geometries in `PrimitiveF
 - [x] Task: Conductor - User Manual Verification 'Specialized Geometry Caching' (Protocol in workflow.md)
 
 ## Phase 2: Strategic Modularization of main.js
+## Phase 2: Strategic Modularization of main.js
 Focus: Extract core responsibilities from `main.js` into independent, testable modules.
 
-- [ ] Task: Write failing integration tests for the new `UIManager`
-- [ ] Task: Extract UI/DOM management to `src/frontend/UIManager.js`
-- [ ] Task: Write failing unit tests for the new `HistoryManager`
-- [ ] Task: Extract undo/redo logic to `src/frontend/HistoryManager.js`
-- [ ] Task: Write failing unit tests for the new `InputManager`
-- [ ] Task: Extract input handling to `src/frontend/InputManager.js`
-- [ ] Task: Refactor `src/frontend/main.js` to integrate the new managers and reduce its line count
-- [ ] Task: Verify all existing tests pass after the refactor
-- [ ] Task: Conductor - User Manual Verification 'Strategic Modularization' (Protocol in workflow.md)
+- [x] Task: Write failing integration tests for the new `UIManager`
+- [x] Task: Extract UI/DOM management to `src/frontend/UIManager.js`
+- [x] Task: Write failing unit tests for the new `HistoryManager`
+- [x] Task: Extract undo/redo logic to `src/frontend/HistoryManager.js`
+- [x] Task: Write failing unit tests for the new `InputManager`
+- [x] Task: Extract input handling to `src/frontend/InputManager.js`
+- [x] Task: Refactor `src/frontend/main.js` to integrate the new managers and reduce its line count
+- [x] Task: Verify all existing tests pass after the refactor
+- [x] Task: Conductor - User Manual Verification 'Strategic Modularization' (Protocol in workflow.md)
+
 
 ## Phase 3: Audit Tooling Enhancement
 Focus: Improve the accuracy and depth of the automated audit scripts.

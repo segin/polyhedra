@@ -57,6 +57,10 @@ export default function Home() {
             <div className="menu-divider"></div>
             <a href="#" id="menu-add-plane">Plane</a>
             <a href="#" id="menu-add-teapot">Teapot</a>
+            <div className="menu-divider"></div>
+            <a href="#" id="menu-add-ambient-light">Ambient Light</a>
+            <a href="#" id="menu-add-directional-light">Directional Light</a>
+            <a href="#" id="menu-add-point-light">Point Light</a>
           </div>
         </div>
         <div className="menu-item">

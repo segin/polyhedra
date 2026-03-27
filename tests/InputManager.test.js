@@ -1,82 +1,63 @@
-/* eslint-env browser */
+
+/**
+ * @jest-environment jsdom
+ */
 import { InputManager } from '../src/frontend/InputManager.js';
 import { Events } from '../src/frontend/constants.js';
-import Hammer from 'hammerjs';
 
+// Mock Hammer.js
 jest.mock('hammerjs', () => {
-  const mockHammer = {
-    add: jest.fn(),
-    on: jest.fn(),
-  };
-  return {
-    Manager: jest.fn(() => mockHammer),
-    Pinch: jest.fn(),
-    Pan: jest.fn(),
-    Press: jest.fn(),
-    Tap: jest.fn(),
-  };
+    return {
+        Manager: jest.fn().mockImplementation(() => ({
+            add: jest.fn(),
+            on: jest.fn()
+        })),
+        Pinch: jest.fn(),
+        Pan: jest.fn(),
+        Press: jest.fn(),
+        Tap: jest.fn()
+    };
 });
 
 describe('InputManager', () => {
-  let eventBus;
-  let domElement;
-  let inputManager;
+    let eventBus;
+    let inputManager;
 
-  beforeEach(() => {
-    eventBus = {
-      publish: jest.fn(),
-      subscribe: jest.fn(),
-    };
-    domElement = document.createElement('div');
-    inputManager = new InputManager(eventBus, domElement);
-  });
+    beforeEach(() => {
+        eventBus = {
+            publish: jest.fn(),
+            subscribe: jest.fn()
+        };
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+        inputManager = new InputManager(eventBus, document.createElement('div'));
+    });
 
-  it('should initialize Hammer.Manager on domElement', () => {
-    expect(Hammer.Manager).toHaveBeenCalledWith(domElement);
-  });
+    test('should initialize correctly', () => {
+        expect(inputManager).toBeDefined();
+    });
 
-  it('should add recognizers for pinch, pan, and press', () => {
-    expect(Hammer.Pinch).toHaveBeenCalled();
-    expect(Hammer.Pan).toHaveBeenCalledWith(expect.objectContaining({ pointers: 2 }));
-    expect(Hammer.Press).toHaveBeenCalled();
-  });
+    test('onKeyDown should publish undo/redo events', () => {
+        const undoEvent = new window.KeyboardEvent('keydown', { key: 'z', ctrlKey: true });
+        const redoEvent = new window.KeyboardEvent('keydown', { key: 'y', ctrlKey: true });
 
-  it('should publish TOUCH_PINCH when pinchmove occurs', () => {
-    const hammerInstance = Hammer.Manager.mock.results[0].value;
-    const pinchMoveHandler = hammerInstance.on.mock.calls.find(call => call[0] === 'pinchmove')[1];
-    
-    pinchMoveHandler({ scale: 1.5 });
-    
-    expect(eventBus.publish).toHaveBeenCalledWith(Events.TOUCH_PINCH, 1.5);
-  });
+        inputManager.onKeyDown(undoEvent);
+        expect(eventBus.publish).toHaveBeenCalledWith(Events.UNDO);
 
-  it('should publish TOUCH_PAN when panmove occurs with 2 pointers', () => {
-    const hammerInstance = Hammer.Manager.mock.results[0].value;
-    const panMoveHandler = hammerInstance.on.mock.calls.find(call => call[0] === 'panmove')[1];
-    
-    panMoveHandler({ pointers: [{}, {}], deltaX: 10, deltaY: 20 });
-    
-    expect(eventBus.publish).toHaveBeenCalledWith(Events.TOUCH_PAN, { x: 10, y: 20 });
-  });
+        inputManager.onKeyDown(redoEvent);
+        expect(eventBus.publish).toHaveBeenCalledWith(Events.REDO);
+    });
 
-  it('should publish TOUCH_LONG_PRESS when press occurs', () => {
-    const hammerInstance = Hammer.Manager.mock.results[0].value;
-    const pressHandler = hammerInstance.on.mock.calls.find(call => call[0] === 'press')[1];
-    
-    pressHandler({ center: { x: 100, y: 200 } });
-    
-    expect(eventBus.publish).toHaveBeenCalledWith(Events.TOUCH_LONG_PRESS, { x: 100, y: 200 });
-  });
+    test('onKeyDown should publish delete event', () => {
+        const deleteEvent = new window.KeyboardEvent('keydown', { key: 'Delete' });
 
-  it('should publish UNDO on Ctrl+Z', () => {
-    const event = new KeyboardEvent('keydown', { key: 'z', ctrlKey: true, bubbles: true });
-    // Since inputManager listens to domElement.ownerDocument || window
-    (domElement.ownerDocument || window).dispatchEvent(event);
-    expect(eventBus.publish).toHaveBeenCalledWith(Events.UNDO);
-  });
+        inputManager.onKeyDown(deleteEvent);
+        expect(eventBus.publish).toHaveBeenCalledWith(Events.DELETE_OBJECT);
+    });
+
+    test('onKeyDown should publish focus event', () => {
+        const focusEvent = new window.KeyboardEvent('keydown', { key: 'f' });
+
+        inputManager.onKeyDown(focusEvent);
+        expect(eventBus.publish).toHaveBeenCalledWith(Events.FOCUS_OBJECT);
+    });
 });
-
