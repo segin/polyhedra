@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///home/segin/nodist3d/src/app/layout.tsx"],"sourcesContent":["import type { Metadata } from \"next\";\nimport \"./globals.css\";\n\nexport const metadata: Metadata = {\n  title: \"Polyhedra\",\n  description: \"Web-based 3D modeling\",\n};\n\nexport default function RootLayout({\n  children,\n}: Readonly<{\n  children: React.ReactNode;\n}>) {\n  return (\n    <html lang=\"en\">\n      <body>{children}</body>\n    </html>\n  );\n}\n"],"names":["metadata","title","description","RootLayout","children"],"mappings":";;;;;;;;;AAGO,MAAMA,QAAkB,GAAG;IAChCC,KAAK,EAAE,WAAW;IAClBC,WAAW,EAAE;AACf,CAAC;AAEc,SAASC,UAAUA,CAAC,EACjCC,QAAAA,EAGA,EAAE;IACF,qBACE,8OAAC,IAAI;QAAC,IAAI,EAAC,IAAI;gCACb,8OAAC,IAAI,CAAC;sBAACA,QAAQ,CAAC,EAAE,IAAI;;;;;;;;;;;AAG5B","ignoreList":[]}},
+    {"offset": {"line": 37, "column": 0}, "map": {"version":3,"sources":["file:///home/segin/nodist3d/node_modules/next/src/server/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.ts"],"sourcesContent":["module.exports = (\n  require('../../module.compiled') as typeof import('../../module.compiled')\n).vendored['react-rsc']!.ReactJsxDevRuntime\n"],"names":["module","exports","require","vendored","ReactJsxDevRuntime"],"mappings":"AAAAA,OAAOC,OAAO,GACZC,QAAQ,4HACRC,QAAQ,CAAC,YAAY,CAAEC,kBAAkB","ignoreList":[0]}}]
+}

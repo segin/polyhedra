@@ -26,37 +26,44 @@
 
 ## ⚡ Performance & Resource Management
 
-### 1. Zombie Physics Bodies (Critical Leak)
-There is a critical API mismatch between `ObjectManager` and `PhysicsManager`.
-- **Finding:** `ObjectManager.deleteObject` calls `physicsManager.removeObject(object)`, but `PhysicsManager` only implements `removeBody(bodyToRemove)`.
-- **Impact:** Physics bodies associated with deleted meshes are **never removed** from the CANNON.js world. This leads to a memory leak and invisible physical collisions that persist after object deletion.
+### 1. Zombie Physics Bodies (Resolved)
+- **Status:** Fixed.
+- **Resolution:** `PhysicsManager.removeObject(object)` was implemented to correctly dispose of CANNON.js bodies when meshes are deleted.
 
-### 2. Geometry Caching
-- **Finding:** `PrimitiveFactory` creates a new instance of `THREE.Geometry` (BufferGeometry) for every 3D object, even for identical shapes.
-- **Impact:** Increased memory footprint and slower instantiation for complex geometries (e.g., Teapot, Text).
-- **Recommendation:** Implement a geometry cache by type/options in `PrimitiveFactory`.
+### 2. Geometry Caching (Resolved)
+- **Status:** Fixed.
+- **Resolution:** A comprehensive geometry caching system was implemented in `PrimitiveFactory`. All primitives, including complex ones like Teapot, Tube, and Extrude, now reuse cached geometries based on their parameters.
 
-### 3. Light Disposal
-- **Finding:** `LightManager.removeLight` removes the light from the scene and internal array but does not call `.dispose()`.
-- **Impact:** Minor GPU resource leak when repeatedly adding/removing lights.
+### 3. Light Disposal (Resolved)
+- **Status:** Fixed.
+- **Resolution:** `LightManager.removeLight` now correctly calls `.dispose()` on light instances, preventing GPU memory leaks.
 
 ---
 
 ## 🛠️ Code Quality & Consistency
 
-### 1. API Consistency
-- **Finding:** Mismatch in object removal naming (`removeObject` vs `removeBody`).
-- **Recommendation:** Rename `removeBody` to `removeObject` in `PhysicsManager` or provide a wrapper/lookup by mesh.
+### 1. API Consistency (Resolved)
+- **Status:** Fixed.
+- **Resolution:** `PhysicsManager` was updated to use consistent naming (`removeObject`) and provides lookup by mesh.
 
-### 2. History System
-- **Finding:** Implements structural sharing (good!), but `_areObjectsEqual` performs manual comparison of complex Three.js objects.
-- **Note:** This is currently stable but should be updated if more complex object types are added.
+### 2. Monolithic Code Refactoring (Resolved)
+- **Finding:** `src/frontend/main.js` was over 1500 lines and handled too many responsibilities (UI, State, Rendering).
+- **Resolution:** Refactored `App` class by extracting logic into:
+  - `UIManager.js`: Handles all DOM interaction, `dat.gui` setup, and UI updates.
+  - `HistoryManager.js`: Encapsulates undo/redo logic and structural sharing state management.
+- **Result:** `main.js` reduced from 1511 to 607 lines, significantly improving maintainability.
+
+### 3. Legacy index.html Removal (Resolved)
+- **Finding:** Server was erroring on missing `src/frontend/index.html`.
+- **Resolution:** Migrated to a Next.js integrated server. `src/backend/server.js` now correctly initializes Next.js and handles all frontend routing through the Next.js handler.
 
 ---
 
 ## 🚀 Priority Checklist for Fixes
 
-1. [ ] Fix `PhysicsManager` API mismatch to stop resource leaks.
-2. [ ] Update dependencies via `npm audit fix`.
-3. [ ] Implement light disposal in `LightManager`.
-4. [ ] Implement geometry caching in `PrimitiveFactory`.
+1. [x] Fix `PhysicsManager` API mismatch to stop resource leaks.
+2. [x] Update dependencies via `npm audit fix`.
+3. [x] Implement light disposal in `LightManager`.
+4. [x] Implement geometry caching in `PrimitiveFactory`.
+5. [x] Refactor monolithic `main.js` into modular managers.
+6. [x] Integrate Next.js into backend server.

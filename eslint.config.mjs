@@ -3,7 +3,10 @@ export default [
         ignores: [
             "src/frontend/vendor/**",
             "src/frontend/public/csg-worker.bundle.js",
-            "src/frontend/csg-worker.bundle.js"
+            "src/frontend/csg-worker.bundle.js",
+            ".next/**",
+            "node_modules/**",
+            "public/**"
         ]
     },
     {

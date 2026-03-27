@@ -1,336 +1,708 @@
-import { Events, ObjectTypes } from './constants.js';
-import { AddObjectCommand, RemoveObjectCommand, GroupCommand, UngroupCommand, Command } from './commands/index.js';
-import { OBJLoader } from './vendor/OBJLoader.js';
-import { GLTFLoader } from './vendor/GLTFLoader.js';
-import { OBJExporter } from 'three/examples/jsm/exporters/OBJExporter.js';
-import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
-import log from './logger.js';
+import * as THREE from 'three';
+import { GUI } from 'dat.gui';
+import { ShaderEditor } from './ShaderEditor.js';
+import { Logger } from './utils/Logger.js';
+import { Events } from './constants.js';
 
-/* global FileReader */
-
+/**
+ * Manages the User Interface of the application.
+ */
 export class UIManager {
-    constructor(eventBus, objectFactory, csgManager, groupManager, lightManager, sceneStorage, engine, transformControls, state, gui, exportManager) {
-        this.eventBus = eventBus;
-        this.objectFactory = objectFactory;
-        this.csgManager = csgManager;
-        this.groupManager = groupManager;
-        this.lightManager = lightManager;
-        this.sceneStorage = sceneStorage;
-        this.engine = engine;
-        this.transformControls = transformControls;
-        this.state = state;
-        this.gui = gui;
-        this.exportManager = exportManager;
+  /**
+   * @param {import('./utils/ServiceContainer.js').ServiceContainer} container
+   */
+  constructor(container) {
+    this.container = container;
+    this.eventBus = container && typeof container.get === 'function' ? container.get('EventBus') : null;
+    this.stateManager = container && typeof container.get === 'function' ? container.get('StateManager') : null;
+    
+    // UI Elements
+    this.gui = null;
+    this.propertiesFolder = null;
+    try {
+        this.objectsList = document.getElementById('objects-list');
+        if (!this.objectsList) {
+            this.objectsList = document.createElement('ul');
+            this.objectsList.id = 'objects-list';
+            // We don't necessarily append it to body here, just ensure it exists
+        }
+    } catch (e) {
+        this.objectsList = document.createElement('ul');
+    }
+    this.sceneGraphItemMap = new Map();
 
-        this.setupUIButtons();
+    // Dependencies that might be registered later
+    this._resolveDependencies();
+  }
+
+  _resolveDependencies() {
+    if (!this.container || typeof this.container.get !== 'function') return;
+    try {
+      this.primitiveFactory = this.container.get('PrimitiveFactory');
+      this.objectManager = this.container.get('ObjectManager');
+      this.objectPropertyUpdater = this.container.get('ObjectPropertyUpdater');
+      this.physicsManager = this.container.get('PhysicsManager');
+      this.sceneManager = this.container.get('SceneManager');
+      this.exportManager = this.container.get('ExportManager');
+      this.scene = this.container.get('Scene');
+      this.renderer = this.container.get('Renderer');
+      this.camera = this.container.get('Camera');
+    } catch (_e) {
+      // Some dependencies might not be registered yet during construction
+    }
+  }
+
+  /**
+   * Lazy resolve dependencies if needed
+   */
+  _ensureDependencies() {
+    if (!this.primitiveFactory) this._resolveDependencies();
+  }
+
+  setupToolbar(callbacks) {
+    const tools = [
+      {
+        id: 'translate-btn',
+        icon: '✥',
+        title: 'Translate (G)',
+        action: () => callbacks.setTransformMode('translate'),
+      },
+      {
+        id: 'rotate-btn',
+        icon: '↻',
+        title: 'Rotate (R)',
+        action: () => callbacks.setTransformMode('rotate'),
+      },
+      {
+        id: 'scale-btn',
+        icon: '⤢',
+        title: 'Scale (S)',
+        action: () => callbacks.setTransformMode('scale'),
+      },
+      {
+        id: 'undo-btn',
+        icon: '↶',
+        title: 'Undo (Ctrl+Z)',
+        action: () => callbacks.undo(),
+      },
+      {
+        id: 'redo-btn',
+        icon: '↷',
+        title: 'Redo (Ctrl+Y)',
+        action: () => callbacks.redo(),
+      },
+      {
+        id: 'delete-btn',
+        icon: '🗑',
+        title: 'Delete (Del)',
+        action: () => callbacks.deleteSelected(),
+      },
+      {
+        id: 'save-image-btn',
+        icon: '📷',
+        title: 'Save Image',
+        action: () => this.container.get('ExportManager').saveImage(),
+      },
+    ];
+
+    let container = document.getElementById('toolbar');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toolbar';
+      document.body.appendChild(container);
     }
 
-    setupUIButtons() {
-        const ui = document.getElementById('ui');
+    tools.forEach((tool) => {
+      const btn = document.createElement('button');
+      btn.id = tool.id;
+      btn.textContent = tool.icon;
+      btn.title = tool.title;
+      btn.setAttribute('aria-label', tool.title);
+      btn.onclick = () => {
+        tool.action();
+        if (['translate', 'rotate', 'scale'].includes(tool.id.split('-')[0])) {
+          container.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+        }
+      };
+      container.appendChild(btn);
+    });
+  }
 
-        const lightFolder = this.gui.addFolder('Lights');
-        lightFolder.add({
-            addAmbientLight: () => {
-                const light = this.lightManager.addLight('AmbientLight', 0x404040, 1, undefined, 'AmbientLight');
-                const command = new AddObjectCommand(this.engine.scene, light);
-                this.eventBus.publish(Events.HISTORY_CHANGE, command);
-            }
-        }, 'addAmbientLight').name('Add Ambient Light');
-        lightFolder.add({
-            addDirectionalLight: () => {
-                const light = this.lightManager.addLight('DirectionalLight', 0xffffff, 1, { x: 1, y: 1, z: 1 }, 'DirectionalLight');
-                const command = new AddObjectCommand(this.engine.scene, light);
-                this.eventBus.publish(Events.HISTORY_CHANGE, command);
-            }
-        }, 'addDirectionalLight').name('Add Directional Light');
-        lightFolder.add({
-            addPointLight: () => {
-                const light = this.lightManager.addLight('PointLight', 0xffffff, 1, { x: 0, y: 0, z: 0 }, 'PointLight');
-                const command = new AddObjectCommand(this.engine.scene, light);
-                this.eventBus.publish(Events.HISTORY_CHANGE, command);
-            }
-        }, 'addPointLight').name('Add Point Light');
-        lightFolder.open();
+  setupGUI() {
+    this._ensureDependencies();
+    this.gui = new GUI({ autoPlace: false });
+    const propsPanel = document.getElementById('properties-panel');
+    if (propsPanel && this.gui.domElement) {
+        try {
+            propsPanel.appendChild(this.gui.domElement);
+        } catch(err) {
+            void err;
+        }
+    }
 
-        const createAddButton = (text, addMethod) => {
-            const button = document.createElement('button');
-            button.textContent = text;
-            button.addEventListener('click', async () => {
-                const newObject = await addMethod();
-                if (newObject) {
-                    const command = new AddObjectCommand(this.engine.scene, newObject);
-                    this.eventBus.publish(Events.HISTORY_CHANGE, command);
-                    this.eventBus.publish(Events.SELECTION_CHANGE, newObject);
-                    this.sceneGraph.update();
-                }
-            });
-            ui.appendChild(button);
+    const cameraFolder = this.gui.addFolder('Camera Settings');
+    cameraFolder.add(this.sceneManager, 'dampingEnabled').name('Enable Damping').onChange(() => this.sceneManager.controls.update());
+    cameraFolder.add(this.sceneManager, 'dampingFactor', 0.01, 1.0).name('Damping Factor');
+
+    const toastManager = this.container && typeof this.container.get === 'function' ? this.container.get('ToastManager') : null;
+    new ShaderEditor(this.gui, this.renderer, this.scene, this.camera, this.eventBus, toastManager);
+
+    if (this.physicsManager) {
+        const physicsFolder = this.gui.addFolder('Physics Controls');
+        const physicsParams = {
+            play: () => this.physicsManager.play(),
+            pause: () => this.physicsManager.pause(),
+            reset: () => this.physicsManager.reset()
+        };
+        physicsFolder.add(physicsParams, 'play').name('Play Simulation');
+        physicsFolder.add(physicsParams, 'pause').name('Pause Simulation');
+        physicsFolder.add(physicsParams, 'reset').name('Reset Simulation');
+    }
+
+    this.propertiesFolder = this.gui.addFolder('Properties');
+    this.propertiesFolder.open();
+
+    const viewFolder = this.gui.addFolder('View Settings');
+    const viewParams = {
+        showGrid: true,
+        gridSize: 10,
+        gridDivisions: 10,
+        showAxes: true
+    };
+    
+    const updateGrid = () => {
+        if (this.eventBus) this.eventBus.publish(Events.UPDATE_GRID, viewParams);
+    };
+    
+    viewFolder.add(viewParams, 'showGrid').name('Show Grid').onChange(updateGrid);
+    
+    const sizeCtrl = viewFolder.add(viewParams, 'gridSize', 1, 100).name('Grid Size');
+    if (sizeCtrl.onFinishChange) sizeCtrl.onFinishChange(updateGrid);
+    else sizeCtrl.onChange(updateGrid);
+
+    const divCtrl = viewFolder.add(viewParams, 'gridDivisions', 1, 100, 1).name('Divisions');
+    if (divCtrl.onFinishChange) divCtrl.onFinishChange(updateGrid);
+    else divCtrl.onChange(updateGrid);
+
+    viewFolder.add(viewParams, 'showAxes').name('Show Axes').onChange((val) => {
+        if (this.eventBus) this.eventBus.publish(Events.TOGGLE_AXES, val);
+    });
+  }
+
+  setupMenu(callbacks) {
+    const handlers = {
+        // File
+        'menu-file-load': () => {
+            const input = document.getElementById('file-input');
+            if (input) input.click();
+        },
+        'menu-file-save': () => callbacks.saveScene(),
+        'menu-file-import': () => {
+            const input = document.getElementById('model-import-input');
+            if (input) input.click();
+        },
+        // Edit
+        'menu-edit-undo': () => callbacks.undo(),
+        'menu-edit-redo': () => callbacks.redo(),
+        'menu-edit-delete': () => callbacks.deleteSelected(),
+        'menu-edit-duplicate': () => callbacks.duplicateSelected(),
+        // Add
+        'menu-add-box': () => callbacks.addBox(),
+        'menu-add-sphere': () => callbacks.addSphere(),
+        'menu-add-cylinder': () => callbacks.addCylinder(),
+        'menu-add-cone': () => callbacks.addCone(),
+        'menu-add-torus': () => callbacks.addTorus(),
+        'menu-add-plane': () => callbacks.addPlane(),
+        'menu-add-teapot': () => callbacks.addTeapot(),
+        // View
+        'menu-view-fullscreen': () => callbacks.toggleFullscreen()
+    };
+
+    Object.entries(handlers).forEach(([id, handler]) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.onclick = (e) => {
+            e.preventDefault();
+            handler();
+        };
+    });
+
+    // Handle file input changes (Legacy support)
+    const loadInput = document.getElementById('file-input');
+    if (loadInput) {
+      loadInput.onchange = async (e) => {
+        // @ts-ignore
+        const file = e.target.files[0];
+        if (file) {
+          try {
+            await callbacks.loadScene(file);
+          } catch (err) {
+            Logger.error('Failed to load scene', err);
+          }
+        }
+        // @ts-ignore
+        e.target.value = '';
+      };
+    }
+
+    const importInput = document.getElementById('model-import-input');
+    if (importInput) {
+        importInput.onchange = (e) => {
+            // @ts-ignore
+            if (e.target.files && e.target.files[0]) {
+                // @ts-ignore
+                callbacks.importModel(e.target.files[0]);
+            }
+            // @ts-ignore
+            e.target.value = '';
+        };
+    }
+  }
+
+  _triggerFilePicker(callback, accept = '') {
+    const input = document.createElement('input');
+    input.type = 'file';
+    if (accept) input.accept = accept;
+    input.onchange = (e) => {
+        // @ts-ignore
+        const file = e.target.files[0];
+        if (file) callback(file);
+    };
+    input.click();
+  }
+
+  setupSceneGraph() {
+    this.objectsList = document.getElementById('objects-list');
+  }
+
+  updatePropertiesPanel(object, callbacks) {
+    this._ensureDependencies();
+    this.clearPropertiesPanel();
+    if (!object || !this.propertiesFolder) return;
+
+    this.propertiesFolder.add(object, 'name').name('Name');
+
+    const pos = this.propertiesFolder.addFolder('Position');
+    pos.add(object.position, 'x', -10, 10).name('X');
+    pos.add(object.position, 'y', -10, 10).name('Y');
+    pos.add(object.position, 'z', -10, 10).name('Z');
+
+    const rot = this.propertiesFolder.addFolder('Rotation');
+    rot.add(object.rotation, 'x', -Math.PI, Math.PI).name('X');
+    rot.add(object.rotation, 'y', -Math.PI, Math.PI).name('Y');
+    rot.add(object.rotation, 'z', -Math.PI, Math.PI).name('Z');
+
+    const sca = this.propertiesFolder.addFolder('Scale');
+    sca.add(object.scale, 'x', 0.1, 5).name('X');
+    sca.add(object.scale, 'y', 0.1, 5).name('Y');
+    sca.add(object.scale, 'z', 0.1, 5).name('Z');
+
+    // @ts-ignore
+    if (object.material) {
+      const mat = this.propertiesFolder.addFolder('Material');
+      const materialData = {
+        // @ts-ignore
+        color: '#' + object.material.color.getHexString(),
+        // @ts-ignore
+        emissive: object.material.emissive ? '#' + object.material.emissive.getHexString() : '#000000'
+      };
+      mat.addColor(materialData, 'color').name('Color').onChange((val) => {
+        // @ts-ignore
+        object.material.color.set(val);
+      }).onFinishChange(() => callbacks.saveState('Change Color'));
+
+      // @ts-ignore
+      if (object.material.emissive !== undefined) {
+        mat.addColor(materialData, 'emissive').name('Emissive').onChange((val) => {
+          // @ts-ignore
+          object.material.emissive.set(val);
+        }).onFinishChange(() => callbacks.saveState('Change Emissive'));
+      }
+
+      // @ts-ignore
+      if (object.material.roughness !== undefined) {
+        // @ts-ignore
+        mat.add(object.material, 'roughness', 0, 1).name('Roughness').onFinishChange(() => callbacks.saveState('Change Roughness'));
+      }
+      
+      // @ts-ignore
+      if (object.material.metalness !== undefined) {
+        // @ts-ignore
+        mat.add(object.material, 'metalness', 0, 1).name('Metalness').onFinishChange(() => callbacks.saveState('Change Metalness'));
+      }
+
+      // @ts-ignore
+      if (object.material.wireframe !== undefined) {
+        // @ts-ignore
+        mat.add(object.material, 'wireframe').name('Wireframe').onFinishChange(() => callbacks.saveState('Toggle Wireframe'));
+      }
+
+      // Texture Support
+      const textureOptions = {
+        uploadMap: () => this.triggerTextureUpload(object, 'map', callbacks),
+        uploadNormalMap: () => this.triggerTextureUpload(object, 'normalMap', callbacks),
+        uploadRoughnessMap: () => this.triggerTextureUpload(object, 'roughnessMap', callbacks)
+      };
+      mat.add(textureOptions, 'uploadMap').name('Set Albedo Map');
+      mat.add(textureOptions, 'uploadNormalMap').name('Set Normal Map');
+      mat.add(textureOptions, 'uploadRoughnessMap').name('Set Rough. Map');
+    }
+
+    if (object.userData && object.userData.primitiveType === 'Extrude') {
+      const g = this.propertiesFolder.addFolder('Extrude Settings');
+      const opts = object.userData.primitiveOptions || {};
+      const params = {
+        depth: opts.depth !== undefined ? opts.depth : 0.2,
+        steps: opts.steps !== undefined ? opts.steps : 2,
+        bevelEnabled: opts.bevelEnabled !== undefined ? opts.bevelEnabled : true,
+        bevelThickness: opts.bevelThickness !== undefined ? opts.bevelThickness : 0.1,
+        bevelSize: opts.bevelSize !== undefined ? opts.bevelSize : 0.1,
+        bevelSegments: opts.bevelSegments !== undefined ? opts.bevelSegments : 1,
+      };
+      const updateExtrude = () => {
+        object.userData.primitiveOptions = { ...opts, ...params };
+        this.objectPropertyUpdater.updatePrimitive(object, object.userData.primitiveOptions);
+      };
+      const finishChange = () => callbacks.saveState('Change Extrude');
+      g.add(params, 'depth', 0.1, 10).name('Depth').onChange(updateExtrude).onFinishChange(finishChange);
+      g.add(params, 'steps', 1, 20, 1).name('Steps').onChange(updateExtrude).onFinishChange(finishChange);
+      g.add(params, 'bevelEnabled').name('Bevel').onChange(updateExtrude).onFinishChange(finishChange);
+      g.add(params, 'bevelThickness', 0, 2).name('Bevel Thick').onChange(updateExtrude).onFinishChange(finishChange);
+      g.add(params, 'bevelSize', 0, 2).name('Bevel Size').onChange(updateExtrude).onFinishChange(finishChange);
+      g.add(params, 'bevelSegments', 1, 10, 1).name('Bevel Segs').onChange(updateExtrude).onFinishChange(finishChange);
+    }
+
+    // CSG Operations
+    this.eventBus.publish(Events.UI_UPDATE_PROPERTIES, { object, folder: this.propertiesFolder, callbacks });
+
+    // Physics Settings (Per Object)
+    if (this.physicsManager) {
+        const physFolder = this.propertiesFolder.addFolder('Physics');
+        const hasBody = this.physicsManager.meshToBodyMap.has(object);
+        const currentBody = hasBody ? this.physicsManager.meshToBodyMap.get(object) : null;
+        
+        let initialShapeType = 'box';
+        if (currentBody && currentBody.shapes.length > 0) {
+            const cannonShape = currentBody.shapes[0];
+            if (cannonShape.type === 1) initialShapeType = 'sphere'; 
+            else if (cannonShape.type === 4) initialShapeType = 'box'; 
+            else if (cannonShape.type === 8) initialShapeType = 'cylinder'; 
+        }
+
+        const physParams = {
+            enabled: hasBody,
+            mass: currentBody ? currentBody.mass : 1,
+            shape: initialShapeType
         };
 
-        createAddButton('Add Cube', () => this.objectFactory.addPrimitive(ObjectTypes.BOX));
-        createAddButton('Add Sphere', () => this.objectFactory.addPrimitive(ObjectTypes.SPHERE));
-        createAddButton('Add Cylinder', () => this.objectFactory.addPrimitive(ObjectTypes.CYLINDER));
-        createAddButton('Add Cone', () => this.objectFactory.addPrimitive(ObjectTypes.CONE));
-        createAddButton('Add Torus', () => this.objectFactory.addPrimitive(ObjectTypes.TORUS));
-        createAddButton('Add Torus Knot', () => this.objectFactory.addPrimitive(ObjectTypes.TORUS_KNOT));
-        createAddButton('Add Tetrahedron', () => this.objectFactory.addPrimitive(ObjectTypes.TETRAHEDRON));
-        createAddButton('Add Icosahedron', () => this.objectFactory.addPrimitive(ObjectTypes.ICOSAHEDRON));
-        createAddButton('Add Dodecahedron', () => this.objectFactory.addPrimitive(ObjectTypes.DODECAHEDRON));
-        createAddButton('Add Octahedron', () => this.objectFactory.addPrimitive(ObjectTypes.OCTAHEDRON));
-        createAddButton('Add Plane', () => this.objectFactory.addPrimitive(ObjectTypes.PLANE));
-        createAddButton('Add Tube', () => this.objectFactory.addPrimitive(ObjectTypes.TUBE));
-        createAddButton('Add Teapot', () => this.objectFactory.addPrimitive(ObjectTypes.TEAPOT));
-        createAddButton('Add Lathe', () => this.objectFactory.addPrimitive(ObjectTypes.LATHE));
-        createAddButton('Add Extrude', () => this.objectFactory.addPrimitive(ObjectTypes.EXTRUDE));
-        createAddButton('Add Text', () => this.objectFactory.addPrimitive(ObjectTypes.TEXT));
-        createAddButton('Add LOD Cube', () => this.objectFactory.addPrimitive(ObjectTypes.LOD_CUBE));
-
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete Selected';
-        deleteButton.addEventListener('click', () => {
-            if (this.state.selectedObject) {
-                const objectToDelete = this.state.selectedObject;
-                const command = new RemoveObjectCommand(this.engine.scene, objectToDelete);
-                this.eventBus.publish(Events.HISTORY_CHANGE, command);
-                this.eventBus.publish(Events.SELECTION_CHANGE, null);
-                this.sceneGraph.update();
-            }
-        });
-        ui.appendChild(deleteButton);
-
-        const duplicateButton = document.createElement('button');
-        duplicateButton.textContent = 'Duplicate Selected';
-        duplicateButton.addEventListener('click', () => {
-            if (this.state.selectedObject) {
-                const duplicatedObject = this.objectFactory.duplicateObject(this.state.selectedObject);
-                const command = new AddObjectCommand(this.engine.scene, duplicatedObject);
-                this.eventBus.publish(Events.HISTORY_CHANGE, command);
-                this.eventBus.publish(Events.SELECTION_CHANGE, duplicatedObject);
-                this.sceneGraph.update();
-            }
-        });
-        ui.appendChild(duplicateButton);
-
-        const groupButton = document.createElement('button');
-        groupButton.textContent = 'Group Selected';
-        groupButton.addEventListener('click', () => {
-            const selectedObjects = this.engine.scene.children.filter(obj => obj.userData.selected);
-            if (selectedObjects.length > 1) {
-                const command = new GroupCommand(this.engine.scene, this.groupManager, selectedObjects);
-                this.eventBus.publish(Events.HISTORY_CHANGE, command);
-                this.eventBus.publish(Events.SELECTION_CHANGE, command.group);
-                this.sceneGraph.update();
+        const updatePhysics = () => {
+            if (physParams.enabled) {
+                this.physicsManager.removeObject(object);
+                this.physicsManager.addBody(object, physParams.mass, physParams.shape);
             } else {
-                log.warn("Select at least two objects to group.");
+                this.physicsManager.removeObject(object);
             }
-        });
-        ui.appendChild(groupButton);
-
-        const ungroupButton = document.createElement('button');
-        ungroupButton.textContent = 'Ungroup Selected';
-        ungroupButton.addEventListener('click', () => {
-            if (this.state.selectedObject && this.state.selectedObject.isGroup) {
-                const command = new UngroupCommand(this.engine.scene, this.groupManager, this.state.selectedObject);
-                this.eventBus.publish(Events.HISTORY_CHANGE, command);
-                this.eventBus.publish(Events.SELECTION_CHANGE, null);
-                this.sceneGraph.update();
-            }
-        });
-        ui.appendChild(ungroupButton);
-
-        const createCSGButton = (text, operation) => {
-            const button = document.createElement('button');
-            button.textContent = text;
-            button.addEventListener('click', () => {
-                const selectedObjects = this.engine.scene.children.filter(obj => obj.userData.selected);
-                if (selectedObjects.length === 2) {
-                    const resultObject = this.csgManager.performCSG(selectedObjects[0], selectedObjects[1], operation);
-                    if (resultObject) {
-                        const command = new AddObjectCommand(this.engine.scene, resultObject);
-                        this.eventBus.publish(Events.HISTORY_CHANGE, command);
-                        this.eventBus.publish(Events.SELECTION_CHANGE, resultObject);
-                        this.sceneGraph.update();
-                    }
-                } else {
-                    log.warn("Select exactly two objects for CSG operation.");
-                }
-            });
-            ui.appendChild(button);
+            callbacks.saveState('Update Physics');
         };
 
-        createCSGButton('Union', 'union');
-        createCSGButton('Subtract', 'subtract');
-        createCSGButton('Intersect', 'intersect');
-
-        const resetButton = document.createElement('button');
-        resetButton.textContent = 'Reset View';
-        resetButton.addEventListener('click', () => {
-            this.engine.resetCamera();
-        });
-        ui.appendChild(resetButton);
-
-        const saveImageButton = document.createElement('button');
-        saveImageButton.textContent = 'Save as Image';
-        saveImageButton.addEventListener('click', () => {
-            this.engine.renderer.render(this.engine.scene, this.engine.camera);
-            const dataURL = this.engine.renderer.domElement.toDataURL('image/png');
-            const a = document.createElement('a');
-            a.href = dataURL;
-            a.download = 'nodist3d-scene.png';
-            a.click();
-        });
-        ui.appendChild(saveImageButton);
-
-        const translateButton = document.createElement('button');
-        translateButton.textContent = 'Translate';
-        translateButton.addEventListener('click', () => {
-            this.transformControls.setMode('translate');
-        });
-        ui.appendChild(translateButton);
-
-        const rotateButton = document.createElement('button');
-        rotateButton.textContent = 'Rotate';
-        rotateButton.addEventListener('click', () => {
-            this.transformControls.setMode('rotate');
-        });
-        ui.appendChild(rotateButton);
-
-        const scaleButton = document.createElement('button');
-        scaleButton.textContent = 'Scale';
-        scaleButton.addEventListener('click', () => {
-            this.transformControls.setMode('scale');
-        });
-        ui.appendChild(scaleButton);
-
-        const saveButton = document.createElement('button');
-        saveButton.textContent = 'Save Scene';
-        saveButton.addEventListener('click', () => {
-            this.sceneStorage.saveScene();
-        });
-        ui.appendChild(saveButton);
-
-        const loadInput = document.createElement('input');
-        loadInput.type = 'file';
-        loadInput.accept = '.nodist3d';
-        loadInput.style.display = 'none';
-        loadInput.addEventListener('change', async (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const loadedData = await this.sceneStorage.loadScene(file);
-                this.transformControls.detach();
-                this.updateGUI(null);
-                this.sceneGraph.update();
-                this.eventBus.publish(Events.HISTORY_CHANGE, new AddObjectCommand(this.engine.scene, loadedData));
-            }
-        });
-        ui.appendChild(loadInput);
-
-        const loadButton = document.createElement('button');
-        loadButton.textContent = 'Load Scene';
-        loadButton.addEventListener('click', () => {
-            loadInput.click();
-        });
-        ui.appendChild(loadButton);
-
-        const importObjInput = document.createElement('input');
-        importObjInput.type = 'file';
-        importObjInput.accept = '.obj';
-        importObjInput.style.display = 'none';
-        importObjInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const objLoader = new OBJLoader();
-                    const object = objLoader.parse(e.target.result);
-                    this.engine.scene.add(object);
-                    const command = new AddObjectCommand(this.engine.scene, object);
-                    this.eventBus.publish(Events.HISTORY_CHANGE, command);
-                    this.eventBus.publish(Events.SELECTION_CHANGE, object);
-                    this.sceneGraph.update();
-                };
-                reader.readAsText(file);
-            }
-        });
-        ui.appendChild(importObjInput);
-
-        const importObjButton = document.createElement('button');
-        importObjButton.textContent = 'Import OBJ';
-        importObjButton.addEventListener('click', () => {
-            importObjInput.click();
-        });
-        ui.appendChild(importObjButton);
-
-        const importGltfInput = document.createElement('input');
-        importGltfInput.type = 'file';
-        importGltfInput.accept = '.gltf,.glb';
-        importGltfInput.style.display = 'none';
-        importGltfInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const gltfLoader = new GLTFLoader();
-                    gltfLoader.parse(e.target.result, '', (gltf) => {
-                        this.engine.scene.add(gltf.scene);
-                        const command = new AddObjectCommand(this.engine.scene, gltf.scene);
-                        this.eventBus.publish(Events.HISTORY_CHANGE, command);
-                        this.eventBus.publish(Events.SELECTION_CHANGE, gltf.scene);
-                        this.sceneGraph.update();
-                    });
-                };
-                reader.readAsArrayBuffer(file);
-            }
-        });
-        ui.appendChild(importGltfInput);
-
-        const importGltfButton = document.createElement('button');
-        importGltfButton.textContent = 'Import GLTF';
-        importGltfButton.addEventListener('click', () => {
-            importGltfInput.click();
-        });
-        ui.appendChild(importGltfButton);
-
-        const exportObjButton = document.createElement('button');
-        exportObjButton.textContent = 'Export OBJ';
-        exportObjButton.addEventListener('click', () => {
-            const exporter = new OBJExporter();
-            const result = exporter.parse(this.engine.scene);
-            const blob = new Blob([result], { type: 'text/plain' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'scene.obj';
-            a.click();
-            URL.revokeObjectURL(a.href);
-        });
-        ui.appendChild(exportObjButton);
-
-        const exportGltfButton = document.createElement('button');
-        exportGltfButton.textContent = 'Export GLTF';
-        exportGltfButton.addEventListener('click', () => {
-            const exporter = new GLTFExporter();
-            exporter.parse(this.engine.scene, (result) => {
-                const output = JSON.stringify(result, null, 2);
-                const blob = new Blob([output], { type: 'text/plain' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'scene.gltf';
-                a.click();
-                URL.revokeObjectURL(a.href);
-            }, (error) => {
-                log.error('An error occurred during GLTF export:', error);
-            }, { binary: false });
-        });
-        ui.appendChild(exportGltfButton);
-
-        const physicsButton = document.createElement('button');
-        physicsButton.textContent = 'Add Physics Body';
-        physicsButton.addEventListener('click', () => {
-            if (this.state.selectedObject) {
-                this.physicsManager.addBody(this.state.selectedObject, 1, 'box');
-                this.eventBus.publish(Events.HISTORY_CHANGE, new Command());
-            }
-        });
-        ui.appendChild(physicsButton);
+        physFolder.add(physParams, 'enabled').name('Enable Physics').onChange(updatePhysics);
+        physFolder.add(physParams, 'mass', 0, 100).name('Mass (0=Static)').onFinishChange(updatePhysics);
+        physFolder.add(physParams, 'shape', ['box', 'sphere', 'cylinder']).name('Collision Shape').onChange(updatePhysics);
     }
+
+    this.applyScrubbingToFolder(this.propertiesFolder);
+  }
+
+  applyScrubbingToFolder(folder) {
+    folder.__controllers.forEach(c => this.applyScrubbing(c));
+    if (folder.__folders) {
+      Object.values(folder.__folders).forEach(f => this.applyScrubbingToFolder(f));
+    }
+  }
+
+  applyScrubbing(controller) {
+    if (typeof controller.getValue() !== 'number') return;
+    
+    const container = controller.domElement.closest('li');
+    if (!container) return;
+    
+    const label = container.querySelector('.property-name');
+    if (!label || label.dataset.scrubbingInitialized) return;
+
+    label.style.cursor = 'ew-resize';
+    label.style.userSelect = 'none';
+    label.dataset.scrubbingInitialized = 'true';
+
+    let startX = 0;
+    let startValue = 0;
+
+    const onMouseMove = (e) => {
+      const delta = e.clientX - startX;
+      let sensitivity = 0.01;
+      if (e.shiftKey) sensitivity = 0.001;
+      if (e.altKey) sensitivity = 0.1;
+      
+      const newValue = startValue + delta * sensitivity;
+      controller.setValue(newValue);
+      if (controller.__onChange) {
+          controller.__onChange.call(controller, newValue);
+      }
+    };
+
+    const onMouseUp = () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      if (controller.__onFinishChange) {
+          controller.__onFinishChange.call(controller, controller.getValue());
+      }
+      document.body.style.cursor = '';
+    };
+
+    label.addEventListener('mousedown', (e) => {
+      startX = e.clientX;
+      startValue = controller.getValue();
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
+      document.body.style.cursor = 'ew-resize';
+      e.preventDefault();
+    });
+  }
+
+  triggerTextureUpload(object, mapType, callbacks) {
+    this._triggerFilePicker((file) => {
+        const reader = new window.FileReader();
+        reader.onload = (event) => {
+          const textureLoader = new THREE.TextureLoader();
+          // @ts-ignore
+          textureLoader.load(event.target.result, (texture) => {
+            // @ts-ignore
+            if (object.material) {
+                // @ts-ignore
+                object.material[mapType] = texture;
+                // @ts-ignore
+                object.material.needsUpdate = true;
+                callbacks.saveState(`Upload ${mapType}`);
+                this.container.get('ToastManager').show('Texture applied!', 'success');
+            }
+          });
+        };
+        reader.readAsDataURL(file);
+    }, 'image/*');
+  }
+
+  clearPropertiesPanel() {
+    if (!this.propertiesFolder) return;
+    const controllers = [...this.propertiesFolder.__controllers];
+    controllers.forEach(c => this.propertiesFolder.remove(c));
+    if (this.propertiesFolder.__folders) {
+      Object.values(this.propertiesFolder.__folders).forEach(f => this.propertiesFolder.removeFolder(f));
+    }
+  }
+
+  updateSceneGraph(objects, selectedObject, callbacks) {
+    if (!this.objectsList) return;
+
+    if (objects.length === 0) {
+      this.objectsList.innerHTML = '';
+      const li = document.createElement('li');
+      li.setAttribute('role', 'listitem');
+      li.textContent = 'No objects in scene';
+      li.style.color = '#888';
+      li.style.fontStyle = 'italic';
+      li.style.textAlign = 'center';
+      li.style.padding = '10px';
+      this.objectsList.appendChild(li);
+      this.sceneGraphItemMap.clear();
+      return;
+    }
+
+    if (
+      this.objectsList.children.length > 0 &&
+      this.objectsList.children[0].textContent === 'No objects in scene'
+    ) {
+      this.objectsList.innerHTML = '';
+    }
+
+    let currentDom = this.objectsList.firstElementChild;
+
+    objects.forEach((obj, idx) => {
+      let li = this.sceneGraphItemMap.get(obj.uuid);
+
+      // @ts-ignore
+      if (li && li._boundObject !== obj) {
+        li.remove();
+        if (li === currentDom) {
+          currentDom = currentDom.nextElementSibling;
+        }
+        this.sceneGraphItemMap.delete(obj.uuid);
+        li = undefined;
+      }
+
+      if (!li) {
+        li = this.createSceneGraphItem(obj, callbacks);
+        this.sceneGraphItemMap.set(obj.uuid, li);
+      }
+
+      this.updateSceneGraphItem(li, obj, idx, selectedObject);
+
+      if (currentDom === li) {
+        currentDom = currentDom.nextElementSibling;
+      } else {
+        this.objectsList.insertBefore(li, currentDom);
+      }
+    });
+
+    while (currentDom) {
+      const next = currentDom.nextElementSibling;
+      currentDom.remove();
+      currentDom = next;
+    }
+
+    if (this.sceneGraphItemMap.size > objects.length) {
+      const activeUuids = new Set(objects.map((o) => o.uuid));
+      for (const uuid of this.sceneGraphItemMap.keys()) {
+        if (!activeUuids.has(uuid)) {
+          this.sceneGraphItemMap.delete(uuid);
+        }
+      }
+    }
+  }
+
+  createSceneGraphItem(obj, callbacks) {
+    const li = document.createElement('li');
+    li.setAttribute('role', 'listitem');
+    li.style.cssText = `
+      padding: 5px;
+      margin: 2px 0;
+      border-radius: 3px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+    `;
+    // @ts-ignore
+    li._boundObject = obj;
+
+    const name = document.createElement('span');
+    name.className = 'object-name';
+    li.appendChild(name);
+    // @ts-ignore
+    li._nameSpan = name;
+
+    const controls = document.createElement('div');
+
+    const visibilityBtn = document.createElement('button');
+    visibilityBtn.className = 'visibility-btn';
+    visibilityBtn.setAttribute('aria-label', obj.visible ? 'Hide object' : 'Show object');
+    visibilityBtn.setAttribute('title', obj.visible ? 'Hide object' : 'Show object');
+    visibilityBtn.onclick = (e) => {
+      e.stopPropagation();
+      obj.visible = !obj.visible;
+      callbacks.updateSceneGraph();
+    };
+    controls.appendChild(visibilityBtn);
+    // @ts-ignore
+    li._visibilityBtn = visibilityBtn;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.setAttribute('aria-label', 'Delete object');
+    deleteBtn.setAttribute('title', 'Delete object');
+    deleteBtn.textContent = '🗑️';
+    deleteBtn.onclick = (e) => {
+      e.stopPropagation();
+      callbacks.deleteObject(obj);
+    };
+    controls.appendChild(deleteBtn);
+
+    li.appendChild(controls);
+
+    li.onclick = () => callbacks.selectObject(obj);
+
+    // Drag and Drop
+    li.draggable = true;
+    li.addEventListener('dragstart', (e) => {
+      // @ts-ignore
+      e.dataTransfer.setData('text/plain', obj.uuid);
+      // @ts-ignore
+      e.dataTransfer.effectAllowed = 'move';
+      li.style.opacity = '0.5';
+    });
+
+    li.addEventListener('dragend', () => {
+      li.style.opacity = '1';
+      const items = this.objectsList.querySelectorAll('li');
+      items.forEach(item => {
+        // @ts-ignore
+        item.style.borderTop = '';
+        // @ts-ignore
+        item.style.borderBottom = '';
+      });
+    });
+
+    li.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      // @ts-ignore
+      e.dataTransfer.dropEffect = 'move';
+      
+      const rect = li.getBoundingClientRect();
+      const midpoint = rect.top + rect.height / 2;
+      if (e.clientY < midpoint) {
+        li.style.borderTop = '2px solid var(--accent)';
+        li.style.borderBottom = '';
+      } else {
+        li.style.borderTop = '';
+        li.style.borderBottom = '2px solid var(--accent)';
+      }
+    });
+
+    li.addEventListener('dragleave', () => {
+      li.style.borderTop = '';
+      li.style.borderBottom = '';
+    });
+
+    li.addEventListener('drop', (e) => {
+      e.preventDefault();
+      li.style.borderTop = '';
+      li.style.borderBottom = '';
+      // @ts-ignore
+      const draggedUuid = e.dataTransfer.getData('text/plain');
+      if (draggedUuid !== obj.uuid) {
+        const rect = li.getBoundingClientRect();
+        const isAfter = e.clientY > (rect.top + rect.height / 2);
+        callbacks.reorderObjects(draggedUuid, obj.uuid, isAfter);
+      }
+    });
+
+    return li;
+  }
+
+  updateSceneGraphItem(li, obj, idx, selectedObject) {
+    const isSelected = selectedObject === obj;
+    const expectedBg = isSelected ? '#444' : '#222';
+    if (li.style.background !== expectedBg) {
+        li.style.background = expectedBg;
+    }
+
+    // @ts-ignore
+    const nameSpan = li._nameSpan;
+    const expectedName = obj.name || `Object ${idx + 1}`;
+    if (nameSpan.textContent !== expectedName) {
+      nameSpan.textContent = expectedName;
+    }
+
+    // @ts-ignore
+    const visibilityBtn = li._visibilityBtn;
+    const expectedVisLabel = obj.visible ? 'Hide object' : 'Show object';
+    const expectedVisIcon = obj.visible ? '👁️' : '🚫';
+
+    if (visibilityBtn.getAttribute('aria-label') !== expectedVisLabel) {
+        visibilityBtn.setAttribute('aria-label', expectedVisLabel);
+    }
+    if (visibilityBtn.getAttribute('title') !== expectedVisLabel) {
+        visibilityBtn.setAttribute('title', expectedVisLabel);
+    }
+    if (visibilityBtn.textContent !== expectedVisIcon) {
+        visibilityBtn.textContent = expectedVisIcon;
+    }
+  }
 }
