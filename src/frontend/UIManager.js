@@ -557,17 +557,13 @@ export class UIManager {
 
     while (currentDom) {
       const next = currentDom.nextElementSibling;
+      // @ts-ignore
+      if (currentDom._boundObject) {
+        // @ts-ignore
+        this.sceneGraphItemMap.delete(currentDom._boundObject.uuid);
+      }
       currentDom.remove();
       currentDom = next;
-    }
-
-    if (this.sceneGraphItemMap.size > objects.length) {
-      const activeUuids = new Set(objects.map((o) => o.uuid));
-      for (const uuid of this.sceneGraphItemMap.keys()) {
-        if (!activeUuids.has(uuid)) {
-          this.sceneGraphItemMap.delete(uuid);
-        }
-      }
     }
   }
 
